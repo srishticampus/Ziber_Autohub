@@ -105,7 +105,7 @@ jobs:
             # Wait longer (30 seconds) and retry with better checks
             for i in {1..6}; do
               sleep 5
-              if curl -s -f -o /dev/null -w "%{http_code}" http://localhost:8013 | grep -q "200"; then
+              if curl -s -f -o /dev/null -w "%{http_code}" http://localhost:8014 | grep -q "200"; then
                 echo "Application is healthy"
                 exit 0
               fi
