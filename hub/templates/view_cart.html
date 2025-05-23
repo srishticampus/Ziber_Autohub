@@ -1,0 +1,22 @@
+<h2>Your Cart</h2>
+<table class="table">
+    <thead>
+        <tr>
+            <th>Car</th>
+            <th>Quantity</th>
+            <th>Price</th>
+            <th>Subtotal</th>
+        </tr>
+    </thead>
+    <tbody>
+        {% for item in cart_items %}
+        <tr>
+            <td>{{ item.car.brand }} {{ item.car.model }}</td>
+            <td>{{ item.quantity }}</td>
+            <td>₹{{ item.car.price }}</td>
+            <td>₹{{ item.car.price|floatformat:2|add:item.quantity|floatformat:2 }}</td>
+        </tr>
+        {% endfor %}
+    </tbody>
+</table>
+<h3>Total: ₹{{ total_price }}</h3>

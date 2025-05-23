@@ -1,0 +1,10 @@
+services:
+  django_backend:
+    build: ./
+    container_name: ziber_autohub_django
+    volumes:
+      - ./:/app 
+      - ./static:/app/staticfiles
+    ports:
+      - "8014:8000"
+    restart: always

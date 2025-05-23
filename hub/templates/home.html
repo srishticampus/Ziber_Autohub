@@ -1,0 +1,608 @@
+<!DOCTYPE html>
+{% load static %}
+<html lang="en">
+   <head>
+      <meta charset="utf-8">
+      <meta http-equiv="X-UA-Compatible" content="IE=edge">
+      <meta name="viewport" content="width=device-width, initial-scale=1">
+      <title>Ziber Automobiles</title>
+      <link rel="stylesheet" type="text/css" href="{% static 'css/bootstrap.min.css' %}">
+      <link rel="stylesheet" type="text/css" href="{% static 'css/style.css' %}">
+      <link rel="stylesheet" href="{% static 'css/responsive.css' %}">
+      <link rel="icon" href="{% static 'images/fevicon.png' %}" type="image/gif" />
+      <link rel="stylesheet" href="{% static 'css/jquery.mCustomScrollbar.min.css' %}">
+      <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/font-awesome/4.7.0/css/font-awesome.min.css">
+      <link href="https://fonts.googleapis.com/css?family=Poppins:400,700&display=swap" rel="stylesheet">
+      <link rel="stylesheet" href="{% static 'css/owl.carousel.min.css' %}">
+      <link rel="stylesheet" href="{% static 'css/owl.theme.default.min.css' %}">
+      <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/fancybox/2.1.5/jquery.fancybox.min.css" media="screen">
+
+   </head>
+   <body>
+      <!-- banner bg main start -->
+      <div class="banner_bg_main">
+         <!-- header top section start -->
+         <div class="container">
+            <div class="header_section_top">
+               <div class="row">
+                  <div class="col-sm-12">
+                     <div class="custom_menu">
+                        <ul>
+                           <li><a href="#">Top Cars</a></li>
+                           <li><a href="#">Accessories</a></li>
+                           <li><a href="#">Latest Models</a></li>
+                           <li><a href="#">Hot Deals</a></li>
+                           <li><a href="#">Support</a></li>
+                        </ul>
+                     </div>
+                  </div>
+               </div>
+            </div>
+         </div>
+         <!-- header top section end -->
+         <!-- logo section start -->
+         <div class="logo_section">
+            <div class="container">
+               <div class="row">
+                  <div class="col-sm-12">
+                     <h1 class="text-white fw-bold text-center">Ziber Car Hub</h1>
+
+                     {% comment %} <div class="logo"><a href="#"><img src="{% static 'images/logo.png' %}" alt="Ziber Automobiles"></a></div> {% endcomment %}
+                  </div>
+               </div>
+            </div>
+         </div>
+         <!-- logo section end -->
+         <!-- header section start -->
+         <div class="header_section">
+            <div class="container">
+               <div class="containt_main">
+                  <div id="mySidenav" class="sidenav">
+                     <a href="javascript:void(0)" class="closebtn" onclick="closeNav()">&times;</a>
+                     <a href="#">Home</a>
+                     <a href="#">Cars</a>
+                     <a href="#">Accessories</a>
+                     <a href="#">Services</a>
+                  </div>
+                  <span class="toggle_icon" onclick="openNav()"><img src="{% static 'images/toggle-icon.png' %}"></span>
+                  <div class="dropdown">
+                     <button class="btn btn-secondary dropdown-toggle" type="button" id="dropdownMenuButton" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">All Categories 
+                     </button>
+                     <div class="dropdown-menu" aria-labelledby="dropdownMenuButton">
+                        <a class="dropdown-item" href="#">SUVs</a>
+                        <a class="dropdown-item" href="#">Sedans</a>
+                        <a class="dropdown-item" href="#">Electric Cars</a>
+                     </div>
+                  </div>
+                  <div class="main">
+                     <div class="input-group">
+                        <input type="text" class="form-control" placeholder="Search cars, brands, or accessories">
+                        <div class="input-group-append">
+                           <button class="btn btn-secondary" type="button" style="background-color: #f26522; border-color:#f26522 ">
+                           <i class="fa fa-search"></i>
+                           </button>
+                        </div>
+                     </div>
+                  </div>
+                  <div class="header_box">
+                     <div class="lang_box ">
+                        <a href="#" title="Language" class="nav-link" data-toggle="dropdown" aria-expanded="true">
+                        <img src="{% static 'images/flag-uk.png' %}" alt="flag" class="mr-2 "> English <i class="fa fa-angle-down ml-2"></i>
+                        </a>
+                     </div>
+                     <div class="login_menu">
+                        <ul>
+                           <li><a href="#"><i class="fa fa-shopping-cart"></i><span class="padding_10">Cart</span></a></li>
+                           <li><a href="{% url 'login' %}"><i class="fa fa-user"></i><span class="padding_10">Login</span></a></li>
+                        </ul>
+                     </div>
+                  </div>
+               </div>
+            </div>
+         </div>
+         <!-- header section end -->
+         <!-- banner section start -->
+         <div class="banner_section layout_padding">
+            <div class="container">
+               <div id="my_slider" class="carousel slide" data-ride="carousel">
+                  <div class="carousel-inner">
+                     <div class="carousel-item active">
+                        <div class="row">
+                           <div class="col-sm-12">
+                              <h1 class="banner_taital">Drive into the Future <br>With Ziber Automobiles</h1>
+                              <div class="buynow_bt"><a href="#">Explore Now</a></div>
+                           </div>
+                        </div>
+                     </div>
+                     <div class="carousel-item">
+                        <div class="row">
+                           <div class="col-sm-12">
+                              <h1 class="banner_taital">Top Models & Affordable Prices</h1>
+                              <div class="buynow_bt"><a href="{% url 'car_list' %}">Shop Cars</a></div>
+                           </div>
+                        </div>
+                     </div>
+                     <div class="carousel-item">
+                        <div class="row">
+                           <div class="col-sm-12">
+                              <h1 class="banner_taital">Your Trusted Auto Hub</h1>
+                              <div class="buynow_bt"><a href="#">Discover More</a></div>
+                           </div>
+                        </div>
+                     </div>
+                  </div>
+                  <a class="carousel-control-prev" href="#my_slider" role="button" data-slide="prev"><i class="fa fa-angle-left"></i></a>
+                  <a class="carousel-control-next" href="#my_slider" role="button" data-slide="next"><i class="fa fa-angle-right"></i></a>
+               </div>
+            </div>
+         </div>
+         <!-- banner section end -->
+      </div>
+      <!-- banner bg main end -->
+
+
+      <div class="jewellery_section">
+         <div class="about_section layout_padding">
+            <div class="container">
+               <div class="row">
+                  <div class="col-md-6">
+                     <img src="{% static 'images/carbg2.jpg' %}" alt="About Ziber Automobiles" class="img-fluid rounded">
+                  </div>
+                  <div class="col-md-6">
+                     <h2 class="about_title">Welcome to Ziber Automobiles</h2>
+                     <p class="about_description">
+                        Ziber Automobiles is your one-stop destination for high-quality cars, accessories, and top-tier automobile services. Whether you're looking for a sleek city ride or a rugged SUV for adventure, we’ve got something for every need. Our passion is helping you drive home with confidence.
+                     </p>
+                     <div class="learn_more_bt"><a href="#">Learn More</a></div>
+                  </div>
+               </div>
+            </div>
+         </div>
+
+         <div id="jewellery_main_slider" class="carousel slide" data-ride="carousel">
+            <div class="carousel-inner">
+               <div class="carousel-item active">
+                  <div class="container">
+                     <h1 class="fashion_taital">New Cars</h1>
+                     <div class="fashion_section_2">
+                        <div class="row">
+                           <div class="col-lg-4 col-sm-4">
+                              <div class="box_main">
+                                 <h4 class="shirt_text">Skoda Kodiaq</h4>
+                                 <p class="price_text">Start Price  <span style="color: #262626;">$ 100</span></p>
+                                 <div class="jewellery_img"><img src="{% static 'images/carbg10.jpg' %}"></div>
+                                 <div class="btn_main">
+                                    <div class="buy_bt"><a href="{% url 'car_list' %}">Buy Now</a></div>
+                                    <div class="seemore_bt"><a href="#">See More</a></div>
+                                 </div>
+                              </div>
+                           </div>
+                           <div class="col-lg-4 col-sm-4">
+                              <div class="box_main">
+                                 <h4 class="shirt_text">Volkswagen Tiguan R-Line</h4>
+                                 <p class="price_text">Start Price  <span style="color: #262626;">$ 100</span></p>
+                                 <div class="jewellery_img"><img src="{% static 'images/carbg13.jpg' %}"></div>
+                                 <div class="btn_main">
+                                    <div class="buy_bt"><a href="{% url 'car_list' %}">Buy Now</a></div>
+                                    <div class="seemore_bt"><a href="#">See More</a></div>
+                                 </div>
+                              </div>
+                           </div>
+                           <div class="col-lg-4 col-sm-4">
+                              <div class="box_main">
+                                 <h4 class="shirt_text">Kia EV6</h4>
+                                 <p class="price_text">Start Price  <span style="color: #262626;">$ 100</span></p>
+                                 <div class="jewellery_img"><img src="{% static 'images/carbg12.png' %}"></div>
+                                 <div class="btn_main">
+                                    <div class="buy_bt"><a href="{% url 'car_list' %}">Buy Now</a></div>
+                                    <div class="seemore_bt"><a href="#">See More</a></div>
+                                 </div>
+                              </div>
+                           </div>
+                        </div>
+                     </div>
+                  </div>
+               </div>
+
+
+               <div class="fashion_section">
+                  <div id="main_slider" class="carousel slide" data-ride="carousel">
+                     <div class="carousel-inner">
+                        <div class="carousel-item active">
+                           <div class="container">
+                              <h1 class="fashion_taital">Old Cars</h1>
+                              <div class="fashion_section_2">
+                                 <div class="row">
+                                    <div class="col-lg-4 col-sm-4">
+                                       <div class="box_main">
+                                          <h4 class="shirt_text">Maruti 800</h4>
+                                          <p class="price_text">Price  <span style="color: #262626;">$ 30</span></p>
+                                          <div class="tshirt_img"><img src="{% static 'images/carbg14.jpg' %}"></div>
+                                          <div class="btn_main">
+                                             <div class="buy_bt"><a href="{% url 'car_list' %}">Buy Now</a></div>
+                                             <div class="seemore_bt"><a href="#">See More</a></div>
+                                          </div>
+                                       </div>
+                                    </div>
+                                    <div class="col-lg-4 col-sm-4">
+                                       <div class="box_main">
+                                          <h4 class="shirt_text">Hindustan Ambassador</h4>
+                                          <p class="price_text">Price  <span style="color: #262626;">$ 30</span></p>
+                                          <div class="tshirt_img"><img src="{% static 'images/carbg15.jpg' %}"></div>
+                                          <div class="btn_main">
+                                             <div class="buy_bt"><a href="{% url 'car_list' %}">Buy Now</a></div>
+                                             <div class="seemore_bt"><a href="#">See More</a></div>
+                                          </div>
+                                       </div>
+                                    </div>
+                                    <div class="col-lg-4 col-sm-4">
+                                       <div class="box_main">
+                                          <h4 class="shirt_text">Premier Padmini</h4>
+                                          <p class="price_text">Price  <span style="color: #262626;">$ 30</span></p>
+                                          <div class="tshirt_img"><img src="{% static 'images/car16.jpg' %}"></div>
+                                          <div class="btn_main">
+                                             <div class="buy_bt"><a href="{% url 'car_list' %}">Buy Now</a></div>
+                                             <div class="seemore_bt"><a href="#">See More</a></div>
+                                          </div>
+                                       </div>
+                                    </div>
+                                 </div>
+                              </div>
+                           </div>
+                        </div>
+                        <div class="carousel-item">
+                           <div class="container">
+                              <h1 class="fashion_taital">used car</h1>
+                              <div class="fashion_section_2">
+                                 <div class="row">
+                                    <div class="col-lg-4 col-sm-4">
+                                       <div class="box_main">
+                                          <h4 class="shirt_text">Tata Sierra</h4>
+                                          <p class="price_text">Price  <span style="color: #262626;">$ 30</span></p>
+                                          <div class="tshirt_img"><img src="{%static 'images/car17.jpg' %}"></div>
+                                          <div class="btn_main">
+                                             <div class="buy_bt"><a href="{% url 'car_list' %}">Buy Now</a></div>
+                                             <div class="seemore_bt"><a href="#">See More</a></div>
+                                          </div>
+                                       </div>
+                                    </div>
+                                    <div class="col-lg-4 col-sm-4">
+                                       <div class="box_main">
+                                          <h4 class="shirt_text">Mahindra Classic Jeep</h4>
+                                          <p class="price_text">Price  <span style="color: #262626;">$ 30</span></p>
+                                          <div class="tshirt_img"><img src="{% static 'images/car18.jpg' %}"></div>
+                                          <div class="btn_main">
+                                             <div class="buy_bt"><a href="#">Buy Now</a></div>
+                                             <div class="seemore_bt"><a href="#">See More</a></div>
+                                          </div>
+                                       </div>
+                                    </div>
+                                    <div class="col-lg-4 col-sm-4">
+                                       <div class="box_main">
+                                          <h4 class="shirt_text">Standard Herald
+                                          </h4>
+                                          <p class="price_text">Price  <span style="color: #262626;">$ 30</span></p>
+                                          <div class="tshirt_img"><img src="{% static 'images/car19.jpg' %}"></div>
+                                          <div class="btn_main">
+                                             <div class="buy_bt"><a href="#">Buy Now</a></div>
+                                             <div class="seemore_bt"><a href="#">See More</a></div>
+                                          </div>
+                                       </div>
+                                    </div>
+                                 </div>
+                              </div>
+                           </div>
+                        </div>
+                        {% comment %} <div class="carousel-item">
+                           <div class="container">
+                              <h1 class="fashion_taital">Car Accessories</h1>
+                              <div class="fashion_section_2">
+                                 <div class="row">
+                                    <div class="col-lg-4 col-sm-4">
+                                       <div class="box_main">
+                                          <h4 class="shirt_text"> Seat Covers</h4>
+                                          <p class="price_text">Price  <span style="color: #262626;">$ 30</span></p>
+                                          <div class="tshirt_img"><img src="{% static 'images/ass1.jpg' %}"></div>
+                                          <div class="btn_main">
+                                             <div class="buy_bt"><a href="#">Buy Now</a></div>
+                                             <div class="seemore_bt"><a href="#">See More</a></div>
+                                          </div>
+                                       </div>
+                                    </div>
+                                    <div class="col-lg-4 col-sm-4">
+                                       <div class="box_main">
+                                          <h4 class="shirt_text">Man -shirt</h4>
+                                          <p class="price_text">Price  <span style="color: #262626;">$ 30</span></p>
+                                          <div class="tshirt_img"><img src="{% static 'images/ass2.jpg' %}"></div>
+                                          <div class="btn_main">
+                                             <div class="buy_bt"><a href="#">Buy Now</a></div>
+                                             <div class="seemore_bt"><a href="#">See More</a></div>
+                                          </div>
+                                       </div>
+                                    </div>
+                                    <div class="col-lg-4 col-sm-4">
+                                       <div class="box_main">
+                                          <h4 class="shirt_text">Woman Scart</h4>
+                                          <p class="price_text">Price  <span style="color: #262626;">$ 30</span></p>
+                                          <div class="tshirt_img"><img src="images/ass3.jpg' %}"></div>
+                                          <div class="btn_main">
+                                             <div class="buy_bt"><a href="#">Buy Now</a></div>
+                                             <div class="seemore_bt"><a href="#">See More</a></div>
+                                          </div>
+                                       </div>
+                                    </div>
+                                 </div>
+                              </div>
+                           </div>
+                        </div> {% endcomment %}
+                     </div>
+                     <a class="carousel-control-prev" href="#main_slider" role="button" data-slide="prev">
+                     <i class="fa fa-angle-left"></i>
+                     </a>
+                     <a class="carousel-control-next" href="#main_slider" role="button" data-slide="next">
+                     <i class="fa fa-angle-right"></i>
+                     </a>
+                  </div>
+               </div>
+
+
+
+               <div class="fashion_section">
+                  <div id="electronic_main_slider" class="carousel slide" data-ride="carousel">
+                     <div class="carousel-inner">
+                        <div class="carousel-item active">
+                           <div class="container">
+                              <h1 class="fashion_taital">Car Accessories</h1>
+                              <div class="fashion_section_2">
+                                 <div class="row">
+                                    <div class="col-lg-4 col-sm-4">
+                                       <div class="box_main">
+                                          <h4 class="shirt_text">Seat Covers</h4>
+                                          <p class="price_text">Start Price  <span style="color: #262626;">$ 100</span></p>
+                                          <div class="electronic_img"><img src="{% static 'images/ass1.jpg' %}"></div>
+                                          <div class="btn_main">
+                                             <div class="buy_bt"><a href="#">Buy Now</a></div>
+                                             <div class="seemore_bt"><a href="#">See More</a></div>
+                                          </div>
+                                       </div>
+                                    </div>
+                                    <div class="col-lg-4 col-sm-4">
+                                       <div class="box_main">
+                                          <h4 class="shirt_text">Magnetic Phone Mount</h4>
+                                          <p class="price_text">Start Price  <span style="color: #262626;">$ 100</span></p>
+                                          <div class="electronic_img"><img src="{% static 'images/ass2.jpg' %}"></div>
+                                          <div class="btn_main">
+                                             <div class="buy_bt"><a href="#">Buy Now</a></div>
+                                             <div class="seemore_bt"><a href="#">See More</a></div>
+                                          </div>
+                                       </div>
+                                    </div>
+                                    <div class="col-lg-4 col-sm-4">
+                                       <div class="box_main">
+                                          <h4 class="shirt_text">. Car Trash Bin</h4>
+                                          <p class="price_text">Start Price  <span style="color: #262626;">$ 100</span></p>
+                                          <div class="electronic_img"><img src="{% static 'images/ass3.jpg' %}"></div>
+                                          <div class="btn_main">
+                                             <div class="buy_bt"><a href="#">Buy Now</a></div>
+                                             <div class="seemore_bt"><a href="#">See More</a></div>
+                                          </div>
+                                       </div>
+                                    </div>
+                                 </div>
+                              </div>
+                           </div>
+                        </div>
+                        <div class="carousel-item">
+                           <div class="container">
+                              <h1 class="fashion_taital">Car Accessories </h1>
+                              <div class="fashion_section_2">
+                                 <div class="row">
+                                    <div class="col-lg-4 col-sm-4">
+                                       <div class="box_main">
+                                          <h4 class="shirt_text"> Portable Tyre Inflator</h4>
+                                          <p class="price_text">Start Price  <span style="color: #262626;">$ 100</span></p>
+                                          <div class="electronic_img"><img src="{% static 'images/ass4.jpg' %}"></div>
+                                          <div class="btn_main">
+                                             <div class="buy_bt"><a href="#">Buy Now</a></div>
+                                             <div class="seemore_bt"><a href="#">See More</a></div>
+                                          </div>
+                                       </div>
+                                    </div>
+                                    <div class="col-lg-4 col-sm-4">
+                                       <div class="box_main">
+                                          <h4 class="shirt_text">Dash Cam</h4>
+                                          <p class="price_text">Start Price  <span style="color: #262626;">$ 100</span></p>
+                                          <div class="electronic_img"><img src="{% static 'images/ass5.jpg' %}"></div>
+                                          <div class="btn_main">
+                                             <div class="buy_bt"><a href="#">Buy Now</a></div>
+                                             <div class="seemore_bt"><a href="#">See More</a></div>
+                                          </div>
+                                       </div>
+                                    </div>
+                                    <div class="col-lg-4 col-sm-4">
+                                       <div class="box_main">
+                                          <h4 class="shirt_text">Emergency Kit</h4>
+                                          <p class="price_text">Start Price  <span style="color: #262626;">$ 100</span></p>
+                                          <div class="electronic_img"><img src="{% static 'images/ass6.jpg' %}"></div>
+                                          <div class="btn_main">
+                                             <div class="buy_bt"><a href="#">Buy Now</a></div>
+                                             <div class="seemore_bt"><a href="#">See More</a></div>
+                                          </div>
+                                       </div>
+                                    </div>
+                                 </div>
+                              </div>
+                           </div>
+                        </div>
+                        {% comment %} <div class="carousel-item">
+                           <div class="container">
+                              <h1 class="fashion_taital">Electronic</h1>
+                              <div class="fashion_section_2">
+                                 <div class="row">
+                                    <div class="col-lg-4 col-sm-4">
+                                       <div class="box_main">
+                                          <h4 class="shirt_text">Laptop</h4>
+                                          <p class="price_text">Start Price  <span style="color: #262626;">$ 100</span></p>
+                                          <div class="electronic_img"><img src="images/laptop-img.png"></div>
+                                          <div class="btn_main">
+                                             <div class="buy_bt"><a href="#">Buy Now</a></div>
+                                             <div class="seemore_bt"><a href="#">See More</a></div>
+                                          </div>
+                                       </div>
+                                    </div>
+                                    <div class="col-lg-4 col-sm-4">
+                                       <div class="box_main">
+                                          <h4 class="shirt_text">Mobile</h4>
+                                          <p class="price_text">Start Price  <span style="color: #262626;">$ 100</span></p>
+                                          <div class="electronic_img"><img src="images/mobile-img.png"></div>
+                                          <div class="btn_main">
+                                             <div class="buy_bt"><a href="#">Buy Now</a></div>
+                                             <div class="seemore_bt"><a href="#">See More</a></div>
+                                          </div>
+                                       </div>
+                                    </div>
+                                    <div class="col-lg-4 col-sm-4">
+                                       <div class="box_main">
+                                          <h4 class="shirt_text">Computers</h4>
+                                          <p class="price_text">Start Price  <span style="color: #262626;">$ 100</span></p>
+                                          <div class="electronic_img"><img src="images/computer-img.png"></div>
+                                          <div class="btn_main">
+                                             <div class="buy_bt"><a href="#">Buy Now</a></div>
+                                             <div class="seemore_bt"><a href="#">See More</a></div>
+                                          </div>
+                                       </div>
+                                    </div>
+                                 </div>
+                              </div>
+                           </div>
+                        </div> {% endcomment %}
+                     </div>
+                     <a class="carousel-control-prev" href="#electronic_main_slider" role="button" data-slide="prev">
+                     <i class="fa fa-angle-left"></i>
+                     </a>
+                     <a class="carousel-control-next" href="#electronic_main_slider" role="button" data-slide="next">
+                     <i class="fa fa-angle-right"></i>
+                     </a>
+                  </div>
+               </div>
+
+         <div class="text-center mb-5">
+            <h1 class="display-5 text-warning">Explore Essential Car Parts</h1>
+            <p class="lead text-dark">Understanding key components of your vehicle helps ensure better maintenance and performance.</p>
+        </div>
+        
+        <section class="mt-4">
+            <!-- Engine -->
+            <div class="row align-items-center mb-5">
+                <div class="col-md-6">
+                    <img src="{% static 'images/engine.jpg' %}" alt="Car Engine" class="img-fluid rounded shadow-sm" style="max-width: 400px; height: auto;">
+                </div>
+                <div class="col-md-6">
+                    <h2 class="text-warning">Engine</h2>
+                    <p class="text-dark">The heart of every vehicle, the engine powers your car and converts fuel into motion with precision.</p>
+                </div>
+            </div>
+        
+            <!-- Brakes -->
+            <div class="row align-items-center mb-5">
+                <div class="col-md-6 order-md-2">
+                    <img src="{% static 'images/break.jpg' %}" alt="Car Brakes" class="img-fluid rounded shadow-sm" style="max-width: 400px; height: auto;">
+                </div>
+                <div class="col-md-6 order-md-1">
+                    <h2 class="text-warning">Brakes</h2>
+                    <p class="text-dark">A vital safety system that ensures you can stop your vehicle quickly and safely under all conditions.</p>
+                </div>
+            </div>
+        
+            <!-- Suspension -->
+            <div class="row align-items-center mb-5">
+                <div class="col-md-6">
+                    <img src="{% static 'images/suspension.jpg' %}" alt="Car Suspension" class="img-fluid rounded shadow-sm" style="max-width: 400px; height: auto;">
+                </div>
+                <div class="col-md-6">
+                    <h2 class="text-warning">Suspension</h2>
+                    <p class="text-dark">Provides a smooth ride by absorbing shocks and maintaining tire contact with the road.</p>
+                </div>
+            </div>
+        
+            <!-- Transmission -->
+            <div class="row align-items-center mb-5">
+                <div class="col-md-6 order-md-2">
+                    <img src="{% static 'images/transmission.jpg' %}" alt="Transmission System" class="img-fluid rounded shadow-sm" style="max-width: 400px; height: auto;">
+                </div>
+                <div class="col-md-6 order-md-1">
+                    <h2 class="text-warning">Transmission</h2>
+                    <p class="text-dark">The transmission system transfers power from the engine to the wheels, allowing for speed and torque control.</p>
+                </div>
+            </div>
+        
+            <!-- Tires -->
+            <div class="row align-items-center mb-5">
+                <div class="col-md-6">
+                    <img src="{% static 'images/tires.jpg' %}" alt="Car Tires" class="img-fluid rounded shadow-sm" style="max-width: 200px; height: auto;">
+                </div>
+                <div class="col-md-6">
+                    <h2 class="text-warning">Tires</h2>
+                    <p class="text-dark">Tires are the vehicle's contact with the road, crucial for handling, braking, and safety.</p>
+                </div>
+            </div>
+        </section>
+        
+                    
+                        
+
+<!-- Footer Section -->
+<div class="footer_section layout_padding">
+   <div class="container text-center">
+       <div class="footer_logo">
+           <h1 style="color: white; font-weight: bold;">Ziber Car Hub</h1>
+       </div>
+       <div class="input_bt mt-3 mb-3">
+           <input type="text" class="mail_bt" placeholder="Enter your email for updates" name="email">
+           <span class="subscribe_bt" id="basic-addon2"><a href="#">Subscribe</a></span>
+       </div>
+       <div class="footer_menu">
+           <ul>
+               <li><a href="#">Latest Cars</a></li>
+               <li><a href="#">Spare Parts</a></li>
+               <li><a href="#">Featured Models</a></li>
+               <li><a href="#">Seasonal Offers</a></li>
+               <li><a href="#">Customer Service</a></li>
+           </ul>
+       </div>
+       <div class="location_main mt-3">
+           Need Help? Call our Auto Experts: <a href="#">+1 1800 555 8899</a>
+       </div>
+   </div>
+</div>
+
+<!-- Copyright -->
+<div class="copyright_section">
+   <div class="container text-center">
+       <p class="copyright_text">
+           © 2025 Ziber Auto Cars. All Rights Reserved. Designed with passion for cars by 
+           <a href="https://html.design" style="color: #0f0;">HTML Design</a>
+       </p>
+   </div>
+</div>
+
+<!-- Scripts -->
+<script src="{% static 'js/jquery.min.js' %}"></script>
+<script src="{% static 'js/popper.min.js' %}"></script>
+<script src="{% static 'js/bootstrap.bundle.min.js' %}"></script>
+<script src="{% static 'js/jquery-3.0.0.min.js' %}"></script>
+<script src="{% static 'js/plugin.js' %}"></script>
+<script src="{% static 'js/jquery.mCustomScrollbar.concat.min.js' %}"></script>
+<script src="{% static 'js/custom.js' %}"></script>
+<script>
+   function openNav() {
+       document.getElementById("mySidenav").style.width = "250px";
+   }
+
+   function closeNav() {
+       document.getElementById("mySidenav").style.width = "0";
+   }
+</script>
+
+</body>
+</html>

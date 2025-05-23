@@ -1,0 +1,187 @@
+name: Deploy Ziber Autohub Project
+
+on:
+  push:
+    branches:
+      - deployment
+
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+
+    steps:
+      # Step 1: Checkout the code
+      - name: Checkout repository
+        uses: actions/checkout@v3
+
+      # Step 2: SSH into the server and prepare environment
+      - name: Prepare server environment
+        uses: appleboy/ssh-action@v0.1.10
+        with:
+          host: ${{ secrets.SERVER_HOST }}
+          username: ${{ secrets.SERVER_USERNAME }}
+          password: ${{ secrets.SERVER_PASSWORD }}
+          script: |
+            # Create target directory with proper permissions
+            sudo mkdir -p /var/www/python.sicsglobal.com/ziber_autohub
+            sudo chown -R ${{ secrets.SERVER_USERNAME }}:www-data /var/www/python.sicsglobal.com/ziber_autohub
+            sudo chmod -R 775 /var/www/python.sicsglobal.com/ziber_autohub
+
+            # Create required subdirectories
+            cd /var/www/python.sicsglobal.com/ziber_autohub/
+            mkdir -p media staticfiles db
+            sudo chown -R ${{ secrets.SERVER_USERNAME }}:www-data media staticfiles db
+            sudo chmod -R 775 media staticfiles db
+
+            # Create specific subdirectories
+            mkdir -p media/datasets media/models media/predictions
+            mkdir -p staticfiles/assets staticfiles/admin staticfiles/css
+
+            # Backup important files
+            mkdir -p .temp
+            [ -f db.sqlite3 ] && mv db.sqlite3 .temp/
+            [ -d media ] && mv media/* .temp/media/ || true
+            [ -d db ] && mv db/* .temp/db/ || true
+            [ -d staticfiles ] && mv staticfiles/* .temp/staticfiles/ || true
+
+      # Step 3: Copy files to the server
+      - name: Copy files to server
+        uses: appleboy/scp-action@v0.1.4
+        with:
+          host: ${{ secrets.SERVER_HOST }}
+          username: ${{ secrets.SERVER_USERNAME }}
+          password: ${{ secrets.SERVER_PASSWORD }}
+          source: "./"
+          target: "/var/www/python.sicsglobal.com/ziber_autohub/"
+          strip_components: 1
+          overwrite: true
+          tar_tmp_path: /tmp
+          tar_exec: "tar"
+          rm: false
+
+      # Step 4: Set permissions and deploy
+      - name: Set permissions and deploy
+        uses: appleboy/ssh-action@v0.1.10
+        with:
+          host: ${{ secrets.SERVER_HOST }}
+          username: ${{ secrets.SERVER_USERNAME }}
+          password: ${{ secrets.SERVER_PASSWORD }}
+          script: |
+            cd /var/www/python.sicsglobal.com/ziber_autohub/
+
+            # Restore preserved files
+            [ -f .temp/db.sqlite3 ] && mv .temp/db.sqlite3 .
+            [ -d .temp/media ] && mv .temp/media/* media/ || true
+            [ -d .temp/db ] && mv .temp/db/* db/ || true
+            [ -d .temp/staticfiles ] && mv .temp/staticfiles/* staticfiles/ || true
+            rm -rf .temp
+
+            # Set proper permissions
+            sudo find . -type d -exec chmod 775 {} \;
+            sudo find . -type f -exec chmod 664 {} \;
+            sudo chmod -R 775 media db staticfiles
+            sudo chown -R ${{ secrets.SERVER_USERNAME }}:www-data .
+
+            # Docker deployment
+            docker compose down
+            docker compose up -d --build
+
+            # Verify container is running
+            sleep 20
+            if ! docker ps --filter "name=ziber_autohub_django" --format "{{.Status}}" | grep -q "Up"; then
+              echo "Web container failed to start"
+              docker logs ziber_autohub_django || true
+              exit 1
+            fi
+
+      # Step 5: Verify application health
+      - name: Verify application health
+        uses: appleboy/ssh-action@v0.1.10
+        with:
+          host: ${{ secrets.SERVER_HOST }}
+          username: ${{ secrets.SERVER_USERNAME }}
+          password: ${{ secrets.SERVER_PASSWORD }}
+          script: |
+            # Wait longer (30 seconds) and retry with better checks
+            for i in {1..6}; do
+              sleep 5
+              if curl -s -f -o /dev/null -w "%{http_code}" http://localhost:8013 | grep -q "200"; then
+                echo "Application is healthy"
+                exit 0
+              fi
+              echo "Attempt $i: Application not ready yet..."
+              docker logs ziber_autohub_django --tail 20 || true
+            done
+            
+            echo "Health check failed after 30 seconds"
+            docker logs ziber_autohub_django || true
+            exit 1
+
+      # Step 6: Enhanced Rollback
+      - name: Rollback on failure
+        if: failure()
+        uses: appleboy/ssh-action@v0.1.10
+        with:
+          host: ${{ secrets.SERVER_HOST }}
+          username: ${{ secrets.SERVER_USERNAME }}
+          password: ${{ secrets.SERVER_PASSWORD }}
+          script: |
+            echo "Starting rollback procedure..."
+            
+            cd /var/www/python.sicsglobal.com/ziber_autohub/ || {
+              echo "Failed to enter deployment directory"
+              exit 1
+            }
+            
+            # Check for any existing backups
+            echo "Checking for backups..."
+            if [ -d "backup" ]; then
+              echo "Found backup directory, restoring..."
+              
+              docker compose down || true
+              
+              [ -f backup/db.sqlite3 ] && mv backup/db.sqlite3 .
+              [ -d backup/media ] && mv backup/media/* media/ || true
+              [ -d backup/db ] && mv backup/db/* db/ || true
+              [ -d backup/staticfiles ] && mv backup/staticfiles/* staticfiles/ || true
+              
+              if docker compose up -d; then
+                echo "Rollback completed successfully from backup directory"
+                exit 0
+              else
+                echo "Failed to start containers after rollback"
+                docker logs ziber_autohub_django || true
+                exit 1
+              fi
+            elif [ -d ".temp" ]; then
+              echo "Found .temp directory, restoring..."
+              
+              docker compose down || true
+              
+              [ -f .temp/db.sqlite3 ] && mv .temp/db.sqlite3 .
+              [ -d .temp/media ] && mv .temp/media/* media/ || true
+              [ -d .temp/db ] && mv .temp/db/* db/ || true
+              [ -d .temp/staticfiles ] && mv .temp/staticfiles/* staticfiles/ || true
+              
+              if docker compose up -d; then
+                echo "Rollback completed successfully from .temp directory"
+                exit 0
+              else
+                echo "Failed to start containers after rollback"
+                docker logs pziber_autohub_django || true
+                exit 1
+              fi
+            else
+              echo "No backup found - cannot rollback"
+              echo "Current directory contents:"
+              ls -la
+              
+              if docker compose up -d; then
+                echo "Successfully restarted current version"
+                exit 1  # Still mark as failed but with restarted container
+              else
+                echo "Failed to restart containers"
+                docker logs ziber_autohub_django || true
+                exit 1
+              fi
+            fi
