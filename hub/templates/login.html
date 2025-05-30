@@ -1,63 +1,15 @@
+{% extends 'base.html' %}
 {% load static %}
-<!DOCTYPE html>
-<html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <title>User Login</title>
-    <link rel="stylesheet" href="{% static 'css/bootstrap.min.css' %}">
-    <link rel="stylesheet" type="text/css" href="{% static 'css/style.css' %}">
-    <link rel="stylesheet" type="text/css" href="{% static 'css/responsive.css' %}">
-    <link rel="icon" href="{% static 'images/fevicon.png' %}" type="image/gif" />
-    <link rel="stylesheet" href="{% static 'css/jquery.mCustomScrollbar.min.css' %}">
-    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/font-awesome/4.7.0/css/font-awesome.min.css">
-    <link href="https://fonts.googleapis.com/css?family=Poppins:400,700&display=swap" rel="stylesheet">
-    <link rel="stylesheet" href="{% static 'css/owl.carousel.min.css' %}">
-    <link rel="stylesheet" href="{% static 'css/owl.theme.default.min.css' %}">
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/fancybox/2.1.5/jquery.fancybox.min.css" media="screen">
-
+{% block extra_css %}
     <style>
-      body {
-         background-color: #000;
-         background-image: url("{% static 'images/your-background.jpg' %}"); /* optional */
-         background-size: cover;
-         background-position: center;
-         color: white;
-         font-family: 'Segoe UI', sans-serif;
-     }
-     
-     .card {
-         background: rgba(0, 0, 0, 0.85);
-         border: 1px solid #e50914;
-         box-shadow: 0 0 20px rgba(229, 9, 20, 0.4);
-     }
-     
-     .dark-input {
-         background: transparent;
-         border: none;
-         border-bottom: 1px solid #e50914;
-         color: white;
-         border-radius: 0;
-     }
-     
-     .dark-input::placeholder {
-         color: #bbb;
-     }
-     
-     .dark-input:focus {
-         outline: none;
-         box-shadow: none;
-         border-color: #e50914;
-     }
-     
-     .btn-danger {
-         background-color: #e50914;
-         border: none;
-         font-weight: bold;
-         text-transform: uppercase;
-     }
-     
-
         .main-content {
+            /* Inherits from base.html body styles */
+        }
+
+        /* Keep specific styles for the login card if not in style.css */
+        /* Example: */
+        .card {
+            /* Add login specific card styles here if needed */
             flex: 1;
             display: flex;
             align-items: center;
@@ -95,124 +47,16 @@
         .text-link:hover {
             text-decoration: underline;
         }
-
-        .footer_section, .copyright_section {
-            background: #000;
-            color: white;
-            padding: 30px 0;
-        }
-
-        .footer_menu ul {
-            list-style: none;
-            padding: 0;
-            display: flex;
-            flex-wrap: wrap;
-            justify-content: center;
-            gap: 15px;
-        }
-
-        .footer_menu ul li a {
-            color: white;
-            text-decoration: none;
-        }
-
-        .footer_menu ul li a:hover {
-            text-decoration: underline;
-        }
     </style>
-</head>
-<body>
-   <div class="banner_bg_main" style="background-image: url('{% static 'images/c1.jpg' %}'); background-size: cover; background-position: center; min-height: 100vh;">
-      <!-- Header Top -->
-      <div class="container">
-          <div class="header_section_top pt-2">
-              <div class="row">
-                  <div class="col-sm-12">
-                      <div class="custom_menu">
-                          <ul>
-                              <li><a href="#">Best Sellers</a></li>
-                              <li><a href="#">Gift Ideas</a></li>
-                              <li><a href="#">New Releases</a></li>
-                              <li><a href="#">Today's Deals</a></li>
-                              <li><a href="#">Customer Service</a></li>
-                          </ul>
-                      </div>
-                  </div>
-              </div>
-          </div>
-      </div>
-  
-      <!-- Logo -->
-      <div class="logo_section">
-          <div class="container">
-              <div class="row">
-                  <div class="col-sm-12">
-                      <h1 class="text-white fw-bold text-center">Ziber Car Hub</h1>
-                  </div>
-              </div>
-          </div>
-      </div>
-  
-      <!-- Header Main -->
-      <div class="header_section">
-          <div class="container">
-              <div class="containt_main">
-                  <div id="mySidenav" class="sidenav">
-                      <li><a href="#">Top Cars</a></li>
-                      <li><a href="#">Accessories</a></li>
-                      <li><a href="#">Latest Models</a></li>
-                      <li><a href="#">Hot Deals</a></li>
-                      <li><a href="#">Support</a></li>
-                  </div>
-                  <span class="toggle_icon" onclick="openNav()"><img src="{% static 'images/toggle-icon.png' %}"></span>
-  
-                  <div class="dropdown">
-                      <button class="btn btn-secondary dropdown-toggle" type="button" data-toggle="dropdown">
-                          All Category
-                      </button>
-                      <div class="dropdown-menu">
-                          <a class="dropdown-item" href="#">Action</a>
-                          <a class="dropdown-item" href="#">Another action</a>
-                          <a class="dropdown-item" href="#">Something else here</a>
-                      </div>
-                  </div>
-  
-                  <div class="main">
-                      <div class="input-group">
-                          <input type="text" class="form-control" placeholder="Search this blog">
-                          <div class="input-group-append">
-                              <button class="btn btn-secondary" type="button" style="background-color: #f26522; border-color:#f26522 ">
-                                  <i class="fa fa-search"></i>
-                              </button>
-                          </div>
-                      </div>
-                  </div>
-  
-                  <div class="header_box">
-                      <div class="lang_box">
-                          <a href="#" class="nav-link" data-toggle="dropdown">
-                              <img src="{% static 'images/flag-uk.png' %}" class="mr-2"> English 
-                              <i class="fa fa-angle-down ml-2" aria-hidden="true"></i>
-                          </a>
-                          <div class="dropdown-menu">
-                              <a class="dropdown-item" href="#">
-                                  <img src="{% static 'images/flag-france.png' %}" class="mr-2"> French
-                              </a>
-                          </div>
-                      </div>
-                      <div class="login_menu">
-                          <ul>
-                              <li><a href="{% url 'register' %}"><i class="fa fa-user"></i><span class="padding_10">Register</span></a></li>
-                          </ul>
-                      </div>
-                  </div>
-              </div>
-          </div>
-      </div>
-  
-      <!-- Login Form Full Height -->
-      <div class="d-flex justify-content-center align-items-center" style="min-height: calc(100vh - 200px);">
-          <div class="col-md-5">
+{% endblock %}
+
+{% block content %}
+<div class="banner_bg_main" style="background-image: url('{% static 'images/c1.jpg' %}'); background-size: cover; background-position: center; min-height: 100vh;">
+    <!-- Header content will be inherited from base.html -->
+
+    <!-- Login Form Full Height -->
+    <div class="d-flex justify-content-center align-items-center" style="min-height: calc(100vh - 200px);">
+        <div class="col-md-5">
               <div class="card p-4 rounded-4" style="background-color: rgba(0,0,0,0.6); color: white;">
                   <h2 class="text-center mb-4">Login here</h2>
   
@@ -243,70 +87,18 @@
                  </form>
                  
   
-                  <div class="text-center mt-3">
-                      <small>Don't have an account? 
-                          <a href="{% url 'register' %}" class="text-decoration-none text-warning">Register here</a>
-                      </small><br>
-                      {% comment %} <small><a href="{% url 'forgot_password' %}" class="text-decoration-none text-light">Forgot Password?</a></small> {% endcomment %}
-                  </div>
+            <div class="text-center mt-3">
+                <small>Don't have an account?
+                    <a href="{% url 'register' %}" class="text-decoration-none text-warning">Register here</a>
+                </small><br>
+                {% comment %} <small><a href="{% url 'forgot_password' %}" class="text-decoration-none text-light">Forgot Password?</a></small> {% endcomment %}
+            </div>
               </div>
           </div>
       </div>
-  </div>
-  
-
-<!-- Footer Section -->
-<div class="footer_section layout_padding">
-    <div class="container text-center">
-        <div class="footer_logo">
-            <h1 style="color: white; font-weight: bold;">Ziber Car Hub</h1>
-        </div>
-        <div class="input_bt mt-3 mb-3">
-            <input type="text" class="mail_bt" placeholder="Enter your email for updates" name="email">
-            <span class="subscribe_bt" id="basic-addon2"><a href="#">Subscribe</a></span>
-        </div>
-        <div class="footer_menu">
-            <ul>
-                <li><a href="#">Latest Cars</a></li>
-                <li><a href="#">Spare Parts</a></li>
-                <li><a href="#">Featured Models</a></li>
-                <li><a href="#">Seasonal Offers</a></li>
-                <li><a href="#">Customer Service</a></li>
-            </ul>
-        </div>
-        <div class="location_main mt-3">
-            Need Help? Call our Auto Experts: <a href="#">+1 1800 555 8899</a>
-        </div>
-    </div>
 </div>
+{% endblock %}
 
-<!-- Copyright -->
-<div class="copyright_section">
-    <div class="container text-center">
-        <p class="copyright_text">
-            © 2025 Ziber Auto Cars. All Rights Reserved. Designed with passion for cars by 
-            <a href="https://html.design" style="color: #0f0;">HTML Design</a>
-        </p>
-    </div>
-</div>
-
-<!-- Scripts -->
-<script src="{% static 'js/jquery.min.js' %}"></script>
-<script src="{% static 'js/popper.min.js' %}"></script>
-<script src="{% static 'js/bootstrap.bundle.min.js' %}"></script>
-<script src="{% static 'js/jquery-3.0.0.min.js' %}"></script>
-<script src="{% static 'js/plugin.js' %}"></script>
-<script src="{% static 'js/jquery.mCustomScrollbar.concat.min.js' %}"></script>
-<script src="{% static 'js/custom.js' %}"></script>
-<script>
-    function openNav() {
-        document.getElementById("mySidenav").style.width = "250px";
-    }
-
-    function closeNav() {
-        document.getElementById("mySidenav").style.width = "0";
-    }
-</script>
-
-</body>
-</html>
+{% block extra_scripts %}
+{% comment %} Add any specific scripts for login.html here if needed {% endcomment %}
+{% endblock %}

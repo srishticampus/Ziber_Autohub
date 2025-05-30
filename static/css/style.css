@@ -831,6 +831,37 @@ a:hover {
  box-shadow: 0 0 20px rgba(229, 9, 20, 0.4);
 }
 
+/* login page styles */
+.login-container {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    min-height: 80vh; /* Adjust height as needed */
+}
+
+.login-card {
+    background: rgba(0, 0, 0, 0.85);
+    border: 1px solid #e50914;
+    box-shadow: 0 0 20px rgba(229, 9, 20, 0.4);
+    padding: 30px;
+    border-radius: 15px;
+    color: white;
+    width: 100%;
+    max-width: 400px; /* Adjust max-width as needed */
+}
+
+.login-card h2 {
+    text-align: center;
+    margin-bottom: 30px;
+    color: white;
+    font-weight: bold;
+}
+
+.login-card .form-control {
+    margin-bottom: 20px;
+}
+
+
 .dark-input {
  background: transparent;
  border: none;
