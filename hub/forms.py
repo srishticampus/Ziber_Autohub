@@ -1,13 +1,7 @@
 from django import forms
-from .models import ServiceBooking
 
 
-from django import forms
-from .models import ServiceBooking
-
-from django import forms
 from .models import JobApplication, JobVacancy
-from django import forms
 from .models import ServiceBooking
 
 class ServiceBookingForm(forms.ModelForm):

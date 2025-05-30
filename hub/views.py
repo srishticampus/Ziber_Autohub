@@ -5,12 +5,7 @@ from django.core.exceptions import ValidationError
 from django.contrib import messages
 from .models import UserProfile
 from django.contrib.auth import logout
-from django.contrib.auth import authenticate, login
-from django.contrib.auth.decorators import login_required
-from .models import Car, Cart, CartItem,Order
-from .forms import ServiceBookingForm
-from .models import ServiceBooking
-
+from django.contrib.auth import authenticate, loginfrom django.contrib.auth.decorators import login_requiredfrom .models import Car, Cart, CartItem, Order, ServiceBooking, JobVacancy, JobApplication
 
 from .models import Car
 
@@ -251,35 +246,7 @@ def checkout(request):
     return render(request, 'checkout.html', {'car': car})
 
 @login_required
-def process_order(request):
-    if request.method == 'POST':
-        buy_now = request.session.get('buy_now')
-        if not buy_now:
-            # Handle the case where there's no item to purchase
-            return redirect('car_list')  # Redirect to your car listing page
 
-        car = get_object_or_404(Car, id=buy_now['car_id'])
-        name = request.POST.get('name')
-        email = request.POST.get('email')
-        address = request.POST.get('address')
-
-        # Create and save the order
-        order = Order.objects.create(
-            car=car,
-            name=name,
-            email=email,
-            address=address,
-            quantity=buy_now['quantity'],
-            total_price=car.price * buy_now['quantity']
-        )
-
-        # Clear the 'buy_now' session data
-        del request.session['buy_now']
-
-        return redirect('payment')
-    else:
-        return redirect('car_list')
-    
 # @login_required
 # def remove_from_cart(request, item_id):
 #     item = get_object_or_404(CartItem, id=item_id)
@@ -317,9 +284,6 @@ def my_bookings(request):
     return render(request, 'my_bookings.html', {'bookings': bookings})
 
 
-
-from .models import JobVacancy, JobApplication
-from .forms import JobApplicationForm, JobVacancyForm
 
 def job_list(request):
     jobs = JobVacancy.objects.all().order_by('-posted_at')
