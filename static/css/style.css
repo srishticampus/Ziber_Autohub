@@ -569,13 +569,21 @@ a:hover {
     margin-top: 30px;
 }
 
-.box_main {
+.box_main_styles {
     width: 100%;
     background-color: #ffffff;
-    height: auto;
-    padding: 20px;
-    box-shadow: 0px 0 30px 10px #f0f0f0;
-    margin-bottom: 20px;
+ height: 380px;
+ overflow: hidden;
+}
+
+.box_main_styles {
+    height: 380px; /* Adjust as needed */
+    overflow: hidden;
+ display: flex;
+ flex-direction: column;
+ justify-content: space-between;
+    padding: 15px;
+    box-shadow: 0 0 10px rgba(0, 0, 0, 0.1); /* Optional for nice effect */
 }
 
 .shirt_text {
@@ -824,6 +832,9 @@ a:hover {
 .footer_logo {
     width: 100%;
     text-align: center;
+.footer_logo_styles {
+    color: white;
+    font-weight: bold;
 }
 
 .input_bt {
