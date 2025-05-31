@@ -1,94 +1,56 @@
 {% extends 'base.html' %}
 {% load static %}
-{% block extra_css %}
-    <style>
-        .main-content {
-            /* Inherits from base.html body styles */
-        }
 
-        /* Keep specific styles for the login card if not in style.css */
-        /* Example: */
-        .card {
-            /* Add login specific card styles here if needed */
-            flex: 1;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            padding: 50px 15px;
-        }
+{% block tittle %}Login to Your Account{% endblock %} {# Added title block #}
 
-        .login-card {
-            background-color: rgba(255, 255, 255, 0.95);
-            padding: 30px;
-            border-radius: 20px;
-            box-shadow: 0 8px 16px rgba(0,0,0,0.2);
-            width: 100%;
-            max-width: 400px;
-        }
-
-        .login-card h2 {
-            color: #198754;
-            font-weight: 600;
-        }
-
-        .form-label {
-            font-weight: 500;
-        }
-
-        .btn-block {
-            width: 100%;
-        }
-
-        .text-link {
-            text-decoration: none;
-            color: #198754;
-        }
-
-        .text-link:hover {
-            text-decoration: underline;
-        }
-    </style>
+{% block extra_styles %}
+    {# No template-specific styles needed here after moving them to style.css #}
 {% endblock %}
 
 {% block content %}
-<div class="banner_bg_main" style="background-image: url('{% static 'images/c1.jpg' %}'); background-size: cover; background-position: center; min-height: 100vh;">
+{# Use a CSS class for the background div instead of inline styles #}
+<div class="login-background">
     <!-- Header content will be inherited from base.html -->
 
     <!-- Login Form Full Height -->
-    <div class="d-flex justify-content-center align-items-center" style="min-height: calc(100vh - 200px);">
+    {# Use a CSS class for the inner container instead of inline styles #}
+    <div class="d-flex justify-content-center align-items-center login-container-height">
         <div class="col-md-5">
-              <div class="card p-4 rounded-4" style="background-color: rgba(0,0,0,0.6); color: white;">
+            {# Use a CSS class for the card with background and color styles #}
+              <div class="card p-4 rounded-4 login-card-style">
                   <h2 class="text-center mb-4">Login here</h2>
-  
+
                   {% if messages %}
+                      {# Message display is fine as is #}
                       {% for message in messages %}
                           <div class="alert alert-{{ message.tags }}">{{ message }}</div>
                       {% endfor %}
                   {% endif %}
-  
+
                   <form method="POST">
                      {% csrf_token %}
                      <div class="mb-3">
-                         <input type="text" name="username" class="form-control"
-                                placeholder="Enter Username *" required
-                                style="background-color: transparent; border: 1px solid red; color: white; text-align: center;">
+                         {# Use a CSS class for input styles #}
+                         <input type="text" name="username" class="form-control login-input-style"
+                                placeholder="Enter Username *" required>
                      </div>
                      <div class="mb-3">
-                         <input type="password" name="password" class="form-control"
-                                placeholder="Enter Password *" required
-                                style="background-color: transparent; border: 1px solid red; color: white; text-align: center;">
+                         {# Use a CSS class for input styles #}
+                         <input type="password" name="password" class="form-control login-input-style"
+                                placeholder="Enter Password *" required>
                      </div>
                      <div class="d-flex justify-content-center">
-                         <button type="submit" class="btn"
-                                 style="background-color: transparent; border: 1px solid red; color: red; padding: 8px 30px;">
+                         {# Use a CSS class for button styles #}
+                         <button type="submit" class="btn login-button-style">
                              Login
                          </button>
                      </div>
                  </form>
-                 
-  
+
+
             <div class="text-center mt-3">
                 <small>Don't have an account?
+                    {# The register link is fine as is #}
                     <a href="{% url 'register' %}" class="text-decoration-none text-warning">Register here</a>
                 </small><br>
                 {% comment %} <small><a href="{% url 'forgot_password' %}" class="text-decoration-none text-light">Forgot Password?</a></small> {% endcomment %}
@@ -100,5 +62,5 @@
 {% endblock %}
 
 {% block extra_scripts %}
-{% comment %} Add any specific scripts for login.html here if needed {% endcomment %}
+{% comment %} Add any specific scripts for login.html here if needed, otherwise leave empty {% endcomment %}
 {% endblock %}

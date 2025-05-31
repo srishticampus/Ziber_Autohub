@@ -1036,3 +1036,736 @@ input.mail_bt::placeholder {
 
 
 /* copyright section end */
+/* Styles from demo.html <style> block */
+.box_main {
+    height: 380px; /* Adjust as needed */
+    overflow: hidden;
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+    padding: 15px;
+    box-shadow: 0 0 10px rgba(0, 0, 0, 0.1); /* Optional for nice effect */
+}
+
+/* Styles from demo.html <style> block */
+.news_section {
+    height: auto;
+    background-size: cover;
+    background-position: center;
+}
+
+/* Styles from demo.html <style> block */
+.carousel-inner {
+    overflow: hidden;
+}
+
+/* Styles from demo.html <style> block */
+.carousel-control-prev, .carousel-control-next {
+    position: absolute;
+    top: 50%;
+    transform: translateY(-50%);
+}
+
+/* Styles from demo.html <style> block */
+.news_section {
+    padding-top: 20px;
+    padding-bottom: 20px;
+}
+
+/* Style from demo.html inline style on search button */
+.main .input-group-append .btn-secondary {
+    background-color: #f26522;
+    border-color: #f26522;
+}
+
+/* Style from demo.html inline style on banner_section */
+.banner_section_demo {
+    height: 100vh;
+    background-size: cover;
+    background-position: center;
+}
+
+/* Style from demo.html inline style on news carousel controls */
+.news-carousel-control i {
+    font-size: 40px;
+    color: #fff;
+}
+
+/* Style from demo.html inline style on new_launch_section */
+.new_launch_section_demo {
+    background-color: #f8f9fa;
+    padding-top: 30px;
+    padding-bottom: 30px;
+}
+
+/* Style from demo.html inline style on new launch heading */
+.new-launch-heading {
+    font-size: 28px;
+    font-weight: bold;
+    color: #333;
+}
+
+/* Style from demo.html inline style on product image */
+.product-img {
+    width: 100%;
+    height: auto;
+}
+
+/* Style from demo.html inline style on product title */
+.product-title-style {
+    font-size: 20px;
+    font-weight: bold;
+    color: #333;
+}
+
+/* Style from demo.html inline style on product description */
+.product-description-style {
+    font-size: 16px;
+    color: #555;
+    line-height: 1.8;
+}
+
+/* Style from demo.html inline style on footer logo */
+.footer_logo_demo h1 {
+    color: white;
+    font-weight: bold;
+}
+/* Add this rule for the price color span */
+.price-color {
+    color: #262626;
+}
+
+/* Add this rule for the search button in the input group */
+.main .input-group-append .btn-secondary {
+    background-color: #f26522;
+    border-color: #f26522;
+}
+
+/* Ensure base.html styles are not duplicated if already present */
+/* Remove or merge any conflicting styles from base.html's original style.css content */
+/* For example, the .box_main style was already present in base.html's style.css. */
+/* Keep the one you prefer or merge them carefully. */
+/* The .box_main_styles rule in your provided style.css seems like a duplicate/attempt to refactor. */
+/* I recommend consolidating .box_main_styles and .box_main if they are meant to be the same. */
+/* I've added the styles from demo.html as new rules with more specific classes where needed. */
+
+/* Ensure the .price-color from index.html is also in this file */
+.price-color {
+    color: #262626;
+}
+
+/* Style from register.html inline style on the main container */
+.register-background {
+    background-image: url('../images/c2.jpg'); /* Use relative path from the css directory */
+    background-size: cover;
+    background-position: center;
+    min-height: 100vh;
+}
+
+/* Style from register.html inline style on the inner container */
+.register-container-height {
+    min-height: 80vh;
+}
+
+/* Ensure these existing styles are present and correct in style.css */
+.dark-input {
+ background: transparent;
+ border: none;
+ border-bottom: 1px solid #e50914;
+ color: white;
+ border-radius: 0;
+}
+
+.dark-input::placeholder {
+    color: #bbb;
+}
+
+.dark-input:focus {
+    outline: none;
+    box-shadow: none;
+    border: 1px solid #e50914;
+    border-color: #e50914;
+}
+
+.form-select.dark-input {
+    color: white;
+    background-color: transparent;
+    border-bottom: 1px solid #e50914;
+    color: white;
+    font-weight: bold;
+}
+
+.btn-danger {
+    background-color: #e50914;
+    border: none;
+    font-weight: bold;
+    color: #fff;
+}
+
+.login-card {
+    background-color: rgba(255, 255, 255, 0.95);
+    padding: 30px;
+    border-radius: 20px;
+    box-shadow: 0 8px 16px rgba(0,0,0,0.2);
+    width: 100%;
+    max-width: 400px;
+}
+
+/* Styles from login.html <style> block */
+.login-card h2 {
+    color: #198754;
+    font-weight: 600;
+}
+
+/* Styles from login.html <style> block */
+.form-label {
+    font-weight: 500;
+}
+
+/* Styles from login.html <style> block */
+.btn-block {
+    width: 100%;
+}
+
+/* Styles from login.html <style> block */
+.text-link {
+    text-decoration: none;
+    color: #198754;
+}
+
+/* Styles from login.html <style> block */
+.text-link:hover {
+    text-decoration: underline;
+}
+
+/* Style from login.html inline style on the main container */
+.login-background {
+    background-image: url('../images/c1.jpg'); /* Use relative path from the css directory */
+    background-size: cover;
+    background-position: center;
+    min-height: 100vh;
+}
+
+/* Style from login.html inline style on the inner container */
+.login-container-height {
+    min-height: calc(100vh - 200px);
+}
+
+/* Style from login.html inline style on the card */
+.login-card-style {
+    background-color: rgba(0,0,0,0.6);
+    color: white;
+}
+
+/* Style from login.html inline style on the input fields */
+.login-input-style {
+    background-color: transparent;
+    border: 1px solid red;
+    color: white;
+    text-align: center;
+}
+
+/* Style from login.html inline style on the login button */
+.login-button-style {
+    background-color: transparent;
+    border: 1px solid red;
+    color: red;
+    padding: 8px 30px;
+}
+
+/* Ensure the .price-color from index.html is also in this file */
+.price-color {
+    color: #262626;
+}
+
+/* Ensure the search button styles from base.html are also in this file */
+.main .input-group-append .btn-secondary {
+    background-color: #f26522;
+    border-color: #f26522;
+}
+
+/* Ensure the register page styles from register.html are also in this file */
+.register-background {
+    background-image: url('../images/c2.jpg'); /* Use relative path from the css directory */
+    background-size: cover;
+    background-position: center;
+    min-height: 100vh;
+}
+
+.register-container-height {
+    min-height: 80vh;
+}
+
+/* Style from car_list.html inline style on the inner banner_bg_main div */
+.car-list-banner-background {
+    background-image: url('../images/c5.jpg'); /* Use relative path from the css directory */
+    background-size: cover;
+    background-position: center;
+}
+
+/* Style from car_list.html inline style on the search button */
+/* This might be a duplicate of the style added for base.html. */
+/* Review and consolidate this if necessary. */
+.main .input-group-append .btn-secondary {
+    background-color: #f26522;
+    border-color: #f26522;
+}
+
+/* Style from car_list.html inline style on the banner carousel content divs */
+.banner-carousel-content {
+    height: 300px;
+}
+
+/* Style from car_list.html inline style on the car image */
+.car-image-style {
+    height: 200px;
+    object-fit: cover;
+}
+
+/* Ensure the .price-color from index.html is also in this file */
+.price-color {
+    color: #262626;
+}
+
+/* Styles from car_detail.html <style> block */
+.car-detail-card {
+    background-color: #fff;
+    border-radius: 12px;
+    box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
+    padding: 30px;
+}
+
+/* Styles from car_detail.html <style> block */
+.car-image {
+    border-radius: 10px;
+    object-fit: cover;
+    width: 100%;
+    height: auto;
+}
+
+/* Styles from car_detail.html <style> block */
+.action-buttons button {
+    width: 100%;
+    margin-bottom: 10px;
+}
+
+/* Style from car_detail.html inline style on the inner banner_bg_main div */
+.car-detail-banner-background {
+    background-image: url('../images/car26.jpg'); /* Use relative path from the css directory */
+    background-size: cover;
+    background-position: center;
+}
+
+/* Style from car_detail.html inline style on the search button */
+/* This might be a duplicate of the style added for base.html and car_list.html. */
+/* Review and consolidate this if necessary. */
+.main .input-group-append .btn-secondary {
+    background-color: #f26522;
+    border-color: #f26522;
+}
+
+/* Style from car_detail.html inline style on the banner carousel content divs */
+/* This might be a duplicate of the style added for car_list.html. */
+/* Review and consolidate this if necessary. */
+.banner-carousel-content {
+    height: 300px;
+}
+
+/* Ensure the .price-color from index.html is also in this file */
+.price-color {
+    color: #262626;
+}
+
+/* Ensure the car image style from car_list.html is also in this file if it's a general style */
+/* If the car-image style from car_detail.html is more specific, keep both and ensure correct specificity */
+.car-image-style {
+    height: 200px;
+    object-fit: cover;
+}
+
+/* Styles from cart.html <style> block */
+.cart-container {
+    background: #fff;
+    padding: 40px;
+    border-radius: 15px;
+    max-width: 1000px;
+    margin: 50px auto;
+    box-shadow: 0 0 25px rgba(0, 0, 0, 0.1);
+}
+
+/* Styles from cart.html <style> block */
+.cart-container h2 { /* Added .cart-container for better specificity if needed */
+    text-align: center;
+    margin-bottom: 30px;
+}
+
+/* Styles from cart.html <style> block */
+.table th, .table td {
+    text-align: center;
+    vertical-align: middle;
+}
+
+/* Styles from cart.html <style> block */
+.cart-item-image { /* Using a specific class for cart item images */
+    width: 100px;
+    height: auto;
+    border-radius: 10px;
+}
+
+/* Styles from cart.html <style> block */
+.total-price {
+    font-size: 20px;
+    font-weight: bold;
+    color: #007bff;
+    text-align: center;
+    margin: 20px 0;
+}
+
+/* Styles from cart.html <style> block */
+.btn-buy {
+    width: 100%;
+    padding: 12px;
+    font-size: 18px;
+    background-color: #28a745;
+    color: white;
+    border-radius: 8px;
+    transition: 0.3s;
+}
+
+/* Styles from cart.html <style> block */
+.btn-buy:hover {
+    background-color: #218838;
+}
+
+/* Styles from cart.html <style> block */
+.btn-remove {
+    background-color: #dc3545;
+    color: white;
+    border-radius: 8px;
+    padding: 6px 12px;
+    font-size: 14px;
+    transition: 0.3s;
+    text-decoration: none;
+}
+
+/* Styles from cart.html <style> block */
+.btn-remove:hover {
+    background-color: #c82333;
+}
+
+/* Styles from checkout.html <style> block */
+.checkout-container {
+    max-width: 700px;
+    margin: 50px auto;
+    background: white;
+    padding: 30px;
+    border-radius: 12px;
+    box-shadow: 0 0 10px rgba(0,0,0,0.1);
+}
+
+/* Styles from checkout.html <style> block */
+/* Note: There is also a .car-image style from car_detail.html. Combine or use specificity if needed. */
+.car-image {
+    width: 100%;
+    height: 250px; /* This height is different from car_detail.html's car-image */
+    object-fit: cover;
+    border-radius: 10px;
+}
+
+/* Style from checkout.html inline style on the inner banner_bg_main div */
+.checkout-banner-background {
+    background-image: url('../images/c6.jpg'); /* Use relative path from the css directory */
+    background-size: cover;
+    background-position: center;
+}
+
+/* Style from checkout.html inline style on the search button */
+/* This might be a duplicate. Review and consolidate. */
+.main .input-group-append .btn-secondary {
+    background-color: #f26522;
+    border-color: #f26522;
+}
+
+/* Style from checkout.html inline style on the banner carousel content divs */
+/* This might be a duplicate. Review and consolidate. */
+.banner-carousel-content {
+    height: 300px;
+}
+
+/* Style from checkout.html inline style on the checkout heading */
+.checkout-heading-text-shadow {
+    text-shadow: 1px 1px 2px #000;
+}
+
+/* Ensure the .price-color from index.html is also in this file */
+.price-color {
+    color: #262626;
+}
+/* Styles from order_confirmation.html <style> block */
+.order-confirmation-container {
+    max-width: 800px;
+    margin: 50px auto;
+    padding: 30px;
+    background-color: #fff;
+    border-radius: 12px;
+    box-shadow: 0 0 15px rgba(0, 0, 0, 0.1);
+    text-align: center;
+}
+
+/* Styles from order_confirmation.html <style> block */
+.order-confirmation-container h2 {
+    color: #28a745; /* Green color for success */
+    margin-bottom: 20px;
+}
+
+/* Styles from order_confirmation.html <style> block */
+.order-details {
+    margin-top: 20px;
+    text-align: left;
+    border-top: 1px solid #eee;
+    padding-top: 20px;
+}
+
+/* Styles from order_confirmation.html <style> block */
+.order-details p {
+    margin-bottom: 10px;
+}
+
+/* Styles from order_confirmation.html <style> block */
+.order-details strong {
+    color: #333;
+}
+
+/* Styles from order_confirmation.html <style> block */
+.btn-home {
+    margin-top: 30px;
+}
+
+/* Styles from payment.html <style> block */
+.payment-box {
+    background: #fff;
+    padding: 40px;
+    border-radius: 15px;
+    max-width: 700px;
+    margin: 50px auto;
+    box-shadow: 0 0 25px rgba(0, 0, 0, 0.05);
+}
+
+/* Styles from payment.html <style> block */
+.payment-option {
+    display: flex;
+    align-items: center;
+    border: 1px solid #dee2e6;
+    border-radius: 10px;
+    padding: 15px;
+    margin-bottom: 15px;
+    cursor: pointer;
+    transition: all 0.3s ease-in-out;
+}
+
+/* Styles from payment.html <style> block */
+.payment-option:hover {
+    background-color: #f8f9fa;
+}
+
+/* Styles from payment.html <style> block */
+.payment-option img {
+    height: 40px;
+    margin-right: 15px;
+}
+
+/* Styles from payment.html <style> block */
+.btn-submit {
+    width: 100%;
+    padding: 12px;
+    font-size: 16px;
+}
+
+/* Styles from payment.html <style> block */
+input[type="radio"] {
+    margin-right: 15px;
+}
+
+/* Styles from payment.html <style> block */
+.payment-details {
+    margin-top: 20px;
+}
+
+/* Styles from payment.html <style> block */
+.payment-details input {
+    margin-top: 10px;
+    width: 100%;
+    padding: 10px;
+    border-radius: 8px;
+    border: 1px solid #ccc;
+}
+
+/* Style from payment.html inline style on the inner banner_bg_main div */
+.payment-banner-background {
+    background-image: url('../images/car27.jpg'); /* Use relative path from the css directory */
+    background-size: cover;
+    background-position: center;
+}
+
+/* Style from payment.html inline style on the search button */
+/* This might be a duplicate. Review and consolidate. */
+.main .input-group-append .btn-secondary {
+    background-color: #f26522;
+    border-color: #f26522;
+}
+
+/* Style from payment.html inline style on the banner carousel content divs */
+/* This might be a duplicate. Review and consolidate. */
+.banner-carousel-content {
+    height: 300px;
+}
+
+/* Ensure the .price-color from index.html is also in this file */
+.price-color {
+    color: #262626;
+}
+/* Styles from payment_success.html <style> block */
+/* Note: There is already a body style. Combine or use specificity. */
+body {
+    background-color: #f4f7fa;
+}
+
+/* Styles from payment_success.html <style> block */
+.success-box {
+    max-width: 600px;
+    margin: 80px auto;
+    padding: 40px;
+    background-color: white;
+    border-radius: 15px;
+    text-align: center;
+    box-shadow: 0 0 25px rgba(0, 0, 0, 0.05);
+}
+
+/* Styles from payment_success.html <style> block */
+.success-icon {
+    width: 80px;
+    margin-bottom: 20px;
+}
+
+/* Styles from payment_success.html <style> block */
+/* Note: There is also a .btn-home style from order_confirmation.html. Combine or use specificity. */
+.btn-home {
+    margin-top: 30px;
+}
+
+/* Style from payment_success.html inline style on the inner banner_bg_main div */
+.payment-success-banner-background {
+    background-image: url('../images/c5.jpg'); /* Use relative path from the css directory */
+    background-size: cover;
+    background-position: center;
+}
+
+/* Style from payment_success.html inline style on the search button */
+/* This might be a duplicate. Review and consolidate. */
+.main .input-group-append .btn-secondary {
+    background-color: #f26522;
+    border-color: #f26522;
+}
+
+/* Style from payment_success.html inline style on the banner carousel content divs */
+/* This might be a duplicate. Review and consolidate. */
+.banner-carousel-content {
+    height: 300px;
+}
+
+/* Ensure the .price-color from index.html is also in this file */
+.price-color {
+    color: #262626;
+}
+/* Styles from my_bookings.html <style> block */
+/* Note: There is already a .box_main style from index.html. Review and consolidate. */
+.box_main {
+    height: 380px; /* Adjust as needed */
+    overflow: hidden;
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+    padding: 15px;
+    box-shadow: 0 0 10px rgba(0, 0, 0, 0.1); /* Optional for nice effect */
+ }
+ 
+ /* Style from my_bookings.html inline style on the search button */
+ /* This might be a duplicate. Review and consolidate. */
+ .main .input-group-append .btn-secondary {
+     background-color: #f26522;
+     border-color: #f26522;
+ }
+ 
+ /* Style from my_bookings.html inline style on the footer logo h1 */
+ .footer_logo h1 {
+     color: white;
+     font-weight: bold;
+ }
+ 
+ /* Ensure the .price-color from index.html is also in this file */
+ .price-color {
+     color: #262626;
+ }
+/* Styles from apply_job.html <style> block */
+/* Note: There is already a .box_main style from multiple templates. Review and consolidate. */
+.box_main {
+    height: 380px; /* Adjust as needed */
+    overflow: hidden;
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+    padding: 15px;
+    box-shadow: 0 0 10px rgba(0, 0, 0, 0.1); /* Optional for nice effect */
+ }
+ 
+ /* Style from apply_job.html inline style on the search button */
+ /* This might be a duplicate. Review and consolidate. */
+ .main .input-group-append .btn-secondary {
+     background-color: #f26522;
+     border-color: #f26522;
+ }
+ 
+ /* Style from apply_job.html inline style on the footer logo h1 */
+ /* This might be a duplicate. Review and consolidate. */
+ .footer_logo h1 {
+     color: white;
+     font-weight: bold;
+ }
+ 
+ /* Ensure the .price-color from index.html is also in this file */
+ .price-color {
+     color: #262626;
+ }
+/* Styles from create_job.html <style> block */
+.create-job-container {
+    max-width: 700px;
+    margin: 50px auto;
+    padding: 30px;
+    background-color: #fff;
+    border-radius: 12px;
+    box-shadow: 0 0 15px rgba(0, 0, 0, 0.1);
+}
+
+/* Styles from create_job.html <style> block */
+.create-job-container h2 {
+    text-align: center;
+    margin-bottom: 30px;
+    color: #333;
+}
+
+/* Styles from create_job.html <style> block */
+.create-job-container .form-label { /* Added .create-job-container for better specificity */
+    font-weight: bold;
+}
+
+/* Styles from create_job.html <style> block */
+.create-job-container .form-control { /* Added .create-job-container for better specificity */
+    margin-bottom: 15px;
+}
+
+/* Styles from create_job.html <style> block */
+.btn-create {
+    width: 100%;
+    padding: 12px;
+    font-size: 18px;
+}

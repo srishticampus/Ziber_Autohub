@@ -1,0 +1,84 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block tittle %}Create Job Vacancy{% endblock %}
+
+{% block extra_styles %}
+    <style>
+        .create-job-container {
+            max-width: 700px;
+            margin: 50px auto;
+            padding: 30px;
+            background-color: #fff;
+            border-radius: 12px;
+            box-shadow: 0 0 15px rgba(0, 0, 0, 0.1);
+        }
+        .create-job-container h2 {
+            text-align: center;
+            margin-bottom: 30px;
+            color: #333;
+        }
+        .form-label {
+            font-weight: bold;
+        }
+        .form-control {
+            margin-bottom: 15px;
+        }
+        .btn-create {
+            width: 100%;
+            padding: 12px;
+            font-size: 18px;
+        }
+    </style>
+{% endblock %}
+
+{% block content %}
+    {# The banner_bg_main, header, logo, header section are in base.html, remove them here #}
+    {# You might want a simple banner or just start with the content area #}
+
+    <div class="container create-job-container mt-5">
+        <h2>Create New Job Vacancy</h2>
+
+        {% if messages %}
+            {% for message in messages %}
+                <div class="alert alert-{{ message.tags }} text-center">{{ message }}</div>
+            {% endfor %}
+        {% endif %}
+
+        <form method="POST" class="form">
+            {% csrf_token %}
+
+            {# Render each form field manually for more control over styling and layout #}
+            {% for field in form %}
+                <div class="mb-3">
+                    <label for="{{ field.id_for_label }}" class="form-label">{{ field.label }}</label>
+                    {{ field }}
+                    {% if field.help_text %}
+                        <div class="form-text">{{ field.help_text }}</div>
+                    {% endif %}
+                    {% for error in field.errors %}
+                        <div class="text-danger">{{ error }}</div>
+                    {% endfor %}
+                </div>
+            {% endfor %}
+
+            {# If the form has non-field errors, display them here #}
+            {% if form.non_field_errors %}
+                <div class="alert alert-danger">
+                    {{ form.non_field_errors }}
+                </div>
+            {% endif %}
+
+            <div class="text-center">
+                <button type="submit" class="btn btn-primary btn-create">Create Vacancy</button>
+            </div>
+        </form>
+    </div>
+
+    {# The footer and copyright sections are in base.html, remove them here #}
+
+{% endblock %}
+
+{% block extra_scripts %}
+    {# Add any create_job-specific scripts here if needed, otherwise leave empty #}
+{% endblock %}

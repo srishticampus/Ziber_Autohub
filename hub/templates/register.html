@@ -1,71 +1,84 @@
 {% extends 'base.html' %}
 {% load static %}
 
+{% block tittle %}Register Account{% endblock %} {# Added title block #}
+
+{% block extra_styles %}
+    {# Add any register-specific styles here if needed, but aim to put most in style.css #}
+{% endblock %}
+
 {% block content %}
-<div class="banner_bg_main" style="background-image: url('{% static 'images/c2.jpg' %}'); background-size: cover; background-position: center; min-height: 100vh;">
-<!-- login form -->
-<div class="container d-flex justify-content-center align-items-center" style="min-height: 80vh;">
-    <div class="col-lg-8 col-md-10">
-        <div class="card p-4 rounded-4">
-            <h2 class="text-center mb-4 text-white">Create Your Account</h2>
+{# Use the new CSS class for the background div #}
+<div class="register-background">
+    <!-- login form -->
+    {# Use the new CSS class for the inner container div #}
+    <div class="container d-flex justify-content-center align-items-center register-container-height">
+        <div class="col-lg-8 col-md-10">
+            {# The card and text styles are likely handled by Bootstrap and your style.css #}
+            <div class="card p-4 rounded-4">
+                <h2 class="text-center mb-4 text-white">Create Your Account</h2>
 
-            {% if errors %}
-                <div class="alert alert-danger">
-                    <ul class="mb-0">
-                        {% for field, error in errors.items %}
-                            <li><strong>{{ field|capfirst }}:</strong> {{ error }}</li>
-                        {% endfor %}
-                    </ul>
+                {% if errors %}
+                    {# Error display is fine as is #}
+                    <div class="alert alert-danger">
+                        <ul class="mb-0">
+                            {% for field, error in errors.items %}
+                                <li><strong>{{ field|capfirst }}:</strong> {{ error }}</li>
+                            {% endfor %}
+                        </ul>
+                    </div>
+                {% endif %}
+
+                {# Form structure and input classes are fine as is #}
+                <form method="POST" enctype="multipart/form-data">
+                    {% csrf_token %}
+                    <div class="row">
+                        <div class="col-md-6 mb-3">
+                            <input type="text" name="username" class="form-control dark-input" placeholder="Enter Username *" required>
+                        </div>
+                        <div class="col-md-6 mb-3">
+                            <input type="email" name="email" class="form-control dark-input" placeholder="Enter Email *" required>
+                        </div>
+                        <div class="col-md-6 mb-3">
+                            <input type="password" name="password" class="form-control dark-input" placeholder="Enter Password *" required>
+                        </div>
+                        <div class="col-md-6 mb-3">
+                            <input type="password" name="confirm_password" class="form-control dark-input" placeholder="Confirm Password *" required>
+                        </div>
+                        <div class="col-md-6 mb-3">
+                            <input type="number" name="age" class="form-control dark-input" placeholder="Enter Age *" required>
+                        </div>
+                        <div class="col-md-6 mb-3">
+                            <input type="text" name="place" class="form-control dark-input" placeholder="Enter Place *" required>
+                        </div>
+                        <div class="col-md-6 mb-3">
+                            <input type="text" name="contact_number" class="form-control dark-input" placeholder="Enter Contact Number *" required>
+                        </div>
+                        <div class="col-md-6 mb-3">
+                            <select name="gender" class="form-select dark-input" required>
+                                <option value="">-- Select Gender --</option>
+                                <option value="Male">Male</option>
+                                <option value="Female">Female</option>
+                                <option value="Other">Other</option>
+                            </select>
+                        </div>
+                        <div class="col-md-12 mb-3">
+                            <input type="file" name="user_image" class="form-control dark-input" required>
+                        </div>
+                    </div>
+
+                    <div class="text-center">
+                        {# The button class is fine as is #}
+                        <button type="submit" class="btn btn-danger px-5 mt-3">Register</button>
+                    </div>
+                </form>
+
+                {# The login link is fine as is #}
+                <div class="text-center mt-3">
+                    <small class="text-light">Already have an account? <a href="{% url 'login' %}" class="text-decoration-none text-danger">Login here</a></small>
                 </div>
-            {% endif %}
-
-            <form method="POST" enctype="multipart/form-data">
-                {% csrf_token %}
-                <div class="row">
-                    <div class="col-md-6 mb-3">
-                        <input type="text" name="username" class="form-control dark-input" placeholder="Enter Username *" required>
-                    </div>
-                    <div class="col-md-6 mb-3">
-                        <input type="email" name="email" class="form-control dark-input" placeholder="Enter Email *" required>
-                    </div>
-                    <div class="col-md-6 mb-3">
-                        <input type="password" name="password" class="form-control dark-input" placeholder="Enter Password *" required>
-                    </div>
-                    <div class="col-md-6 mb-3">
-                        <input type="password" name="confirm_password" class="form-control dark-input" placeholder="Confirm Password *" required>
-                    </div>
-                    <div class="col-md-6 mb-3">
-                        <input type="number" name="age" class="form-control dark-input" placeholder="Enter Age *" required>
-                    </div>
-                    <div class="col-md-6 mb-3">
-                        <input type="text" name="place" class="form-control dark-input" placeholder="Enter Place *" required>
-                    </div>
-                    <div class="col-md-6 mb-3">
-                        <input type="text" name="contact_number" class="form-control dark-input" placeholder="Enter Contact Number *" required>
-                    </div>
-                    <div class="col-md-6 mb-3">
-                        <select name="gender" class="form-select dark-input" required>
-                            <option value="">-- Select Gender --</option>
-                            <option value="Male">Male</option>
-                            <option value="Female">Female</option>
-                            <option value="Other">Other</option>
-                        </select>
-                    </div>
-                    <div class="col-md-12 mb-3">
-                        <input type="file" name="user_image" class="form-control dark-input" required>
-                    </div>
-                </div>
-
-                <div class="text-center">
-                    <button type="submit" class="btn btn-danger px-5 mt-3">Register</button>
-                </div>
-            </form>
-
-            <div class="text-center mt-3">
-                <small class="text-light">Already have an account? <a href="{% url 'login' %}" class="text-decoration-none text-danger">Login here</a></small>
             </div>
         </div>
     </div>
-</div>
 </div>
 {% endblock %}
