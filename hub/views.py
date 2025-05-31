@@ -1,199 +1,151 @@
-from django.shortcuts import render,redirect,get_object_or_404
-from django.contrib.auth.models import User
-from django.core.validators import validate_email
-from django.core.exceptions import ValidationError
+#hub/views.py
+from django.shortcuts import render, redirect, get_object_or_404
 from django.contrib import messages
-from .models import UserProfile
-from django.contrib.auth import logout
-from django.contrib.auth import authenticate, login
 from django.contrib.auth.decorators import login_required
-from .models import Car, Cart, CartItem, Order, ServiceBooking, JobVacancy, JobApplication
-
-from .models import Car
-
-
-
-# Create your views here.
-# def home(request):
-#     return render(request,'home.html')
-
+from django.db.models import Q
+from django.utils import timezone
+from .models import (
+    Car, Cart, CartItem, Order, OrderItem, 
+    ServiceBooking, JobVacancy, JobApplication
+)
+from .forms import (
+    UserRegistrationForm, ServiceBookingForm,
+    JobApplicationForm, JobVacancyForm, CheckoutForm
+)
 
 def index(request):
-    return render(request,'index.html')
-
-
+    return render(request, 'index.html')
 
 def demo(request):
-    return render(request,'demo.html')
-
-def news(request):
-    return render(request,'news_details.html')
-
-
-def products(request):
-    return render(request,'p_details.html')
-
-
+    return render(request, 'demo.html')
 
 def register_user(request):
     if request.method == 'POST':
-        username = request.POST['username']
-        email = request.POST['email']
-        password = request.POST['password']
-        confirm_password = request.POST['confirm_password']
-        age = request.POST['age']
-        place = request.POST['place']
-        contact_number = request.POST['contact_number']
-        image = request.FILES.get('user_image')
-        gender = request.POST['gender']
-
-        errors = {}
-
-        if User.objects.filter(username=username).exists():
-            errors['username'] = "Username already exists!"
-
-        try:
-            validate_email(email)
-        except ValidationError:
-            errors['email'] = "Invalid email format!"
-
-        if User.objects.filter(email=email).exists():
-            errors['email'] = "Email already exists!"
-
-        if UserProfile.objects.filter(contact_number=contact_number).exists():
-            errors['contact_number'] = "This contact number is already registered!"
-
-        if password != confirm_password:
-            errors['password'] = "Passwords do not match!"
-
-        if errors:
-            return render(request, 'register.html', {'errors': errors})
-
-        user = User.objects.create_user(username=username, email=email, password=password)
-        user.is_active = True
-        user.save()
-
-        UserProfile.objects.create(
-            user=user,
-            age=age,
-            place=place,
-            contact_number=contact_number,
-            image=image,
-            gender=gender
-        )
-
-        messages.success(request, "Registration successful! You can now log in.")
-        return redirect('login')
-
-    return render(request, 'register.html')
-
-
-
-
-def login_view(request):
-    if request.method == "POST":
-        username = request.POST['username']
-        password = request.POST['password']
-        user = authenticate(request, username=username, password=password)
-
-        if user:
-            if not user.is_active:
-                messages.error(request, "Your account is pending approval by the admin.")
-                return redirect('login')
-
-            login(request, user)
-
-            if user.is_superuser:  
-                return redirect("admin_panel:admin_dashboard")  
-            
-            elif UserProfile.objects.filter(user=user).exists():
-                messages.success(request, "Login successful! Welcome to your profile.")
-                return redirect("car_list")
-            
-            else:
-                messages.success(request, "Login successful!")
-                return redirect("home_page")  
-
-        else:
-            messages.error(request, "Invalid username or password")
+        form = UserRegistrationForm(request.POST, request.FILES)
+        if form.is_valid():
+            user = form.save()
+            messages.success(request, 'Registration successful! You can now log in.')
             return redirect('login')
-
-    return render(request, 'login.html')
-  
-
-def logout_user(request):
-    logout(request)
-    messages.success(request, "Logged out successfully!")
-    return redirect('home')
-
-
-from django.db.models import Q
+    else:
+        form = UserRegistrationForm()
+    return render(request, 'register.html', {'form': form})
 
 @login_required
 def car_list(request):
-    query = request.GET.get('q')
-    if query:
-        cars = Car.objects.filter(
-            Q(name__icontains=query) |
-            Q(brand__icontains=query) |
-            Q(model__icontains=query)
-        )
-    else:
-        cars = Car.objects.all()
-    return render(request, 'car_list.html', {'cars': cars})
-
+    query = request.GET.get('q', '')
+    cars = Car.objects.filter(
+        Q(name__icontains=query) | 
+        Q(brand__icontains=query) |
+        Q(model__icontains=query)
+    ).order_by('-year', 'brand')
+    return render(request, 'car_list.html', {'cars': cars, 'query': query})
 
 @login_required
-def car_detail(request, car_id):
-    car = get_object_or_404(Car, id=car_id)
+def car_detail(request, pk):
+    car = get_object_or_404(Car, pk=pk)
     return render(request, 'car_detail.html', {'car': car})
 
-
-
 @login_required
-def add_to_cart(request, car_id):
-    cart = request.session.get('cart', {})
-    car_id_str = str(car_id)
-    if car_id_str in cart:
-        cart[car_id_str]['quantity'] += 1
+def add_to_cart(request, pk):
+    car = get_object_or_404(Car, pk=pk)
+    cart, created = Cart.objects.get_or_create(user=request.user)
+    
+    cart_item, created = CartItem.objects.get_or_create(
+        cart=cart,
+        car=car,
+        defaults={'quantity': 1}
+    )
+    
+    if not created:
+        if cart_item.quantity < car.stock:
+            cart_item.quantity += 1
+            cart_item.save()
+            messages.success(request, f"Added another {car} to your cart.")
+        else:
+            messages.error(request, f"Only {car.stock} available in stock.")
     else:
-        cart[car_id_str] = {'quantity': 1}
-    request.session['cart'] = cart
-    return redirect('view_cart') 
-
-
-
+        messages.success(request, f"Added {car} to your cart.")
+    
+    return redirect('view_cart')
 
 @login_required
 def view_cart(request):
-    cart = request.session.get('cart', {})
-    cart_items = []
-    total_price = 0
-
-    for car_id_str, item in cart.items():
-        try:
-            car = Car.objects.get(id=int(car_id_str))
-            quantity = item.get('quantity', 1)
-            total = car.price * quantity
-            total_price += total
-            cart_items.append({
-                'car': car,
-                'quantity': quantity,
-                'total': total,
-            })
-        except Car.DoesNotExist:
-            continue  # Skip if car not found
-
-    return render(request, 'cart.html', {'cart_items': cart_items, 'total_price': total_price})
-
+    cart = get_object_or_404(Cart, user=request.user)
+    return render(request, 'cart.html', {'cart': cart})
 
 @login_required
-def buy_now(request, car_id):
-    car = get_object_or_404(Car, id=car_id)
-    # Store the selected car in the session for checkout
+def update_cart_item(request, pk):
+    cart_item = get_object_or_404(CartItem, pk=pk, cart__user=request.user)
+    
+    if request.method == 'POST':
+        quantity = int(request.POST.get('quantity', 1))
+        
+        if quantity <= 0:
+            cart_item.delete()
+            messages.success(request, "Item removed from cart.")
+        elif quantity > cart_item.car.stock:
+            messages.error(request, f"Only {cart_item.car.stock} available in stock.")
+        else:
+            cart_item.quantity = quantity
+            cart_item.save()
+            messages.success(request, "Cart updated successfully.")
+    
+    return redirect('view_cart')
+
+@login_required
+def remove_from_cart(request, pk):
+    cart_item = get_object_or_404(CartItem, pk=pk, cart__user=request.user)
+    cart_item.delete()
+    messages.success(request, "Item removed from cart.")
+    return redirect('view_cart')
+
+@login_required
+def checkout(request):
+    cart = get_object_or_404(Cart, user=request.user)
+    
+    if cart.items.count() == 0:
+        messages.warning(request, "Your cart is empty.")
+        return redirect('view_cart')
+    
+    if request.method == 'POST':
+        form = CheckoutForm(request.POST, user=request.user)
+        if form.is_valid():
+            order = Order.objects.create(
+                user=request.user,
+                total_price=cart.total_price,
+                shipping_address=form.cleaned_data['shipping_address'],
+                billing_address=form.cleaned_data.get('billing_address', ''),
+                phone=form.cleaned_data['phone'],
+                email=form.cleaned_data['email']
+            )
+            
+            for item in cart.items.all():
+                OrderItem.objects.create(
+                    order=order,
+                    car=item.car,
+                    quantity=item.quantity,
+                    price=item.car.price
+                )
+                item.car.stock -= item.quantity
+                item.car.save()
+            
+            cart.items.all().delete()
+            messages.success(request, "Order placed successfully!")
+            return redirect('payment_success')
+    else:
+        form = CheckoutForm(user=request.user)
+    
+    return render(request, 'checkout.html', {
+        'form': form,
+        'cart': cart
+    })
+
+@login_required
+def buy_now(request, pk):
+    car = get_object_or_404(Car, pk=pk)
     request.session['buy_now'] = {
         'car_id': car.id,
-        'quantity': 1  # Default quantity can be adjusted as needed
+        'quantity': 1
     }
     return render(request, 'checkout.html', {'car': car})
 
@@ -202,98 +154,73 @@ def process_order(request):
     if request.method == 'POST':
         buy_now = request.session.get('buy_now')
         if not buy_now:
-            # Handle the case where there's no item to purchase
-            return redirect('car_list')  # Redirect to your car listing page
+            return redirect('car_list')
 
         car = get_object_or_404(Car, id=buy_now['car_id'])
-        name = request.POST.get('name')
-        email = request.POST.get('email')
-        address = request.POST.get('address')
-
-        # Create and save the order
         order = Order.objects.create(
             car=car,
-            name=name,
-            email=email,
-            address=address,
+            name=request.POST.get('name'),
+            email=request.POST.get('email'),
+            address=request.POST.get('address'),
             quantity=buy_now['quantity'],
-            total_price=car.price * buy_now['quantity']
+            total_price=car.price * buy_now['quantity'],
+            user=request.user
         )
-
-        # Clear the 'buy_now' session data
+        
         del request.session['buy_now']
+        return redirect('payment_success')
+    return redirect('car_list')
 
-        return render(request, 'order_confirmation.html', {'order': order})
-    else:
-        return redirect('car_list')
 @login_required
 def payment(request):
-    # Simulate payment processing
     return render(request, 'payment.html')
 
 @login_required
 def payment_success(request):
-    # Display payment success message
     return render(request, 'payment_success.html')
 
 @login_required
-def checkout(request):
-    buy_now = request.session.get('buy_now')
-    if not buy_now:
-        return redirect('car_list')
-    car = get_object_or_404(Car, id=buy_now['car_id'])
-    if request.method == 'POST':
-        # Process the order here
-        return redirect('payment')
-    return render(request, 'checkout.html', {'car': car})
-
-@login_required
-
-# @login_required
-# def remove_from_cart(request, item_id):
-#     item = get_object_or_404(CartItem, id=item_id)
-#     item.delete()
-#     return redirect('view_cart') 
-
-
 def book_service(request):
     if request.method == 'POST':
         form = ServiceBookingForm(request.POST, request.FILES)
         if form.is_valid():
-            service_date = form.cleaned_data['service_date']
-            bookings_count = ServiceBooking.objects.filter(service_date=service_date).count()
-
-            # Limit to 6 bookings per day
-            if bookings_count >= 6:
-                messages.error(request, 'Booking full for this date. Please select another date.')
-                return redirect('book_service')
-
-            # Save the booking with user info
             booking = form.save(commit=False)
             booking.user = request.user
-            booking.save()
-
-            messages.success(request, 'Service booked successfully! 🎉 Waiting for admin confirmation.')
-            return redirect('home')
+            
+            existing = ServiceBooking.objects.filter(
+                service_date=booking.service_date,
+                status__in=['Pending', 'Approved']
+            ).count()
+            
+            if existing >= 6:
+                messages.error(request, 'All slots are booked for this date.')
+            else:
+                booking.save()
+                messages.success(request, 'Service booked successfully!')
+                return redirect('my_bookings')
     else:
         form = ServiceBookingForm()
-
+    
     return render(request, 'service-booking.html', {'form': form})
 
-
+@login_required
 def my_bookings(request):
-    bookings = ServiceBooking.objects.filter(user=request.user)
+    bookings = ServiceBooking.objects.filter(user=request.user).order_by('-service_date')
     return render(request, 'my_bookings.html', {'bookings': bookings})
 
-
-
+@login_required
 def job_list(request):
-    jobs = JobVacancy.objects.all().order_by('-posted_at')
+    jobs = JobVacancy.objects.filter(is_active=True).order_by('-posted_at')
     return render(request, 'job_list.html', {'jobs': jobs})
 
-def apply_job(request, job_id):
-    job = get_object_or_404(JobVacancy, id=job_id)
-
+@login_required
+def apply_job(request, pk):
+    job = get_object_or_404(JobVacancy, pk=pk, is_active=True)
+    
+    if JobApplication.objects.filter(job=job, applicant=request.user).exists():
+        messages.warning(request, 'You have already applied for this position.')
+        return redirect('job_list')
+    
     if request.method == 'POST':
         form = JobApplicationForm(request.POST, request.FILES)
         if form.is_valid():
@@ -301,27 +228,31 @@ def apply_job(request, job_id):
             application.job = job
             application.applicant = request.user
             application.save()
-
-            messages.success(request, 'Application submitted successfully! 🚀 Waiting for admin review.')
+            messages.success(request, 'Application submitted successfully!')
             return redirect('job_list')
     else:
         form = JobApplicationForm()
-
+    
     return render(request, 'apply_job.html', {'form': form, 'job': job})
 
-# Admin Create Vacancy View
-
+@login_required
 def create_job_vacancy(request):
-    if not request.user.is_superuser:
-        return redirect('home')  # Only admins allowed
-
+    if not request.user.is_staff:
+        return redirect('home')
+    
     if request.method == 'POST':
         form = JobVacancyForm(request.POST)
         if form.is_valid():
             form.save()
-            messages.success(request, 'Job vacancy posted successfully! 🎯')
+            messages.success(request, 'Job vacancy created!')
             return redirect('job_list')
     else:
         form = JobVacancyForm()
     
-    return render(request, 'create_job.html', {'form': form})
+    return render(request, 'job_list.html', {'form': form})
+
+def news(request):
+    return render(request, 'news_details.html')
+
+def products(request):
+    return render(request, 'p_details.html')
