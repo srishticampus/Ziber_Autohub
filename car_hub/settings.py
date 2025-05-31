@@ -29,7 +29,7 @@ SECRET_KEY = 'django-insecure-rn*vx!w6*oj-)_!*t8*zegsx9(##*sh5z9ti#+zx*m55ca)n7f
 DEBUG = True
 
 ALLOWED_HOSTS = [
-    'localhost','0.0.0.0','python.sicsglobal.com'
+    'localhost','0.0.0.0','python.sicsglobal.com','127.0.0.1'
 ]
 
 #FORCE_SCRIPT_NAME = '/ziber_autohub'

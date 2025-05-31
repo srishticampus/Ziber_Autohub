@@ -5,6 +5,10 @@ from django.contrib.auth.decorators import login_required
 from django.contrib.auth import authenticate, login as auth_login, logout as auth_logout
 from django.db.models import Q
 from django.utils import timezone
+from django.contrib.auth.models import User
+from django.core.validators import validate_email
+from django.core.exceptions import ValidationError
+from .models import UserProfile
 from .models import (
     Car, Cart, CartItem, Order, OrderItem, 
     ServiceBooking, JobVacancy, JobApplication
@@ -22,14 +26,56 @@ def demo(request):
 
 def register_user(request):
     if request.method == 'POST':
-        form = UserRegistrationForm(request.POST, request.FILES)
-        if form.is_valid():
-            user = form.save()
-            messages.success(request, 'Registration successful! You can now log in.')
-            return redirect('login')
-    else:
-        form = UserRegistrationForm()
-    return render(request, 'register.html', {'form': form})
+        username = request.POST['username']
+        email = request.POST['email']
+        password = request.POST['password']
+        confirm_password = request.POST['confirm_password']
+        age = request.POST['age']
+        place = request.POST['place']
+        contact_number = request.POST['contact_number']
+        image = request.FILES.get('user_image')
+        gender = request.POST['gender']
+
+        errors = {}
+
+        if User.objects.filter(username=username).exists():
+            errors['username'] = "Username already exists!"
+
+        try:
+            validate_email(email)
+        except ValidationError:
+            errors['email'] = "Invalid email format!"
+
+        if User.objects.filter(email=email).exists():
+            errors['email'] = "Email already exists!"
+
+        if UserProfile.objects.filter(contact_number=contact_number).exists():
+            errors['contact_number'] = "This contact number is already registered!"
+
+        if password != confirm_password:
+            errors['password'] = "Passwords do not match!"
+
+        if errors:
+            return render(request, 'register.html', {'errors': errors})
+
+        user = User.objects.create_user(username=username, email=email, password=password)
+        user.is_active = True
+        user.save()
+
+        UserProfile.objects.create(
+            user=user,
+            age=age,
+            place=place,
+            contact_number=contact_number,
+            image=image,
+            gender=gender
+        )
+
+        messages.success(request, "Registration successful! You can now log in.")
+        return redirect('login')
+
+    return render(request, 'register.html')
+
 
 def login_view(request):
     if request.method == "POST":
@@ -91,8 +137,8 @@ def add_to_cart(request, pk):
 
 @login_required
 def view_cart(request):
-    cart = get_object_or_404(Cart, user=request.user)
-    return render(request, 'cart.html', {'cart': cart})
+    # cart = get_object_or_404(Cart, user=request.user)
+    return render(request, 'cart.html')
 
 @login_required
 def update_cart_item(request, pk):

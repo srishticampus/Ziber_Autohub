@@ -9,55 +9,54 @@
 
 {% block content %}
 {# The banner_bg_main, header, logo, header section are in base.html, remove them here #}
+<div class="fashion_section"> 
+    <div class="container cart-container"> {# The cart-container class styles are moved to style.css #}
+        <h2>Your Cart</h2> {# The h2 styles are moved to style.css #}
 
-<div class="container cart-container"> {# The cart-container class styles are moved to style.css #}
-    <h2>Your Cart</h2> {# The h2 styles are moved to style.css #}
+        <table class="table table-bordered table-striped"> {# Bootstrap classes are fine #}
+            <thead>
+                <tr>
+                    <th>Car Image</th>
+                    <th>Car</th>
+                    <th>Quantity</th>
+                    <th>Total</th>
+                    {% comment %} <th>Action</th> {% endcomment %}
+                </tr>
+            </thead>
+            <tbody>
+                {% for item in cart_items %}
+                <tr>
+                    <td>
+                        {# The img styles are moved to style.css #}
+                        <img src="{{ item.car.image.url }}" alt="{{ item.car.name }}" class="cart-item-image">
+                    </td>
+                    <td>{{ item.car.name }} <br> ₹{{ item.car.price }}</td>
+                    <td>{{ item.quantity }}</td>
+                    <td>₹{{ item.total }}</td>
+                    {% comment %} <td>
+                        <a href="{% url 'remove_from_cart' car_id=item.car.id %}" class="btn btn-remove">Remove</a>
+                    </td> {% endcomment %}
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
 
-    <table class="table table-bordered table-striped"> {# Bootstrap classes are fine #}
-        <thead>
-            <tr>
-                <th>Car Image</th>
-                <th>Car</th>
-                <th>Quantity</th>
-                <th>Total</th>
-                {% comment %} <th>Action</th> {% endcomment %}
-            </tr>
-        </thead>
-        <tbody>
-            {% for item in cart_items %}
-            <tr>
-                <td>
-                    {# The img styles are moved to style.css #}
-                    <img src="{{ item.car.image.url }}" alt="{{ item.car.name }}" class="cart-item-image">
-                </td>
-                <td>{{ item.car.name }} <br> ₹{{ item.car.price }}</td>
-                <td>{{ item.quantity }}</td>
-                <td>₹{{ item.total }}</td>
-                {% comment %} <td>
-                    <a href="{% url 'remove_from_cart' car_id=item.car.id %}" class="btn btn-remove">Remove</a>
-                </td> {% endcomment %}
-            </tr>
-            {% endfor %}
-        </tbody>
-    </table>
+        {% if total_price > 0 %}
+            <div class="total-price"> {# The total-price class styles are moved to style.css #}
+                <strong>Total Price:</strong> ₹{{ total_price }}
+            </div>
 
-    {% if total_price > 0 %}
-        <div class="total-price"> {# The total-price class styles are moved to style.css #}
-            <strong>Total Price:</strong> ₹{{ total_price }}
-        </div>
-
-        <form method="post" action="{% url 'checkout' %}">
-            {% csrf_token %}
-            <button type="submit" class="btn btn-buy">Buy Now</button> {# The btn-buy class styles are moved to style.css #}
-        </form>
-    {% endif %}
+            <form method="post" action="{% url 'checkout' %}">
+                {% csrf_token %}
+                <button type="submit" class="btn btn-buy">Buy Now</button> {# The btn-buy class styles are moved to style.css #}
+            </form>
+        {% endif %}
+    </div>
 </div>
-
 {# The footer and copyright sections are in base.html, remove them here #}
 
 {% endblock %}
 
 {% block extra_scripts %}
 {% comment %} Add any specific scripts for cart.html here if needed, otherwise leave empty {% endcomment %}
-{% endcomment %}
 {% endblock %}

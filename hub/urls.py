@@ -35,6 +35,8 @@ urlpatterns = [
     path('jobs/apply/<int:pk>/', views.apply_job, name='apply_job'),
     path('jobs/my-applications/', views.my_applications, name='my_applications'),
     path('jobs/create/', views.create_job_vacancy, name='create_job_vacancy'),
+
+    path('buy_now/<int:pk>/', views.buy_now, name='buy_now'),
     
     # Other pages
     path('news/', views.news, name='news'),
