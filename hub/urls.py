@@ -10,13 +10,13 @@ urlpatterns = [
     path('register/', views.register_user, name='register'),
     path('login/', views.login_view, name='login'),
     path('logout/', views.logout_user, name='logout'),
-    
+
     # Cars
     path('cars/', views.car_list, name='car_list'),
     path('cars/<int:pk>/', views.car_detail, name='car_detail'),
     
     # Cart
-    path('cart/', views.cart_detail, name='cart_detail'),
+    path('cart/', views.view_cart, name='view_cart'),
     path('cart/add/<int:pk>/', views.add_to_cart, name='add_to_cart'),
     path('cart/update/<int:pk>/', views.update_cart_item, name='update_cart_item'),
     path('cart/remove/<int:pk>/', views.remove_from_cart, name='remove_from_cart'),
@@ -28,7 +28,7 @@ urlpatterns = [
     
     # Services
     path('services/book/', views.book_service, name='book_service'),
-    path('services/', views.service_bookings, name='service_bookings'),
+    path('services/', views.my_bookings, name='my_bookings'),
     
     # Jobs
     path('jobs/', views.job_list, name='job_list'),

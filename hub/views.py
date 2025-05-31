@@ -2,6 +2,7 @@
 from django.shortcuts import render, redirect, get_object_or_404
 from django.contrib import messages
 from django.contrib.auth.decorators import login_required
+from django.contrib.auth import authenticate, login as auth_login, logout as auth_logout
 from django.db.models import Q
 from django.utils import timezone
 from .models import (
@@ -29,6 +30,26 @@ def register_user(request):
     else:
         form = UserRegistrationForm()
     return render(request, 'register.html', {'form': form})
+
+def login_view(request):
+    if request.method == "POST":
+        username = request.POST.get('username')
+        password = request.POST.get('password')
+        user = authenticate(request, username=username, password=password)
+        
+        if user is not None:
+            auth_login(request, user)
+            messages.success(request, "You have been successfully logged in.")
+            return redirect('home')
+        else:
+            messages.error(request, "Invalid username or password.")
+    
+    return render(request, 'login.html')
+
+def logout_user(request):
+    auth_logout(request)
+    messages.success(request, "You have been logged out.")
+    return redirect('home')
 
 @login_required
 def car_list(request):
@@ -256,3 +277,20 @@ def news(request):
 
 def products(request):
     return render(request, 'p_details.html')
+
+@login_required
+def order_detail(request, pk):
+    order = get_object_or_404(Order, pk=pk, user=request.user)
+    return render(request, 'order_detail.html', {'order': order})
+
+@login_required
+def order_history(request):
+    orders = Order.objects.filter(user=request.user).order_by('-created_at')
+    return render(request, 'order_history.html', {'orders': orders})
+
+@login_required
+def my_applications(request):
+    applications = JobApplication.objects.filter(
+        applicant=request.user
+    ).select_related('job').order_by('-applied_at')
+    return render(request, 'my_applications.html', {'applications': applications})
