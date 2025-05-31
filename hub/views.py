@@ -5,7 +5,9 @@ from django.core.exceptions import ValidationError
 from django.contrib import messages
 from .models import UserProfile
 from django.contrib.auth import logout
-from django.contrib.auth import authenticate, loginfrom django.contrib.auth.decorators import login_requiredfrom .models import Car, Cart, CartItem, Order, ServiceBooking, JobVacancy, JobApplication
+from django.contrib.auth import authenticate, login
+from django.contrib.auth.decorators import login_required
+from .models import Car, Cart, CartItem, Order, ServiceBooking, JobVacancy, JobApplication
 
 from .models import Car
 
