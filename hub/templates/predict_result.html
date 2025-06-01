@@ -1,0 +1,16 @@
+{% extends "base.html" %}
+
+{% block title %}Prediction Result - Ziber Autohub{% endblock %}
+
+{% block content %}
+<div class="container my-5">
+    <div class="login-container">
+        <div class="login-card text-center">
+            <h2>Estimated Price</h2>
+            <p class="lead">The predicted selling price of the car is:</p>
+            <h3 class="text-success" style="font-size: 2rem;">₹ {{ price }} Lakhs</h3>
+            <a href="{% url 'predict_price' %}" class="btn btn-secondary mt-4">Predict Another</a>
+        </div>
+    </div>
+</div>
+{% endblock %}
