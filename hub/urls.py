@@ -41,4 +41,7 @@ urlpatterns = [
     # Other pages
     path('news/', views.news, name='news'),
     path('products/', views.products, name='products'),
+
+    #ml prediction page
+    path('predict/', views.predict_price, name='predict_price'),
 ]

@@ -102,3 +102,12 @@ class CheckoutForm(forms.Form):
         
         for field in self.fields:
             self.fields[field].widget.attrs.update({'class': 'form-control'})
+
+class CarDetailsForm(forms.Form):
+    present_price = forms.FloatField(label="Present Price (in lakhs)")
+    kms_driven = forms.IntegerField(label="Kilometers Driven")
+    owner = forms.IntegerField(label="Number of Previous Owners")
+    year = forms.IntegerField(label="Year of Purchase")
+    fuel_type = forms.ChoiceField(choices=[('Petrol', 'Petrol'), ('Diesel', 'Diesel'), ('CNG', 'CNG')])
+    seller_type = forms.ChoiceField(choices=[('Dealer', 'Dealer'), ('Individual', 'Individual')])
+    transmission = forms.ChoiceField(choices=[('Manual', 'Manual'), ('Automatic', 'Automatic')])

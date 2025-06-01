@@ -1,4 +1,6 @@
 #hub/views.py
+import os
+import joblib
 from django.shortcuts import render, redirect, get_object_or_404
 from django.contrib import messages
 from django.contrib.auth.decorators import login_required
@@ -15,7 +17,7 @@ from .models import (
 )
 from .forms import (
     UserRegistrationForm, ServiceBookingForm,
-    JobApplicationForm, JobVacancyForm, CheckoutForm
+    JobApplicationForm, JobVacancyForm, CheckoutForm,CarDetailsForm
 )
 
 def index(request):
@@ -340,3 +342,54 @@ def my_applications(request):
         applicant=request.user
     ).select_related('job').order_by('-applied_at')
     return render(request, 'my_applications.html', {'applications': applications})
+
+# Load model once
+model_path = os.path.join(os.path.dirname(__file__), 'ml_model/random_forest_regression_model.pkl')
+model = joblib.load(model_path)
+
+def predict_price(request):
+    if request.method == 'POST':
+        form = CarDetailsForm(request.POST)
+        if form.is_valid():
+            data = form.cleaned_data
+
+            # Preprocessing same as training data
+            car_age = 2025 - data['year']  # no_year
+            fuel_type = data['fuel_type']
+            fuel_type_cng = 1 if fuel_type == 'CNG' else 0
+            fuel_type_diesel = 1 if fuel_type == 'Diesel' else 0
+            fuel_type_petrol = 1 if fuel_type == 'Petrol' else 0
+
+            seller_type = data['seller_type']
+            seller_type_dealer = 1 if seller_type == 'Dealer' else 0
+            seller_type_individual = 1 if seller_type == 'Individual' else 0
+
+            transmission = data['transmission']
+            transmission_manual = 1 if transmission == 'Manual' else 0
+            transmission_automatic = 1 if transmission == 'Automatic' else 0
+
+            # Final input vector with 11 features in order
+            features = [[
+                data['present_price'],
+                data['kms_driven'],
+                data['owner'],
+                car_age,
+                fuel_type_cng,
+                fuel_type_diesel,
+                fuel_type_petrol,
+                seller_type_dealer,
+                seller_type_individual,
+                transmission_automatic,
+                transmission_manual
+            ]]
+
+            # Prediction
+            predicted_price = model.predict(features)[0]
+
+            return render(request, 'predict_result.html', {
+                'price': round(predicted_price, 2)
+            })
+    else:
+        form = CarDetailsForm()
+
+    return render(request, 'predict_form.html', {'form': form})
