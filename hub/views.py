@@ -7,9 +7,14 @@ from django.contrib.auth.decorators import login_required
 from django.contrib.auth import authenticate, login as auth_login, logout as auth_logout
 from django.db.models import Q
 from django.utils import timezone
+from django.views.generic import TemplateView, CreateView, ListView
+from django.contrib.auth.mixins import LoginRequiredMixin,UserPassesTestMixin
+from django.contrib.admin.views.decorators import staff_member_required
+from django.core.exceptions import PermissionDenied
 from django.contrib.auth.models import User
 from django.core.validators import validate_email
 from django.core.exceptions import ValidationError
+from django.urls import reverse_lazy
 from .models import UserProfile
 from .models import (
     Car, Cart, CartItem, Order, OrderItem, 
@@ -139,7 +144,7 @@ def add_to_cart(request, pk):
 
 @login_required
 def view_cart(request):
-    # cart = get_object_or_404(Cart, user=request.user)
+    cart = get_object_or_404(Cart, user=request.user)
     return render(request, 'cart.html')
 
 @login_required
@@ -342,9 +347,17 @@ def my_applications(request):
         applicant=request.user
     ).select_related('job').order_by('-applied_at')
     return render(request, 'my_applications.html', {'applications': applications})
-
 # Load model once
 model_path = os.path.join(os.path.dirname(__file__), 'ml_model/random_forest_regression_model.pkl')
+model = joblib.load(model_path)
+
+# StaffRequiredMixin definition
+class StaffRequiredMixin:
+    """Mixin to ensure the user is a staff member."""
+    def dispatch(self, request, *args, **kwargs):
+        if not request.user.is_staff:
+            raise PermissionDenied
+        return super().dispatch(request, *args, **kwargs)
 model = joblib.load(model_path)
 
 def predict_price(request):
@@ -393,3 +406,44 @@ def predict_price(request):
         form = CarDetailsForm()
 
     return render(request, 'predict_form.html', {'form': form})
+
+
+class StaffRequiredMixin(UserPassesTestMixin):
+    def test_func(self):
+        return self.request.user.is_staff
+    
+    def handle_no_permission(self):
+        return redirect('admin_login')
+
+@staff_member_required
+def admin_dashboard(request):
+    context = {
+        'car_count': Car.objects.count(),
+        'active_jobs': JobVacancy.objects.filter(is_active=True).count(),
+        'recent_orders': Order.objects.filter(created_at__gte=timezone.now()-timezone.timedelta(days=7)).count(),
+    }
+    return render(request, 'admin/dashboard.html', context)
+
+class AdminCarCreateView(LoginRequiredMixin, StaffRequiredMixin, CreateView):
+    model = Car
+    fields = ['name', 'brand', 'model', 'year', 'price', 'stock', 'description', 'image']
+    template_name = 'admin/car_form.html'
+    success_url = reverse_lazy('admin_car_list')
+
+class AdminCarListView(LoginRequiredMixin, StaffRequiredMixin, ListView):
+    model = Car
+    template_name = 'admin/car_list.html'
+    context_object_name = 'cars'
+    paginate_by = 10
+
+class AdminJobVacancyCreateView(LoginRequiredMixin, StaffRequiredMixin, CreateView):
+    model = JobVacancy
+    form_class = JobVacancyForm
+    template_name = 'admin/job_form.html'
+    success_url = reverse_lazy('admin_job_list')
+
+class AdminJobVacancyListView(LoginRequiredMixin, StaffRequiredMixin, ListView):
+    model = JobVacancy
+    template_name = 'admin/job_list.html'
+    context_object_name = 'jobs'
+    paginate_by = 10

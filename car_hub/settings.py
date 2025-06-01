@@ -12,7 +12,12 @@ https://docs.djangoproject.com/en/5.1/ref/settings/
 
 from pathlib import Path
 import os
-LOGIN_URL = 'login'  # or whatever the name of your login URL is
+# Custom admin login URL
+LOGIN_URL = 'admin_login'
+LOGOUT_REDIRECT_URL = 'admin_login'
+
+# Custom admin site header
+ADMIN_SITE_HEADER = "Ziber Autohub Administration"
 
 
 # Build paths inside the project like this: BASE_DIR / 'subdir'.

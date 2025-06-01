@@ -1,31 +1,64 @@
+# hub/admin.py
 from django.contrib import admin
+from django.contrib.auth.admin import UserAdmin
+from django.contrib.auth.models import User
+from .models import UserProfile, Car, ServiceBooking, JobVacancy, JobApplication, Cart, CartItem, Order, OrderItem
 
-# Register your models here.
-from .models import UserProfile,Car,ServiceBooking
+class UserProfileInline(admin.StackedInline):
+    model = UserProfile
+    can_delete = False
+    verbose_name_plural = 'Profile'
+    fk_name = 'user'
 
-admin.site.register(UserProfile)
-admin.site.register(Car)
+class CustomUserAdmin(UserAdmin):
+    inlines = (UserProfileInline, )
+    list_display = ('username', 'email', 'first_name', 'last_name', 'is_staff', 'get_contact_number')
+    list_select_related = ('profile', )
 
-@admin.register(ServiceBooking)
-class ServiceBookingAdmin(admin.ModelAdmin):
-    list_display = ('user', 'car_model', 'service_date', 'status', 'created_at')
-    list_filter = ('status',)
-    search_fields = ('user__username', 'car_model')
+    def get_contact_number(self, instance):
+        return instance.profile.contact_number
+    get_contact_number.short_description = 'Contact Number'
 
+    def get_inline_instances(self, request, obj=None):
+        if not obj:
+            return list()
+        return super(CustomUserAdmin, self).get_inline_instances(request, obj)
 
-from django.contrib import admin
-from .models import JobVacancy, JobApplication
+@admin.register(Car)
+class CarAdmin(admin.ModelAdmin):
+    list_display = ('name', 'brand', 'model', 'year', 'price', 'stock')
+    list_filter = ('brand', 'year')
+    search_fields = ('name', 'brand', 'model')
+    ordering = ('-year', 'brand')
+    fieldsets = (
+        (None, {
+            'fields': ('name', 'brand', 'model', 'year')
+        }),
+        ('Details', {
+            'fields': ('price', 'stock', 'description', 'image')
+        }),
+    )
 
-# For Job Vacancy
 @admin.register(JobVacancy)
 class JobVacancyAdmin(admin.ModelAdmin):
-    list_display = ('title', 'location', 'posted_at')
-    search_fields = ('title', 'location')
-    list_filter = ('posted_at',)
+    list_display = ('title', 'location', 'posted_at', 'is_active')
+    list_filter = ('is_active', 'location')
+    search_fields = ('title', 'description')
+    ordering = ('-posted_at',)
+    fieldsets = (
+        (None, {
+            'fields': ('title', 'description', 'location')
+        }),
+        ('Status', {
+            'fields': ('is_active',)
+        }),
+    )
 
-# For Job Applications
-@admin.register(JobApplication)
-class JobApplicationAdmin(admin.ModelAdmin):
-    list_display = ('job', 'applicant', 'applied_at', 'status')
-    list_filter = ('status', 'applied_at')
-    search_fields = ('job__title', 'applicant__username')
+admin.site.unregister(User)
+admin.site.register(User, CustomUserAdmin)
+admin.site.register(ServiceBooking)
+admin.site.register(JobApplication)
+admin.site.register(Cart)
+admin.site.register(CartItem)
+admin.site.register(Order)
+admin.site.register(OrderItem)
