@@ -409,42 +409,42 @@ def predict_price(request):
     return render(request, 'predict_form.html', {'form': form})
 
 
-class StaffRequiredMixin(UserPassesTestMixin):
-    def test_func(self):
-        return self.request.user.is_staff
+# class StaffRequiredMixin(UserPassesTestMixin):
+#     def test_func(self):
+#         return self.request.user.is_staff
     
-    def handle_no_permission(self):
-        return redirect('admin_login')
+#     def handle_no_permission(self):
+#         return redirect('admin_login')
 
-@staff_member_required
-def admin_dashboard(request):
-    context = {
-        'car_count': Car.objects.count(),
-        'active_jobs': JobVacancy.objects.filter(is_active=True).count(),
-        'recent_orders': Order.objects.filter(created_at__gte=timezone.now()-timezone.timedelta(days=7)).count(),
-    }
-    return render(request, 'admin/dashboard.html', context)
+# @staff_member_required
+# def admin_dashboard(request):
+#     context = {
+#         'car_count': Car.objects.count(),
+#         'active_jobs': JobVacancy.objects.filter(is_active=True).count(),
+#         'recent_orders': Order.objects.filter(created_at__gte=timezone.now()-timezone.timedelta(days=7)).count(),
+#     }
+#     return render(request, 'admin/dashboard.html', context)
 
-class AdminCarCreateView(LoginRequiredMixin, StaffRequiredMixin, CreateView):
-    model = Car
-    fields = ['name', 'brand', 'model', 'year', 'price', 'stock', 'description', 'image']
-    template_name = 'admin/car_form.html'
-    success_url = reverse_lazy('admin_car_list')
+# class AdminCarCreateView(LoginRequiredMixin, StaffRequiredMixin, CreateView):
+#     model = Car
+#     fields = ['name', 'brand', 'model', 'year', 'price', 'stock', 'description', 'image']
+#     template_name = 'admin/car_form.html'
+#     success_url = reverse_lazy('admin_car_list')
 
-class AdminCarListView(LoginRequiredMixin, StaffRequiredMixin, ListView):
-    model = Car
-    template_name = 'admin/car_list.html'
-    context_object_name = 'cars'
-    paginate_by = 10
+# class AdminCarListView(LoginRequiredMixin, StaffRequiredMixin, ListView):
+#     model = Car
+#     template_name = 'admin/car_list.html'
+#     context_object_name = 'cars'
+#     paginate_by = 10
 
-class AdminJobVacancyCreateView(LoginRequiredMixin, StaffRequiredMixin, CreateView):
-    model = JobVacancy
-    form_class = JobVacancyForm
-    template_name = 'admin/job_form.html'
-    success_url = reverse_lazy('admin_job_list')
+# class AdminJobVacancyCreateView(LoginRequiredMixin, StaffRequiredMixin, CreateView):
+#     model = JobVacancy
+#     form_class = JobVacancyForm
+#     template_name = 'admin/job_form.html'
+#     success_url = reverse_lazy('admin_job_list')
 
-class AdminJobVacancyListView(LoginRequiredMixin, StaffRequiredMixin, ListView):
-    model = JobVacancy
-    template_name = 'admin/job_list.html'
-    context_object_name = 'jobs'
-    paginate_by = 10
+# class AdminJobVacancyListView(LoginRequiredMixin, StaffRequiredMixin, ListView):
+#     model = JobVacancy
+#     template_name = 'admin/job_list.html'
+#     context_object_name = 'jobs'
+#     paginate_by = 10

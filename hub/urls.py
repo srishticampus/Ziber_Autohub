@@ -51,16 +51,16 @@ urlpatterns = [
     #ml prediction page
     path('predict/', views.predict_price, name='predict_price'),
 
-    #Admin URLs
-    path('admin/login/', auth_views.LoginView.as_view(template_name='admin/login.html'), name='admin_login'),
-    path('admin/logout/', auth_views.LogoutView.as_view(), name='admin_logout'),
-    path('admin/dashboard/', staff_required(views.admin_dashboard), name='admin_dashboard'),
+    # #Admin URLs
+    # path('admin/login/', auth_views.LoginView.as_view(template_name='admin/login.html'), name='admin_login'),
+    # path('admin/logout/', auth_views.LogoutView.as_view(), name='admin_logout'),
+    # path('admin/dashboard/', staff_required(views.admin_dashboard), name='admin_dashboard'),
     
-    # Car management
-    path('admin/cars/', staff_required(views.AdminCarListView.as_view()), name='admin_car_list'),
-    path('admin/cars/add/', staff_required(views.AdminCarCreateView.as_view()), name='admin_car_add'),
+    # # Car management
+    # path('admin/cars/', staff_required(views.AdminCarListView.as_view()), name='admin_car_list'),
+    # path('admin/cars/add/', staff_required(views.AdminCarCreateView.as_view()), name='admin_car_add'),
     
-    # Job management
-    path('admin/jobs/', staff_required(views.AdminJobVacancyListView.as_view()), name='admin_job_list'),
-    path('admin/jobs/add/', staff_required(views.AdminJobVacancyCreateView.as_view()), name='admin_job_add'),
+    # # Job management
+    # path('admin/jobs/', staff_required(views.AdminJobVacancyListView.as_view()), name='admin_job_list'),
+    # path('admin/jobs/add/', staff_required(views.AdminJobVacancyCreateView.as_view()), name='admin_job_add'),
 ]
