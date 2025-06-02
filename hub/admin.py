@@ -2,7 +2,7 @@
 from django.contrib import admin
 from django.contrib.auth.admin import UserAdmin
 from django.contrib.auth.models import User
-from .models import UserProfile, Car, ServiceBooking, JobVacancy, JobApplication, Cart, CartItem, Order, OrderItem
+from .models import UserProfile, Car, ServiceBooking, JobVacancy, JobApplication, Cart, CartItem, Order, OrderItem, PreBooking
 
 class UserProfileInline(admin.StackedInline):
     model = UserProfile
@@ -62,3 +62,4 @@ admin.site.register(Cart)
 admin.site.register(CartItem)
 admin.site.register(Order)
 admin.site.register(OrderItem)
+admin.site.register(PreBooking)

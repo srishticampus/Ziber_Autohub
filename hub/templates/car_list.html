@@ -79,7 +79,7 @@
 
                                     <div class="action-buttons mt-4">
                                     {% if car.is_new %}
-                                       <form method="post" action="">
+                                       <form method="post" action="{% url 'pre_book_car' car.id %}">
                                              {% csrf_token %}
                                              <button type="submit" class="btn btn-info">Pre Book</button>
                                        </form>
