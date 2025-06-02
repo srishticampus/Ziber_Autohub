@@ -1,112 +1,164 @@
 {% extends 'base.html' %}
 {% load static %}
 
-{% block tittle %}Car List{% endblock %} {# Added title block #}
+{% block title %}Car List{% endblock %}
 
 {% block extra_styles %}
-    {# Add any car_list-specific styles here if needed, but aim to put most in style.css #}
+<style>
+    .filter-section {
+        border-radius: 5px;
+    }
+    .filter-section h4 {
+        margin-bottom: 15px;
+        color: #343a40;
+    }
+    .filter-group {
+        margin-bottom: 15px;
+    }
+    .price-range-inputs {
+        display: flex;
+        gap: 10px;
+    }
+    .price-range-inputs input {
+        flex: 1;
+    }
+    .car-image-style {
+        height: 200px;
+        object-fit: cover;
+    }
+    .filter-button{
+      background-color: #f26522;
+    }
+</style>
 {% endblock %}
 
 {% block content %}
-    {# The outer banner_bg_main div contains content that is in base.html, remove it here #}
-    {# The inner banner_bg_main div had inline styles, use a class instead #}
-    <div class="banner_bg_main car-list-banner-background">
+<div class="banner_bg_main car-list-banner-background">
+    <!-- Your existing banner content -->
+</div>
 
-    {# The header, logo, header section are in base.html, remove them here #}
 
-    {# The banner section had inline styles and comments, use a class and keep only relevant content #}
-         <div class="banner_section layout_padding">
-             <div class="container">
-                <div id="my_slider" class="carousel slide" data-ride="carousel">
-                   <div class="carousel-inner">
-                      <div class="carousel-item active">
-                         <div class="row">
-                            {# The content div had inline style, use a class instead #}
-                            <div class="col-sm-12 d-flex flex-column align-items-center justify-content-center banner-carousel-content">
-                               <div class="buynow_bt"><a href="">Pre Book</a></div>
-                            </div>
-                         </div>
-                      </div>
-                      {# Removed commented out carousel item #}
-                      <div class="carousel-item">
-                         <div class="row">
-                            {# The content div had inline style, use a class instead #}
-                            <div class="col-sm-12 d-flex flex-column align-items-center justify-content-center banner-carousel-content">
-                               <div class="buynow_bt"><a href="">Buy Now</a></div>
-                            </div>
-                         </div>
-                      </div>
-                   </div>
-                   <a class="carousel-control-prev" href="#my_slider" role="button" data-slide="prev">
-                      <i class="fa fa-angle-left"></i>
-                   </a>
-                   <a class="carousel-control-next" href="#my_slider" role="button" data-slide="next">
-                      <i class="fa fa-angle-right"></i>
-                   </a>
-                </div>
-             </div>
-          </div>
 
-    </div> {# Close the car-list-banner-background div #}
-      <!-- banner bg main end - This div is part of the banner_bg_main class we are refactoring -->
+<!-- Car Listing Section -->
+<div class="fashion_section bg-dark py-5">
 
-      <!-- fashion section start -->
-      {# The fashion section has a py-5 class which is fine, keep it #}
-      <div class="fashion_section bg-dark py-5">
-         <div class="container">
-            {# The h2 has Bootstrap classes, which is fine #}
-            <h2 class="text-center mb-5 text-white fw-bold">Collection</h2>
-            <div class="row">
-                 {% if cars %}
-                 {% for car in cars %}
-                 <div class="col-lg-4 col-md-6 mb-4">
-                     {# The card has Bootstrap classes, which is fine #}
-                     <div class="card shadow-sm h-100">
-                         {# The img had inline styles, use a class instead #}
-                         <img src="{{ car.image.url }}" class="card-img-top car-image-style" alt="{{ car.brand }} {{ car.model }}">
-                         {# The card-body has Bootstrap classes, which is fine #}
-                         <div class="card-body d-flex flex-column">
-                             {# The h5 and p have Bootstrap classes, which is fine #}
-                             <h5 class="card-title">{{ car.brand }} {{ car.model }}</h5>
-                             <p class="card-text mb-2">Price: ₹{{ car.price }}</p>
-
-                             {# The action buttons are fine as is #}
-                             <div class="mt-auto">
-                                 <div class="d-flex justify-content-between">
-                                    <div class="text-center mt-3">
-                                       <a href="{% url 'car_detail' car.id %}" class="btn btn-outline-primary btn-sm">See More</a>
-                                   </div>
-
-                                    <form method="post" action="{% url 'buy_now' car.id %}">
-                                         {% csrf_token %}
-                                         <button type="submit" class="btn btn-success btn-sm">Buy Now</button>
-                                     </form>
-                                 </div>
-                                 <form method="post" action="{% url 'add_to_cart' car.id %}" class="mt-2">
-                                     {% csrf_token %}
-                                     <button type="submit" class="btn btn-primary btn-sm w-100">Add to Cart</button>
-                                 </form>
-                             </div>
-                         </div>
-                     </div>
-                 </div>
-                 {% endfor %}
-                 {% else %}
-                 <div class="col-12 m-auto d-flex justify-content-center align-items-center ">
-                     <div class="alert alert-light text-center mt-4" role="alert">
-                         No cars available at the moment.
-                     </div>  
-                  </div>
-                  {% endif %}
+    <div class="container">
+      <div class="row">
+         <div class="col">
+            <h2 class="text-center mb-5 text-white fw-bold">Car Collection</h2>
          </div>
-     </div>
-   </div>
-      <!-- fashion section end -->
-
-      {# The footer and copyright sections are in base.html, remove them here #}
-
+      </div>
+      <div class="row">
+       <div class="col">
+   <!-- Filter Section -->
+<div class="container m-4">
+    <div class="filter-section">
+        <form method="get" action="{% url 'car_list' %}">
+            <div class="row mt-5">
+                <div class="col-md-3 filter-group">
+                    <input type="text" name="q" class="form-control" placeholder="Search by name, brand or model" value="{{ query }}">
+                </div>
+                
+                <div class="col-md-2 filter-group">
+                    <select name="brand" class="form-control">
+                        <option value="">All Brands</option>
+                        {% for brand in brands %}
+                            <option value="{{ brand }}" {% if selected_brand == brand %}selected{% endif %}>{{ brand }}</option>
+                        {% endfor %}
+                    </select>
+                </div>
+                
+                <div class="col-md-2 filter-group">
+                    <select name="year" class="form-control">
+                        <option value="">All Years</option>
+                        {% for year in years %}
+                            <option value="{{ year }}" {% if selected_year == year|stringformat:"s" %}selected{% endif %}>{{ year }}</option>
+                        {% endfor %}
+                    </select>
+                </div>
+                
+                <div class="col-md-3 filter-group">
+                    <div class="price-range-inputs">
+                        <input type="number" name="min_price" class="form-control" placeholder="Min price" value="{{ min_price }}">
+                        <input type="number" name="max_price" class="form-control" placeholder="Max price" value="{{ max_price }}">
+                    </div>
+                </div>
+                
+                <div class="col-md-2 d-flex align-items-end filter-group">
+    <button type="submit" class="btn filter-button w-100 text-white">Apply Filters</button>
+    <a href="{% url 'car_list' %}" class="btn btn-secondary w-100 ml-2">Clear All</a>
+</div>
+            </div>
+        </form>
+    </div>
+</div>
+       </div>
+      </div>
+      
+        
+        
+        <div class="row">
+            {% if cars %}
+                {% for car in cars %}
+                <div class="col-lg-4 col-md-6 mb-4">
+                    <div class="card shadow-sm h-100">
+                        <img src="{{ car.image.url }}" class="card-img-top car-image-style" alt="{{ car.brand }} {{ car.model }}">
+                        <div class="card-body d-flex flex-column">
+                            <h5 class="card-title text-white">{{ car.brand }} {{ car.model }}</h5>
+                            <p class="card-text mb-1">Year: {{ car.year }}</p>
+                            <p class="card-text mb-2">Price: ₹ {{ car.price }}</p>
+                            
+                            <div class="mt-auto">
+                                <div class="d-flex justify-content-between">
+                                    <div class="text-center mt-3">
+                                        <a href="{% url 'car_detail' car.id %}" class="btn btn-outline-primary btn-sm">See More</a>
+                                    </div>
+                                    <form method="post" action="{% url 'buy_now' car.id %}">
+                                        {% csrf_token %}
+                                        <button type="submit" class="btn btn-success btn-sm">Buy Now</button>
+                                    </form>
+                                </div>
+                                <form method="post" action="{% url 'add_to_cart' car.id %}" class="mt-2">
+                                    {% csrf_token %}
+                                    <button type="submit" class="btn btn-primary btn-sm w-100">Add to Cart</button>
+                                </form>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                {% endfor %}
+            {% else %}
+                <div class="col-12 m-auto d-flex justify-content-center align-items-center">
+                    <div class="alert alert-light text-center mt-4" role="alert">
+                        No cars found matching your filters.
+                    </div>  
+                </div>
+            {% endif %}
+        </div>
+    </div>
+</div>
 {% endblock %}
-
 {% block extra_scripts %}
-{% comment %} Add any specific scripts for car_list.html here if needed, otherwise leave empty {% endcomment %}
+<script>
+    document.addEventListener('DOMContentLoaded', function() {
+        const minPriceInput = document.querySelector('input[name="min_price"]');
+        const maxPriceInput = document.querySelector('input[name="max_price"]');
+        
+        if (minPriceInput && maxPriceInput) {
+            minPriceInput.addEventListener('change', function() {
+                if (maxPriceInput.value && parseFloat(this.value) > parseFloat(maxPriceInput.value)) {
+                    alert('Minimum price cannot be greater than maximum price');
+                    this.value = '';
+                }
+            });
+            
+            maxPriceInput.addEventListener('change', function() {
+                if (minPriceInput.value && parseFloat(this.value) < parseFloat(minPriceInput.value)) {
+                    alert('Maximum price cannot be less than minimum price');
+                    this.value = '';
+                }
+            });
+        }
+    });
+</script>
 {% endblock %}

@@ -21,7 +21,9 @@ from .forms import ( ServiceBookingForm,
 
 @login_required
 def index(request):
-    return render(request, 'index.html')
+    new_cars = Car.objects.filter(is_new=True).order_by('-created_at')[:3]
+    old_cars = Car.objects.filter(is_new=False).order_by('-created_at')[:3]
+    return render(request, 'index.html',{'new_cars': new_cars, 'old_cars': old_cars})
 
 def demo(request):
     return render(request, 'demo.html')
@@ -102,13 +104,49 @@ def logout_user(request):
 @login_required
 def car_list(request):
     query = request.GET.get('q', '')
-    cars = Car.objects.filter(
-        Q(name__icontains=query) | 
-        Q(brand__icontains=query) |
-        Q(model__icontains=query)
-    ).order_by('-year', 'brand')
-    return render(request, 'car_list.html', {'cars': cars, 'query': query})
-
+    year_filter = request.GET.get('year', '')
+    brand_filter = request.GET.get('brand', '')
+    min_price = request.GET.get('min_price', '')
+    max_price = request.GET.get('max_price', '')
+    
+    cars = Car.objects.all().order_by('-year', 'brand')
+    
+    # Apply filters
+    if query:
+        cars = cars.filter(
+            Q(name__icontains=query) | 
+            Q(brand__icontains=query) |
+            Q(model__icontains=query)
+        )
+    
+    if year_filter:
+        cars = cars.filter(year=year_filter)
+    
+    if brand_filter:
+        cars = cars.filter(brand=brand_filter)
+    
+    if min_price:
+        cars = cars.filter(price__gte=min_price)
+    
+    if max_price:
+        cars = cars.filter(price__lte=max_price)
+    
+    # Get unique years and brands for filter dropdowns
+    years = Car.objects.values_list('year', flat=True).distinct().order_by('-year')
+    brands = Car.objects.values_list('brand', flat=True).distinct().order_by('brand')
+    
+    context = {
+        'cars': cars,
+        'query': query,
+        'years': years,
+        'brands': brands,
+        'selected_year': year_filter,
+        'selected_brand': brand_filter,
+        'min_price': min_price,
+        'max_price': max_price,
+    }
+    
+    return render(request, 'car_list.html', context)
 @login_required
 def car_detail(request, pk):
     car = get_object_or_404(Car, pk=pk)
@@ -140,7 +178,9 @@ def add_to_cart(request, pk):
 @login_required
 def view_cart(request):
     cart = get_object_or_404(Cart, user=request.user)
-    return render(request, 'cart.html')
+    cart_items = cart.items.all()
+    total_price = cart.total_price
+    return render(request, 'cart.html', {'cart_items': cart_items,'total_price': total_price})
 
 @login_required
 def update_cart_item(request, pk):
@@ -171,13 +211,14 @@ def remove_from_cart(request, pk):
 @login_required
 def checkout(request):
     cart = get_object_or_404(Cart, user=request.user)
-    
-    if cart.items.count() == 0:
+    cart_items = cart.items.all()
+
+    if not cart_items.exists():
         messages.warning(request, "Your cart is empty.")
         return redirect('view_cart')
-    
+
     if request.method == 'POST':
-        form = CheckoutForm(request.POST, user=request.user)
+        form = CheckoutForm(request.POST)
         if form.is_valid():
             order = Order.objects.create(
                 user=request.user,
@@ -187,8 +228,8 @@ def checkout(request):
                 phone=form.cleaned_data['phone'],
                 email=form.cleaned_data['email']
             )
-            
-            for item in cart.items.all():
+
+            for item in cart_items:
                 OrderItem.objects.create(
                     order=order,
                     car=item.car,
@@ -197,26 +238,28 @@ def checkout(request):
                 )
                 item.car.stock -= item.quantity
                 item.car.save()
-            
+
             cart.items.all().delete()
             messages.success(request, "Order placed successfully!")
             return redirect('payment_success')
     else:
-        form = CheckoutForm(user=request.user)
-    
+        form = CheckoutForm()
+
     return render(request, 'checkout.html', {
         'form': form,
-        'cart': cart
+        'cart_items': cart_items,
+        'total_price': cart.total_price
     })
 
 @login_required
 def buy_now(request, pk):
     car = get_object_or_404(Car, pk=pk)
-    request.session['buy_now'] = {
-        'car_id': car.id,
-        'quantity': 1
-    }
-    return render(request, 'checkout.html', {'car': car})
+    cart_item = CartItem.objects.get_or_create(cart=request.user.cart, car=car)
+    if cart_item[1]:
+        messages.success(request, "Item added to cart.")
+    else:
+        messages.success(request, "Item updated in cart.")
+    return redirect('view_cart')
 
 @login_required
 def process_order(request):
