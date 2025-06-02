@@ -12,7 +12,12 @@ https://docs.djangoproject.com/en/5.1/ref/settings/
 
 from pathlib import Path
 import os
-LOGIN_URL = 'login'  # or whatever the name of your login URL is
+# Custom admin login URL
+LOGIN_URL = 'login'
+LOGOUT_REDIRECT_URL = 'login'
+
+# Custom admin site header
+ADMIN_SITE_HEADER = "Ziber Autohub Administration"
 
 
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
@@ -29,10 +34,10 @@ SECRET_KEY = 'django-insecure-rn*vx!w6*oj-)_!*t8*zegsx9(##*sh5z9ti#+zx*m55ca)n7f
 DEBUG = True
 
 ALLOWED_HOSTS = [
-    'localhost','0.0.0.0','python.sicsglobal.com'
+    'localhost','0.0.0.0','python.sicsglobal.com','127.0.0.1'
 ]
 
-FORCE_SCRIPT_NAME = '/ziber_autohub'
+#FORCE_SCRIPT_NAME = '/ziber_autohub'
 # Add CSRF trusted origins
 CSRF_TRUSTED_ORIGINS = [
     'https://python.sicsglobal.com',

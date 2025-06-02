@@ -1,159 +1,62 @@
+{% extends 'base.html' %}
 {% load static %}
-<!DOCTYPE html>
-<html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Your Cart</title>
-    <link rel="stylesheet" href="{% static 'css/bootstrap.min.css' %}">
-    <style>
-        body {
-            background: #f8f9fa;
-        }
-        .cart-container {
-            background: #fff;
-            padding: 40px;
-            border-radius: 15px;
-            max-width: 1000px;
-            margin: 50px auto;
-            box-shadow: 0 0 25px rgba(0, 0, 0, 0.1);
-        }
-        h2 {
-            text-align: center;
-            margin-bottom: 30px;
-        }
-        .table th, .table td {
-            text-align: center;
-            vertical-align: middle;
-        }
-        .table img {
-            width: 100px;
-            height: auto;
-            border-radius: 10px;
-        }
-        .total-price {
-            font-size: 20px;
-            font-weight: bold;
-            color: #007bff;
-            text-align: center;
-            margin: 20px 0;
-        }
-        .btn-buy {
-            width: 100%;
-            padding: 12px;
-            font-size: 18px;
-            background-color: #28a745;
-            color: white;
-            border-radius: 8px;
-            transition: 0.3s;
-        }
-        .btn-buy:hover {
-            background-color: #218838;
-        }
-        .btn-remove {
-            background-color: #dc3545;
-            color: white;
-            border-radius: 8px;
-            padding: 6px 12px;
-            font-size: 14px;
-            transition: 0.3s;
-            text-decoration: none;
-        }
-        .btn-remove:hover {
-            background-color: #c82333;
-        }
-    </style>
 
-    <link rel="stylesheet" href="{% static 'css/style.css' %}">
-    <link rel="stylesheet" href="{% static 'css/responsive.css' %}">
-    <link rel="icon" href="{% static 'images/fevicon.png' %}" type="image/gif" />
-    <link rel="stylesheet" href="{% static 'css/jquery.mCustomScrollbar.min.css' %}">
-    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/font-awesome/4.7.0/css/font-awesome.min.css">
-    <link href="https://fonts.googleapis.com/css?family=Poppins:400,700&display=swap" rel="stylesheet">
-    <link rel="stylesheet" href="{% static 'css/owl.carousel.min.css' %}">
-    <link rel="stylesheet" href="{% static 'css/owl.theme.default.min.css' %}">
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/fancybox/2.1.5/jquery.fancybox.min.css" media="screen">
-</head>
-<body>
+{% block tittle %}Your Cart{% endblock %} {# Added title block #}
 
-<div class="container cart-container">
-    <h2>Your Cart</h2>
+{% block extra_styles %}
+    {# Add any cart-specific styles here if needed, but aim to put most in style.css #}
+{% endblock %}
 
-    <table class="table table-bordered table-striped">
-        <thead>
-            <tr>
-                <th>Car Image</th>
-                <th>Car</th>
-                <th>Quantity</th>
-                <th>Total</th>
-                {% comment %} <th>Action</th> {% endcomment %}
-            </tr>
-        </thead>
-        <tbody>
-            {% for item in cart_items %}
-            <tr>
-                <td>
-                    <img src="{{ item.car.image.url }}" alt="{{ item.car.name }}">
-                </td>
-                <td>{{ item.car.name }} <br> ₹{{ item.car.price }}</td>
-                <td>{{ item.quantity }}</td>
-                <td>₹{{ item.total }}</td>
-                {% comment %} <td>
-                    <a href="{% url 'remove_from_cart' car_id=item.car.id %}" class="btn btn-remove">Remove</a>
-                </td> {% endcomment %}
-            </tr>
-            {% endfor %}
-        </tbody>
-    </table>
+{% block content %}
+{# The banner_bg_main, header, logo, header section are in base.html, remove them here #}
+<div class="fashion_section"> 
+    <div class="container cart-container"> {# The cart-container class styles are moved to style.css #}
+        <h2>Your Cart</h2> {# The h2 styles are moved to style.css #}
 
-    {% if total_price > 0 %}
-        <div class="total-price">
-            <strong>Total Price:</strong> ₹{{ total_price }}
-        </div>
+        <table class="table table-bordered table-striped"> {# Bootstrap classes are fine #}
+            <thead>
+                <tr>
+                    <th>Car Image</th>
+                    <th>Car</th>
+                    <th>Quantity</th>
+                    <th>Total</th>
+                    {% comment %} <th>Action</th> {% endcomment %}
+                </tr>
+            </thead>
+            <tbody>
+                {% for item in cart_items %}
+                <tr>
+                    <td>
+                        {# The img styles are moved to style.css #}
+                        <img src="{{ item.car.image.url }}" alt="{{ item.car.name }}" class="cart-item-image">
+                    </td>
+                    <td>{{ item.car.name }} <br> ₹{{ item.car.price }}</td>
+                    <td>{{ item.quantity }}</td>
+                    <td>₹{{ item.total }}</td>
+                    {% comment %} <td>
+                        <a href="{% url 'remove_from_cart' car_id=item.car.id %}" class="btn btn-remove">Remove</a>
+                    </td> {% endcomment %}
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
 
-        <form method="post" action="{% url 'checkout' %}">
-            {% csrf_token %}
-            <button type="submit" class="btn btn-buy">Buy Now</button>
-        </form>
-    {% endif %}
-</div>
+        {% if total_price > 0 %}
+            <div class="total-price"> {# The total-price class styles are moved to style.css #}
+                <strong>Total Price:</strong> ₹{{ total_price }}
+            </div>
 
-<!-- Footer Section -->
-<div class="footer_section layout_padding">
-    <div class="container">
-        <div class="footer_logo"><a href="#"><img src="{% static 'images/footer-logo.png' %}" alt="Ziber Footer Logo"></a></div>
-        <div class="input_bt">
-            <input type="text" class="mail_bt" placeholder="Your Email" name="Your Email">
-            <span class="subscribe_bt" id="basic-addon2"><a href="#">Subscribe</a></span>
-        </div>
-        <div class="footer_menu">
-            <ul>
-                <li><a href="#">Cars</a></li>
-                <li><a href="#">Parts</a></li>
-                <li><a href="#">New Arrivals</a></li>
-                <li><a href="#">Offers</a></li>
-                <li><a href="#">Support</a></li>
-            </ul>
-        </div>
-        <div class="location_main">Customer Care : <a href="#">+1 1800 555 8899</a></div>
+            <form method="post" action="{% url 'checkout' %}">
+                {% csrf_token %}
+                <button type="submit" class="btn btn-buy">Buy Now</button> {# The btn-buy class styles are moved to style.css #}
+            </form>
+        {% endif %}
     </div>
 </div>
+{# The footer and copyright sections are in base.html, remove them here #}
 
-<!-- Scripts -->
-<script src="{% static 'js/jquery.min.js' %}"></script>
-<script src="{% static 'js/popper.min.js' %}"></script>
-<script src="{% static 'js/bootstrap.bundle.min.js' %}"></script>
-<script src="{% static 'js/plugin.js' %}"></script>
-<script src="{% static 'js/jquery.mCustomScrollbar.concat.min.js' %}"></script>
-<script src="{% static 'js/custom.js' %}"></script>
-<script>
-    function openNav() {
-        document.getElementById("mySidenav").style.width = "250px";
-    }
-    function closeNav() {
-        document.getElementById("mySidenav").style.width = "0";
-    }
-</script>
+{% endblock %}
 
-</body>
-</html>
+{% block extra_scripts %}
+{% comment %} Add any specific scripts for cart.html here if needed, otherwise leave empty {% endcomment %}
+{% endblock %}

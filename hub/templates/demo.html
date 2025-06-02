@@ -1,377 +1,205 @@
-<!DOCTYPE html>
+{% extends 'base.html' %}
 {% load static %}
-<html lang="en">
-   <head>
-      <!-- basic -->
-      <meta charset="utf-8">
-      <meta http-equiv="X-UA-Compatible" content="IE=edge">
-      <meta name="viewport" content="width=device-width, initial-scale=1">
-      <!-- mobile metas -->
-      <meta name="viewport" content="width=device-width, initial-scale=1">
-      <meta name="viewport" content="initial-scale=1, maximum-scale=1">
-      <!-- site metas -->
-      <title>index</title>
-      <meta name="keywords" content="">
-      <meta name="description" content="">
-      <meta name="author" content="">
-      <!-- bootstrap css -->
-      <link rel="stylesheet" type="text/css" href="{% static 'css/bootstrap.min.css' %}">
-      <!-- style css -->
-      <link rel="stylesheet" type="text/css" href="{% static 'css/style.css' %}">
-      <!-- Responsive-->
-      <link rel="stylesheet" href="{% static 'css/responsive.css' %}">
-      <!-- fevicon -->
-      <link rel="icon" href="{% static 'images/fevicon.png' %}" type="image/gif" />
-      <!-- Scrollbar Custom CSS -->
-      <link rel="stylesheet" href="{% static 'css/jquery.mCustomScrollbar.min.css' %}">
-      <!-- Tweaks for older IEs-->
-      <link rel="stylesheet" href="https://netdna.bootstrapcdn.com/font-awesome/4.0.3/css/font-awesome.css">
-      <!-- fonts -->
-      <link href="https://fonts.googleapis.com/css?family=Poppins:400,700&display=swap" rel="stylesheet">
-      <!-- font awesome -->
-      <link rel="stylesheet" type="text/css" href="https://stackpath.bootstrapcdn.com/font-awesome/4.7.0/css/font-awesome.min.css">
-      <!--  -->
-      <!-- owl stylesheets -->
-      <link href="https://fonts.googleapis.com/css?family=Great+Vibes|Poppins:400,700&display=swap&subset=latin-ext" rel="stylesheet">
-      <link rel="stylesheet" href="{% static 'css/owl.carousel.min.css' %}">
-      <link rel="stylesoeet" href="{% static 'css/owl.theme.default.min.css' %}">
-      <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/fancybox/2.1.5/jquery.fancybox.min.css" media="screen">
-   </head>
-   <style>
-      .box_main {
-         height: 380px; /* Adjust as needed */
-         overflow: hidden;
-         display: flex;
-         flex-direction: column;
-         justify-content: space-between;
-         padding: 15px;
-         box-shadow: 0 0 10px rgba(0, 0, 0, 0.1); /* Optional for nice effect */
 
+{% block tittle %}Home{% endblock %}
 
-         /* Update the height of the news_section to auto */
-.news_section {
-    height: auto;
-    background-size: cover;
-    background-position: center;
-}
+{% block extra_styles %}
+    {# Add any demo-specific styles here if needed, but aim to put most in style.css #}
+{% endblock %}
 
-/* Ensure the carousel items don't overflow */
-.carousel-inner {
-    overflow: hidden;
-}
+{% block content %}
+    {# The banner_bg_main div contains the header/nav which are in base.html, remove it here #}
 
-/* Ensure that the carousel controls stay at the correct position */
-.carousel-control-prev, .carousel-control-next {
-    position: absolute;
-    top: 50%;
-    transform: translateY(-50%);
-    font-size: 40px;
-    color: white;
-}
-
-/* Optional: Add padding or margins for spacing between sections */
-.news_section {
-    padding-top: 20px;
-    padding-bottom: 20px;
-}
-
-
-      }
-   
-   </style>
-   
-   
-   </style>
-   <body>
-      <!-- banner bg main start -->
-      <div class="banner_bg_main">
-         <!-- header top section start -->
-         <div class="container">
-            <div class="header_section_top">
-               <div class="row">
-                  <div class="col-sm-12">
-                     <div class="custom_menu">
-                        <ul>
-                           <li><a href="{% url 'book_service' %}">Service Booking</a></li>
-                           <li><a href="{% url 'job_list' %}">Career</a></li>
-                           <li><a href="{% url 'car_list' %}">New Releases</a></li>
-                           <li><a href="news">Today's News</a></li>
-                           {% comment %} <li><a href="#">Customer Service</a></li> {% endcomment %}
-                        </ul>
-                     </div>
-                  </div>
-               </div>
-            </div>
-         </div>
-         <!-- header top section start -->
-         <!-- logo section start -->
-         <div class="logo_section">
-            <div class="container">
-               <div class="row">
-                  <div class="col-sm-12">
-                     <h1 class="text-white fw-bold text-center">Ziber</h1>
-
-                     {% comment %} <div class="logo"><a href="index.html"><img src="{% static 'images/logo.png' %}"></a></div> {% endcomment %}
-                  </div>
-               </div>
-            </div>
-         </div>
-         <!-- logo section end -->
-         <!-- header section start -->
-         <div class="header_section">
-            <div class="container">
-               <div class="containt_main">
-                  <div id="mySidenav" class="sidenav">
-                     <a href="javascript:void(0)" class="closebtn" onclick="closeNav()">&times;</a>
-                     <a href="{% url 'home' %}">Home</a>
-                     <a href="{% url 'car_list' %}">New Car</a>
-                     <a href="{% url 'book_service' %}.html">service</a>
-                     <a href="#">Accessories</a>
-                  </div>
-                  <span class="toggle_icon" onclick="openNav()"><img src="{% static 'images/toggle-icon.png' %}"></span>
-                  <div class="dropdown">
-                     <button class="btn btn-secondary dropdown-toggle" type="button" id="dropdownMenuButton" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">All Category 
-                     </button>
-                     <div class="dropdown-menu" aria-labelledby="dropdownMenuButton">
-                        <a class="dropdown-item" href="#">Action</a>
-                        <a class="dropdown-item" href="#">Another action</a>
-                        <a class="dropdown-item" href="#">Something else here</a>
-                     </div>
-                  </div>
-                  <div class="main">
-                     <!-- Another variation with a button -->
-                     <div class="input-group">
-                        <input type="text" class="form-control" placeholder="Search this blog">
-                        <div class="input-group-append">
-                           <button class="btn btn-secondary" type="button" style="background-color: #f26522; border-color:#f26522 ">
-                           <i class="fa fa-search"></i>
-                           </button>
-                        </div>
-                     </div>
-                  </div>
-                  <div class="header_box">
-                     <div class="lang_box ">
-                     
-                     </div>
-                     <div class="login_menu">
-                        <ul>
-                           <li><a href="{% url 'register' %}"><i class="fa fa-user-plus"></i><span class="padding_10">Register</span></a></li>
-
-                           <li><a href="{% url 'login' %}"><i class="fa fa-user"></i><span class="padding_10">Login</span></a></li>
-                        </ul>
-                     </div>
-                  </div>
-               </div>
-            </div>
-         </div>
-         <!-- header section end -->
-         <!-- banner section start -->
-         <div class="banner_section layout_padding" style="height: 100vh; background-size: cover; background-position: center;">
-            <div class="container h-100 d-flex align-items-center justify-content-center">
-                <div id="my_slider" class="carousel slide w-100" data-ride="carousel">
-                    <div class="carousel-inner">
-                        <div class="carousel-item active">
-                            <div class="row justify-content-center">
-                                <div class="col-sm-12 text-center">
-                                    <div class="buynow_bt"><a href="{% url 'car_list' %}">Buy Now</a></div>
-                                </div>
-                            </div>
-                        </div>
-                        <div class="carousel-item">
-                            <div class="row justify-content-center">
-                                <div class="col-sm-12 text-center">
-                                    <div class="buynow_bt"><a href="{% url 'car_list' %}">Buy Now</a></div>
-                                </div>
-                            </div>
-                        </div>
-                        <div class="carousel-item">
-                            <div class="row justify-content-center">
-                                <div class="col-sm-12 text-center">
-                                    <div class="buynow_bt"><a href="{% url 'car_list' %}">Buy Now</a></div>
-                                </div>
+    <!-- banner section start - Content within the banner_bg_main div -->
+    {# The banner_section div had inline styles, use a class instead #}
+    <div class="banner_section_demo layout_padding">
+        <div class="container h-100 d-flex align-items-center justify-content-center">
+            <div id="my_slider" class="carousel slide w-100" data-ride="carousel">
+                <div class="carousel-inner">
+                    <div class="carousel-item active">
+                        <div class="row justify-content-center">
+                            <div class="col-sm-12 text-center">
+                                <div class="buynow_bt"><a href="{% url 'car_list' %}">Buy Now</a></div>
                             </div>
                         </div>
                     </div>
-                    <a class="carousel-control-prev" href="#my_slider" role="button" data-slide="prev">
-                        <i class="fa fa-angle-left"></i>
-                    </a>
-                    <a class="carousel-control-next" href="#my_slider" role="button" data-slide="next">
-                        <i class="fa fa-angle-right"></i>
-                    </a>
-                </div>
-            </div>
-        </div>
-        
-        <!-- banner section end -->
-        </div>
-
-        <!-- news_section layout starts -->
-<div class="news_section layout_padding" style="background-size: cover; background-position: center;">
-    <div class="container h-100 d-flex align-items-center justify-content-center">
-        <div id="news_slider" class="carousel slide w-100" data-ride="carousel">
-            <!-- Latest News Heading -->
-            <div class="latest_news_heading text-center mb-4">
-                <h2>Latest News</h2>
-            </div>
-            <div class="carousel-inner">
-                <!-- News Item 1 -->
-                <div class="carousel-item active">
-                    <div class="row justify-content-center">
-                        <div class="col-sm-12 text-center">
-                            <a href="/news">
-                                <img src="{% static 'images/news1.jpg' %}" alt="News 1" class="img-fluid news-item" />
-                            </a>
+                    <div class="carousel-item">
+                        <div class="row justify-content-center">
+                            <div class="col-sm-12 text-center">
+                                <div class="buynow_bt"><a href="{% url 'car_list' %}">Buy Now</a></div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="carousel-item">
+                        <div class="row justify-content-center">
+                            <div class="col-sm-12 text-center">
+                                <div class="buynow_bt"><a href="{% url 'car_list' %}">Buy Now</a></div>
+                            </div>
                         </div>
                     </div>
                 </div>
-                <!-- News Item 2 -->
-                <div class="carousel-item">
-                    <div class="row justify-content-center">
-                        <div class="col-sm-12 text-center">
-                            <a href="news">
-                                <img src="{% static 'images/news2.jpg' %}" alt="News 2" class="img-fluid news-item" />
-                            </a>
-                        </div>
-                    </div>
-                </div>
-                <!-- News Item 3 -->
-                <div class="carousel-item">
-                    <div class="row justify-content-center">
-                        <div class="col-sm-12 text-center">
-                            <a href="/news">
-                                <img src="{% static 'images/news3.jpg' %}" alt="News 3" class="img-fluid news-item" />
-                            </a>
-                        </div>
-                    </div>
-                </div>
+                <a class="carousel-control-prev" href="#my_slider" role="button" data-slide="prev">
+                    <i class="fa fa-angle-left"></i>
+                </a>
+                <a class="carousel-control-next" href="#my_slider" role="button" data-slide="next">
+                    <i class="fa fa-angle-right"></i>
+                </a>
             </div>
-
-            <!-- Carousel Controls (Increase arrow size) -->
-            <a class="carousel-control-prev" href="#news_slider" role="button" data-slide="prev">
-                <i class="fa fa-angle-left" style="font-size: 40px; color: #fff;"></i>
-            </a>
-            <a class="carousel-control-next" href="#news_slider" role="button" data-slide="next">
-                <i class="fa fa-angle-right" style="font-size: 40px; color: #fff;"></i>
-            </a>
         </div>
     </div>
-</div>
-<!-- news_section layout ends -->
+    <!-- banner section end -->
 
-<div class="new_launch_section layout_padding" style="background-color: #f8f9fa; padding-top: 30px; padding-bottom: 30px;">
-    <div class="container">
-        <!-- New Launch Products Heading -->
-        <div class="text-center mb-4">
-            <h2 class="text-uppercase" style="font-size: 28px; font-weight: bold; color: #333;">New Launch Products</h2>
-        </div>
+    <!-- news_section layout starts -->
+    {# The news_section div had inline styles, use a class instead #}
+    <div class="news_section_demo layout_padding">
+        <div class="container h-100 d-flex align-items-center justify-content-center">
+            <div id="news_slider" class="carousel slide w-100" data-ride="carousel">
+                <!-- Latest News Heading -->
+                <div class="latest_news_heading text-center mb-4">
+                    <h2>Latest News</h2>
+                </div>
+                <div class="carousel-inner">
+                    <!-- News Item 1 -->
+                    <div class="carousel-item active">
+                        <div class="row justify-content-center">
+                            <div class="col-sm-12 text-center">
+                                <a href="{% url 'news' %}"> {# Use URL tag for news #}
+                                    <img src="{% static 'images/news1.jpg' %}" alt="News 1" class="img-fluid news-item"/>
+                                </a>
+                            </div>
+                        </div>
+                    </div>
+                    <!-- News Item 2 -->
+                    <div class="carousel-item">
+                        <div class="row justify-content-center">
+                            <div class="col-sm-12 text-center">
+                                <a href="{% url 'news' %}"> {# Use URL tag for news #}
+                                    <img src="{% static 'images/news2.jpg' %}" alt="News 2" class="img-fluid news-item"/>
+                                </a>
+                            </div>
+                        </div>
+                    </div>
+                    <!-- News Item 3 -->
+                    <div class="carousel-item">
+                        <div class="row justify-content-center">
+                            <div class="col-sm-12 text-center">
+                                <a href="{% url 'news' %}"> {# Use URL tag for news #}
+                                    <img src="{% static 'images/news3.jpg' %}" alt="News 3" class="img-fluid news-item"/>
+                                </a>
+                            </div>
+                        </div>
+                    </div>
+                </div>
 
-        <!-- Product Carousel -->
-        <div id="new_launch_slider" class="carousel slide" data-ride="carousel">
-            <div class="carousel-inner">
-                <!-- Product 1 -->
-                <div class="carousel-item active">
-                    <div class="row justify-content-center">
-                        <div class="col-sm-4 text-center">
-                            <div class="product_item">
-                                <img src="{% static 'images/cp1.jpg' %}" alt="Product 1" class="img-fluid mb-3" style="width: 100%; height: auto;">
-                                <h4 class="product_title" style="font-size: 20px; font-weight: bold; color: #333;">Tata To Likely </h4>
-                                <p class="product_description" style="font-size: 16px; color: #555; line-height: 1.8;">
-                                    This is a description of Product 1. It features excellent quality, modern design, and the latest technology.
-                                </p>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-                <!-- Product 2 -->
-                <div class="carousel-item">
-                    <div class="row justify-content-center">
-                        <div class="col-sm-4 text-center">
-                            <div class="product_item">
-                                <img src="{% static 'images/cp2.jpeg' %}" alt="Product 2" class="img-fluid mb-3" style="width: 100%; height: auto;">
-                                <h4 class="product_title" style="font-size: 20px; font-weight: bold; color: #333;">Toyota Taisor,</h4>
-                                <p class="product_description" style="font-size: 16px; color: #555; line-height: 1.8;">
-                                    Product 2 is a state-of-the-art model, providing optimal performance and durability for every user.
-                                </p>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-                <!-- Product 3 -->
-                <div class="carousel-item">
-                    <div class="row justify-content-center">
-                        <div class="col-sm-4 text-center">
-                            <div class="product_item">
-                                <img src="{% static 'images/cp3.jpg' %}" alt="Product 3" class="img-fluid mb-3" style="width: 100%; height: auto;">
-                                <h4 class="product_title" style="font-size: 20px; font-weight: bold; color: #333;">3 MG Cars </h4>
-                                <p class="product_description" style="font-size: 16px; color: #555; line-height: 1.8;">
-                                    The latest in technology, Product 3 offers outstanding features that will change your lifestyle.
-                                </p>
-                            </div>
-                        </div>
-                    </div>
-                </div>
+                <!-- Carousel Controls (Increase arrow size) -->
+                {# The icons had inline styles, use a class instead #}
+                <a class="carousel-control-prev news-carousel-control" href="#news_slider" role="button"
+                   data-slide="prev">
+                    <i class="fa fa-angle-left"></i>
+                </a>
+                <a class="carousel-control-next news-carousel-control" href="#news_slider" role="button"
+                   data-slide="next">
+                    <i class="fa fa-angle-right"></i>
+                </a>
             </div>
-
-            <!-- Carousel Controls -->
-            <a class="carousel-control-prev" href="#new_launch_slider" role="button" data-slide="prev">
-                <i class="fa fa-angle-left" style="font-size: 40px; color: #333;"></i>
-            </a>
-            <a class="carousel-control-next" href="#new_launch_slider" role="button" data-slide="next">
-                <i class="fa fa-angle-right" style="font-size: 40px; color: #333;"></i>
-            </a>
         </div>
     </div>
-</div>
+    <!-- news_section layout ends -->
 
-      
-      <!-- jewellery  section end -->
-      <!-- footer section start -->
-      <div class="footer_section layout_padding">
-         <div class="container">
-            <div class="footer_logo">
-               <h1 style="color: white; font-weight: bold;">Ziber Car Hub</h1>
-           </div>
-               <div class="input_bt">
-               <input type="text" class="mail_bt" placeholder="Your Email" name="Your Email">
-               <span class="subscribe_bt" id="basic-addon2"><a href="#">Subscribe</a></span>
+    {# The new_launch_section div had inline styles, use a class instead #}
+    <div class="new_launch_section_demo layout_padding">
+        <div class="container">
+            <!-- New Launch Products Heading -->
+            <div class="text-center mb-4">
+                {# The h2 had inline styles, use a class instead #}
+                <h2 class="text-uppercase new-launch-heading">New Launch Products</h2>
             </div>
-            <div class="footer_menu">
-               <ul>
-                  <li><a href="#">Best Sellers</a></li>
-                  <li><a href="#">Gift Ideas</a></li>
-                  <li><a href="#">New Releases</a></li>
-                  <li><a href="#">Today's Deals</a></li>
-                  <li><a href="#">Customer Service</a></li>
-               </ul>
+
+            <!-- Product Carousel -->
+            <div id="new_launch_slider" class="carousel slide" data-ride="carousel">
+                <div class="carousel-inner">
+                    <!-- Product 1 -->
+                    <div class="carousel-item active">
+                        <div class="row justify-content-center">
+                            <div class="col-sm-4 text-center">
+                                <div class="product_item">
+                                    {# The img had inline styles, use a class instead #}
+                                    <img src="{% static 'images/cp1.jpg' %}" alt="Product 1"
+                                         class="img-fluid mb-3 product-img">
+                                    {# The h4 had inline styles, use a class instead #}
+                                    <h4 class="product_title product-title-style">Tata To Likely </h4>
+                                    {# The p had inline styles, use a class instead #}
+                                    <p class="product_description product-description-style">
+                                        This is a description of Product 1. It features excellent quality, modern design,
+                                        and the latest technology.
+                                    </p>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <!-- Product 2 -->
+                    <div class="carousel-item">
+                        <div class="row justify-content-center">
+                            <div class="col-sm-4 text-center">
+                                <div class="product_item">
+                                    {# The img had inline styles, use a class instead #}
+                                    <img src="{% static 'images/cp2.jpeg' %}" alt="Product 2"
+                                         class="img-fluid mb-3 product-img">
+                                    {# The h4 had inline styles, use a class instead #}
+                                    <h4 class="product_title product-title-style">Toyota Taisor,</h4>
+                                    {# The p had inline styles, use a class instead #}
+                                    <p class="product_description product-description-style">
+                                        Product 2 is a state-of-the-art model, providing optimal performance and durability
+                                        for every user.
+                                    </p>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <!-- Product 3 -->
+                    <div class="carousel-item">
+                        <div class="row justify-content-center">
+                            <div class="col-sm-4 text-center">
+                                <div class="product_item">
+                                    {# The img had inline styles, use a class instead #}
+                                    <img src="{% static 'images/cp3.jpg' %}" alt="Product 3"
+                                         class="img-fluid mb-3 product-img">
+                                    {# The h4 had inline styles, use a class instead #}
+                                    <h4 class="product_title product-title-style">3 MG Cars </h4>
+                                    {# The p had inline styles, use a class instead #}
+                                    <p class="product_description product-description-style">
+                                        The latest in technology, Product 3 offers outstanding features that will change
+                                        your lifestyle.
+                                    </p>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Carousel Controls -->
+                {# The icons had inline styles, use a class instead #}
+                <a class="carousel-control-prev product-carousel-control" href="#new_launch_slider" role="button"
+                   data-slide="prev">
+                    <i class="fa fa-angle-left"></i>
+                </a>
+                <a class="carousel-control-next product-carousel-control" href="#new_launch_slider" role="button"
+                   data-slide="next">
+                    <i class="fa fa-angle-right"></i>
+                </a>
             </div>
-            <div class="location_main">Help Line  Number : <a href="#">+1 1800 1200 1200</a></div>
-         </div>
-      </div>
-      <!-- footer section end -->
-      <!-- copyright section start -->
-      <div class="copyright_section">
-         <div class="container">
-            <p class="copyright_text">© 2020 All Rights Reserved. Design by <a href="https://html.design">Free html  Templates</a></p>
-         </div>
-      </div>
-      <!-- copyright section end -->
-      <!-- Javascript files-->
-      <script src="{% static 'js/jquery.min.js' %}"></script>
-      <script src="{% static 'js/popper.min.js' %}"></script>
-      <script src="{% static 'js/bootstrap.bundle.min.js' %}"></script>
-      <script src="{% static 'js/jquery-3.0.0.min.js' %}"></script>
-      <script src="{% static 'js/plugin.js' %}"></script>
-      <!-- sidebar -->
-      <script src="j{% static 's/jquery.mCustomScrollbar.concat.min.js' %}"></script>
-      <script src="{% static 'js/custom.js' %}"></script>
-      <script>
-         function openNav() {
-           document.getElementById("mySidenav").style.width = "250px";
-         }
-         
-         function closeNav() {
-           document.getElementById("mySidenav").style.width = "0";
-         }
-      </script>
-   </body>
-</html>
+        </div>
+    </div>
+
+    {# The footer_logo div had inline styles, use a class instead #}
+    <div class="footer_logo_demo">
+        <h1>Ziber Car Hub</h1>
+    </div>
+
+    {# The remaining footer and copyright sections are in base.html, remove them here #}
+
+{% endblock %}
+
+{% block extra_scripts %}
+    {# Add any demo-specific scripts here if needed, otherwise leave empty #}
+{% endblock %}
