@@ -105,13 +105,49 @@ def logout_user(request):
 @login_required
 def car_list(request):
     query = request.GET.get('q', '')
-    cars = Car.objects.filter(
-        Q(name__icontains=query) | 
-        Q(brand__icontains=query) |
-        Q(model__icontains=query)
-    ).order_by('-year', 'brand')
-    return render(request, 'car_list.html', {'cars': cars, 'query': query})
-
+    year_filter = request.GET.get('year', '')
+    brand_filter = request.GET.get('brand', '')
+    min_price = request.GET.get('min_price', '')
+    max_price = request.GET.get('max_price', '')
+    
+    cars = Car.objects.all().order_by('-year', 'brand')
+    
+    # Apply filters
+    if query:
+        cars = cars.filter(
+            Q(name__icontains=query) | 
+            Q(brand__icontains=query) |
+            Q(model__icontains=query)
+        )
+    
+    if year_filter:
+        cars = cars.filter(year=year_filter)
+    
+    if brand_filter:
+        cars = cars.filter(brand=brand_filter)
+    
+    if min_price:
+        cars = cars.filter(price__gte=min_price)
+    
+    if max_price:
+        cars = cars.filter(price__lte=max_price)
+    
+    # Get unique years and brands for filter dropdowns
+    years = Car.objects.values_list('year', flat=True).distinct().order_by('-year')
+    brands = Car.objects.values_list('brand', flat=True).distinct().order_by('brand')
+    
+    context = {
+        'cars': cars,
+        'query': query,
+        'years': years,
+        'brands': brands,
+        'selected_year': year_filter,
+        'selected_brand': brand_filter,
+        'min_price': min_price,
+        'max_price': max_price,
+    }
+    
+    return render(request, 'car_list.html', context)
 @login_required
 def car_detail(request, pk):
     car = get_object_or_404(Car, pk=pk)
