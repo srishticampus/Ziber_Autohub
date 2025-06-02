@@ -32,44 +32,26 @@
                <h1 class="fashion_taital">New Cars</h1>
                <div class="fashion_section_2">
                   <div class="row">
-                     <div class="col-lg-4 col-sm-4">
-                        <div class="box_main">
-                           <h4 class="shirt_text">Skoda Kodiaq</h4>
-                           <p class="price_text">Start Price <span class="price-color">$ 300</span></p>
-                           <div class="tshirt_img"><img src="{% static 'images/carbg10.jpg' %}" alt="Skoda Kodiaq"></div>
-                           <div class="btn_main">
-                              <div class="buy_bt"><a href="{% url 'car_list' %}">Buy Now</a></div>
-                              <div class="seemore_bt"><a href="{% url 'car_list' %}">See More</a></div>
-                           </div>
-                        </div>
-                     </div>
-                     <div class="col-lg-4 col-sm-4">
-                        <div class="box_main">
-                           <h4 class="shirt_text">Volkswagen Tiguan R-Line</h4>
-                           <p class="price_text">Start Price <span class="price-color">$ 300</span></p>
-                           <div class="tshirt_img"><img src="{% static 'images/carbg13.jpg' %}" alt="Volkswagen Tiguan"></div>
-                           <div class="btn_main">
-                              <div class="buy_bt"><a href="{% url 'car_list' %}">Buy Now</a></div>
-                              <div class="seemore_bt"><a href="{% url 'car_list' %}">See More</a></div>
-                           </div>
-                        </div>
-                     </div>
-                     <div class="col-lg-4 col-sm-4">
-                        <div class="box_main">
-                           <h4 class="shirt_text">Kia EV6</h4>
-                           <p class="price_text">Start Price <span class="price-color">$ 300</span></p>
-                           <div class="tshirt_img"><img src="{% static 'images/carbg12.png' %}" alt="Kia EV6"></div>
-                           <div class="btn_main">
-                              <div class="buy_bt"><a href="{% url 'car_list' %}">Buy Now</a></div>
-                              <div class="seemore_bt"><a href="{% url 'car_list' %}">See More</a></div>
-                           </div>
-                        </div>
-                     </div>
+                      {% for new_car in new_cars %}
+                      <a href="{% url 'car_detail' new_car.id %}">
+                         <div class="col-lg-4 col-sm-4">
+                            <div class="box_main">
+                               <h4 class="shirt_text">{{new_car.name}}</h4>
+                               <p class="price_text">Start Price <span class="price-color">$ {{new_car.price}}</span></p>
+                               <div class="tshirt_img"><img src="{% static 'images/carbg10.jpg' %}" alt="Skoda Kodiaq"></div>
+                               <div class="btn_main">
+                                  <div class="buy_bt"><a href="{% url 'car_list' %}">Buy Now</a></div>
+                                  <div class="seemore_bt"><a href="{% url 'car_list' %}">See More</a></div>
+                               </div>
+                            </div>
+                         </div>
+                      </a>
+                     {% endfor %}
                   </div>
                </div>
             </div>
          </div>
-         <div class="carousel-item ">
+         <!-- <div class="carousel-item ">
             <div class="container">
                <h1 class="fashion_taital">New Cars</h1>
                <div class="fashion_section_2">
@@ -152,17 +134,17 @@
                   </div>
                </div>
             </div>
-         </div>
+         </div> -->
          <!-- Additional carousel items would go here -->
       </div>
-      <a class="carousel-control-prev" href="#main_slider" role="button" data-slide="prev">
+      <!-- <a class="carousel-control-prev" href="#main_slider" role="button" data-slide="prev">
          <i class="fa fa-angle-left"></i>
          <span class="sr-only">Previous</span>
       </a>
       <a class="carousel-control-next" href="#main_slider" role="button" data-slide="next">
          <i class="fa fa-angle-right"></i>
          <span class="sr-only">Next</span>
-      </a>
+      </a> -->
    </div>
 </div>
 <!-- fashion section end -->
@@ -176,44 +158,26 @@
                <h1 class="fashion_taital">Used Cars</h1>
                <div class="fashion_section_2">
                   <div class="row">
-                     <div class="col-lg-4 col-sm-4">
-                        <div class="box_main">
-                           <h4 class="shirt_text">Maruti Suzuki Swift</h4>
-                           <p class="price_text">Start Price <span class="price-color">$ 100</span></p>
-                           <div class="electronic_img"><img src="{% static 'images/used1.jpg' %}" alt="Maruti Suzuki Swift"></div>
-                           <div class="btn_main">
-                              <div class="buy_bt"><a href="{% url 'car_list' %}">Buy Now</a></div>
-                              <div class="seemore_bt"><a href="{% url 'car_list' %}">See More</a></div>
+                     {% for old_car in old_cars %}
+                     <a href="{% url 'car_detail' old_car.id %}">
+                        <div class="col-lg-4 col-sm-4">
+                           <div class="box_main">
+                              <h4 class="shirt_text">{{old_car.name}}</h4>
+                              <p class="price_text">Start Price <span class="price-color">$ {{old_car.price}}</span></p>
+                              <div class="electronic_img"><img src="{% static 'images/used1.jpg' %}" alt="Maruti Suzuki Swift"></div>
+                              <div class="btn_main">
+                                 <div class="buy_bt"><a href="{% url 'car_list' %}">Buy Now</a></div>
+                                 <div class="seemore_bt"><a href="{% url 'car_list' %}">See More</a></div>
+                              </div>
                            </div>
                         </div>
-                     </div>
-                     <div class="col-lg-4 col-sm-4">
-                        <div class="box_main">
-                           <h4 class="shirt_text">Hyundai i20</h4>
-                           <p class="price_text">Start Price <span class="price-color">$ 100</span></p>
-                           <div class="electronic_img"><img src="{% static 'images/used4.jpg' %}" alt="Hyundai i20"></div>
-                           <div class="btn_main">
-                              <div class="buy_bt"><a href="{% url 'car_list' %}">Buy Now</a></div>
-                              <div class="seemore_bt"><a href="{% url 'car_list' %}">See More</a></div>
-                           </div>
-                        </div>
-                     </div>
-                     <div class="col-lg-4 col-sm-4">
-                        <div class="box_main">
-                           <h4 class="shirt_text">Honda City</h4>
-                           <p class="price_text">Start Price <span class="price-color">$ 100</span></p>
-                           <div class="electronic_img"><img src="{% static 'images/used3.jpg' %}" alt="Honda City"></div>
-                           <div class="btn_main">
-                              <div class="buy_bt"><a href="{% url 'car_list' %}">Buy Now</a></div>
-                              <div class="seemore_bt"><a href="{% url 'car_list' %}">See More</a></div>
-                           </div>
-                        </div>
-                     </div>
+                     </a>
+                     {% endfor %}
                   </div>
                </div>
             </div>
          </div>
-          <div class="carousel-item ">
+          <!-- <div class="carousel-item ">
             <div class="container">
                <h1 class="fashion_taital">Used Cars</h1>
                <div class="fashion_section_2">
@@ -296,17 +260,17 @@
                   </div>
                </div>
             </div>
-         </div>
+         </div> -->
          <!-- Additional carousel items would go here -->
       </div>
-      <a class="carousel-control-prev" href="#electronic_main_slider" role="button" data-slide="prev">
+      <!-- <a class="carousel-control-prev" href="#electronic_main_slider" role="button" data-slide="prev">
          <i class="fa fa-angle-left"></i>
          <span class="sr-only">Previous</span>
       </a>
       <a class="carousel-control-next" href="#electronic_main_slider" role="button" data-slide="next">
          <i class="fa fa-angle-right"></i>
          <span class="sr-only">Next</span>
-      </a>
+      </a> -->
    </div>
 </div>
 <!-- electronic section end -->

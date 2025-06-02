@@ -30,9 +30,9 @@
                         {# The img styles are moved to style.css #}
                         <img src="{{ item.car.image.url }}" alt="{{ item.car.name }}" class="cart-item-image">
                     </td>
-                    <td>{{ item.car.name }} <br> ₹{{ item.car.price }}</td>
+                    <td>{{ item.car.name }}</td>
                     <td>{{ item.quantity }}</td>
-                    <td>₹{{ item.total }}</td>
+                    <td>₹{{ item.car.price }}</td>
                     {% comment %} <td>
                         <a href="{% url 'remove_from_cart' car_id=item.car.id %}" class="btn btn-remove">Remove</a>
                     </td> {% endcomment %}
@@ -41,7 +41,6 @@
             </tbody>
         </table>
 
-        {% if total_price > 0 %}
             <div class="total-price"> {# The total-price class styles are moved to style.css #}
                 <strong>Total Price:</strong> ₹{{ total_price }}
             </div>
@@ -50,7 +49,7 @@
                 {% csrf_token %}
                 <button type="submit" class="btn btn-buy">Buy Now</button> {# The btn-buy class styles are moved to style.css #}
             </form>
-        {% endif %}
+    
     </div>
 </div>
 {# The footer and copyright sections are in base.html, remove them here #}
