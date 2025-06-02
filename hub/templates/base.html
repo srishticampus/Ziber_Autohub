@@ -103,7 +103,7 @@
           <div class="row">
             <div class="col-sm-12">
               <div class="logo">
-                <a href="{% url 'home' %}"> <h1 class="text-white">Ziber Autohub</h1></a>
+                <a href="{% if user.is_authenticated %}{% url 'home' %} {% else %} {% url 'demo' %}{% endif %}"> <h1 class="text-white">Ziber Autohub</h1></a>
               </div>
             </div>
           </div>
@@ -111,7 +111,7 @@
       </div>
       <!-- logo section end -->
       <!-- header section start -->
-      <div class="header_section my-5">
+      <div class="header_section my-3">
         <div class="container">
           <div class="containt_main">
             <div id="mySidenav" class="sidenav">

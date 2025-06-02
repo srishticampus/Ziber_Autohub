@@ -560,7 +560,6 @@ a:hover {
 .fashion_section {
     width: 100%;
     float: left;
-    padding-bottom: 150px;
 }
 
 .fashion_taital {
@@ -1090,6 +1089,7 @@ input.mail_bt::placeholder {
     height: 100vh;
     background-size: cover;
     background-position: center;
+    background-image: url('../images/car26.jpg');
 }
 
 /* Style from demo.html inline style on news carousel controls */

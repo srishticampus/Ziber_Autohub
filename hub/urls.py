@@ -9,8 +9,8 @@ def staff_required(login_url=None):
     return user_passes_test(lambda u: u.is_staff, login_url=login_url)
 
 urlpatterns = [
-    path('', views.index, name='home'),
-    path('demo/', views.demo, name='demo'),
+    path('', views.demo, name='demo'),
+    path('home/', views.index, name='home'),
     
     # Authentication
     path('register/', views.register_user, name='register'),

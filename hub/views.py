@@ -25,6 +25,7 @@ from .forms import (
     JobApplicationForm, JobVacancyForm, CheckoutForm,CarDetailsForm
 )
 
+@login_required
 def index(request):
     return render(request, 'index.html')
 
