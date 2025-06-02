@@ -1,211 +1,84 @@
+{% extends 'base.html' %}
 {% load static %}
-<!DOCTYPE html>
-<html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <title>User Login</title>
-    <link rel="stylesheet" href="{% static 'css/bootstrap.min.css' %}">
-    <link rel="stylesheet" type="text/css" href="{% static 'css/style.css' %}">
-    <link rel="stylesheet" type="text/css" href="{% static 'css/responsive.css' %}">
-    <link rel="icon" href="{% static 'images/fevicon.png' %}" type="image/gif" />
-    <link rel="stylesheet" href="{% static 'css/jquery.mCustomScrollbar.min.css' %}">
-    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/font-awesome/4.7.0/css/font-awesome.min.css">
-    <link href="https://fonts.googleapis.com/css?family=Poppins:400,700&display=swap" rel="stylesheet">
-    <link rel="stylesheet" href="{% static 'css/owl.carousel.min.css' %}">
-    <link rel="stylesheet" href="{% static 'css/owl.theme.default.min.css' %}">
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/fancybox/2.1.5/jquery.fancybox.min.css" media="screen">
-<style>
-    body {
-        background-color: #000;
-        background-image: url("{% static 'images/your-background.jpg' %}");
-        background-size: cover;
-        background-position: center;
-        color: white;
-        font-family: 'Segoe UI', sans-serif;
-    }
 
-    .card {
-        background: rgba(0, 0, 0, 0.85);
-        border: 1px solid #e50914;
-        box-shadow: 0 0 20px rgba(229, 9, 20, 0.4);
-    }
+{% block tittle %}Register Account{% endblock %} {# Added title block #}
 
-    .dark-input {
-        background: transparent;
-        border: none;
-        border-bottom: 1px solid #e50914;
-        color: white;
-        border-radius: 0;
-    }
+{% block extra_styles %}
+    {# Add any register-specific styles here if needed, but aim to put most in style.css #}
+{% endblock %}
 
-    .dark-input::placeholder {
-        color: #bbb;
-    }
+{% block content %}
+{# Use the new CSS class for the background div #}
+<div class="register-background">
+    <!-- login form -->
+    {# Use the new CSS class for the inner container div #}
+    <div class="container d-flex justify-content-center align-items-center register-container-height">
+        <div class="col-lg-8 col-md-10">
+            {# The card and text styles are likely handled by Bootstrap and your style.css #}
+            <div class="card p-4 rounded-4">
+                <h2 class="text-center mb-4 text-white">Create Your Account</h2>
 
-    .dark-input:focus {
-        outline: none;
-        box-shadow: none;
-        border-color: #e50914;
-    }
+                {% if errors %}
+                    {# Error display is fine as is #}
+                    <div class="alert alert-danger">
+                        <ul class="mb-0">
+                            {% for field, error in errors.items %}
+                                <li><strong>{{ field|capfirst }}:</strong> {{ error }}</li>
+                            {% endfor %}
+                        </ul>
+                    </div>
+                {% endif %}
 
-    .form-select.dark-input {
-        color: white;
-        background-color: transparent;
-        border-bottom: 1px solid #e50914;
-    }
+                {# Form structure and input classes are fine as is #}
+                <form method="POST" enctype="multipart/form-data">
+                    {% csrf_token %}
+                    <div class="row">
+                        <div class="col-md-6 mb-3">
+                            <input type="text" name="username" class="form-control dark-input" placeholder="Enter Username *" required>
+                        </div>
+                        <div class="col-md-6 mb-3">
+                            <input type="email" name="email" class="form-control dark-input" placeholder="Enter Email *" required>
+                        </div>
+                        <div class="col-md-6 mb-3">
+                            <input type="password" name="password" class="form-control dark-input" placeholder="Enter Password *" required>
+                        </div>
+                        <div class="col-md-6 mb-3">
+                            <input type="password" name="confirm_password" class="form-control dark-input" placeholder="Confirm Password *" required>
+                        </div>
+                        <div class="col-md-6 mb-3">
+                            <input type="number" name="age" class="form-control dark-input" placeholder="Enter Age *" required>
+                        </div>
+                        <div class="col-md-6 mb-3">
+                            <input type="text" name="place" class="form-control dark-input" placeholder="Enter Place *" required>
+                        </div>
+                        <div class="col-md-6 mb-3">
+                            <input type="text" name="contact_number" class="form-control dark-input" placeholder="Enter Contact Number *" required>
+                        </div>
+                        <div class="col-md-6 mb-3">
+                            <select name="gender" class="form-select dark-input" required>
+                                <option value="">-- Select Gender --</option>
+                                <option value="Male">Male</option>
+                                <option value="Female">Female</option>
+                                <option value="Other">Other</option>
+                            </select>
+                        </div>
+                        <div class="col-md-12 mb-3">
+                            <input type="file" name="user_image" class="form-control dark-input" required>
+                        </div>
+                    </div>
 
-    .btn-danger {
-        background-color: #e50914;
-        border: none;
-        font-weight: bold;
-        text-transform: uppercase;
-    }
-</style>
-</head>
-<body>
-<div class="banner_bg_main" style="background-image: url('{% static 'images/c2.jpg' %}'); background-size: cover; background-position: center; min-height: 100vh;">
-<!-- header top -->
-<div class="container pt-3">
-    <div class="header_section_top">
-        <div class="row">
-            <div class="col-sm-12">
-                <div class="custom_menu">
-                    <ul>
-                        <li><a href="#">Best Sellers</a></li>
-                        <li><a href="#">Gift Ideas</a></li>
-                        <li><a href="#">New Releases</a></li>
-                        <li><a href="#">Today's Deals</a></li>
-                        <li><a href="#">Customer Service</a></li>
-                    </ul>
+                    <div class="text-center">
+                        {# The button class is fine as is #}
+                        <button type="submit" class="btn btn-danger px-5 mt-3">Register</button>
+                    </div>
+                </form>
+
+                {# The login link is fine as is #}
+                <div class="text-center mt-3">
+                    <small class="text-light">Already have an account? <a href="{% url 'login' %}" class="text-decoration-none text-danger">Login here</a></small>
                 </div>
             </div>
         </div>
     </div>
 </div>
-
-<!-- logo -->
-<div class="logo_section text-center mt-3">
-    <h1 class="text-white fw-bold">Ziber Car Hub</h1>
-</div>
-
-<!-- login form -->
-<div class="container d-flex justify-content-center align-items-center" style="min-height: 80vh;">
-    <div class="col-lg-8 col-md-10">
-        <div class="card p-4 rounded-4">
-            <h2 class="text-center mb-4 text-white">Create Your Account</h2>
-
-            {% if errors %}
-                <div class="alert alert-danger">
-                    <ul class="mb-0">
-                        {% for field, error in errors.items %}
-                            <li><strong>{{ field|capfirst }}:</strong> {{ error }}</li>
-                        {% endfor %}
-                    </ul>
-                </div>
-            {% endif %}
-
-            <form method="POST" enctype="multipart/form-data">
-                {% csrf_token %}
-                <div class="row">
-                    <div class="col-md-6 mb-3">
-                        <input type="text" name="username" class="form-control dark-input" placeholder="Enter Username *" required>
-                    </div>
-                    <div class="col-md-6 mb-3">
-                        <input type="email" name="email" class="form-control dark-input" placeholder="Enter Email *" required>
-                    </div>
-                    <div class="col-md-6 mb-3">
-                        <input type="password" name="password" class="form-control dark-input" placeholder="Enter Password *" required>
-                    </div>
-                    <div class="col-md-6 mb-3">
-                        <input type="password" name="confirm_password" class="form-control dark-input" placeholder="Confirm Password *" required>
-                    </div>
-                    <div class="col-md-6 mb-3">
-                        <input type="number" name="age" class="form-control dark-input" placeholder="Enter Age *" required>
-                    </div>
-                    <div class="col-md-6 mb-3">
-                        <input type="text" name="place" class="form-control dark-input" placeholder="Enter Place *" required>
-                    </div>
-                    <div class="col-md-6 mb-3">
-                        <input type="text" name="contact_number" class="form-control dark-input" placeholder="Enter Contact Number *" required>
-                    </div>
-                    <div class="col-md-6 mb-3">
-                        <select name="gender" class="form-select dark-input" required>
-                            <option value="">-- Select Gender --</option>
-                            <option value="Male">Male</option>
-                            <option value="Female">Female</option>
-                            <option value="Other">Other</option>
-                        </select>
-                    </div>
-                    <div class="col-md-12 mb-3">
-                        <input type="file" name="user_image" class="form-control dark-input" required>
-                    </div>
-                </div>
-
-                <div class="text-center">
-                    <button type="submit" class="btn btn-danger px-5 mt-3">Register</button>
-                </div>
-            </form>
-
-            <div class="text-center mt-3">
-                <small class="text-light">Already have an account? <a href="{% url 'login' %}" class="text-decoration-none text-danger">Login here</a></small>
-            </div>
-        </div>
-    </div>
-</div>
-</div>
-
-<!-- Footer Section -->
-<div class="footer_section layout_padding">
-    <div class="container text-center">
-        <div class="footer_logo">
-            <h1 style="color: white; font-weight: bold;">Ziber Car Hub</h1>
-        </div>
-        <div class="input_bt mt-3 mb-3">
-            <input type="text" class="mail_bt" placeholder="Enter your email for updates" name="email">
-            <span class="subscribe_bt" id="basic-addon2"><a href="#">Subscribe</a></span>
-        </div>
-        <div class="footer_menu">
-            <ul>
-                <li><a href="#">Latest Cars</a></li>
-                <li><a href="#">Spare Parts</a></li>
-                <li><a href="#">Featured Models</a></li>
-                <li><a href="#">Seasonal Offers</a></li>
-                <li><a href="#">Customer Service</a></li>
-            </ul>
-        </div>
-        <div class="location_main mt-3">
-            Need Help? Call our Auto Experts: <a href="#">+1 1800 555 8899</a>
-        </div>
-    </div>
-</div>
-
-<!-- Copyright -->
-<div class="copyright_section">
-    <div class="container text-center">
-        <p class="copyright_text">
-            © 2025 Ziber Auto Cars. All Rights Reserved. Designed with passion for cars by 
-            <a href="https://html.design" style="color: #0f0;">HTML Design</a>
-        </p>
-    </div>
-</div>
-
-<!-- Scripts -->
-<script src="{% static 'js/jquery.min.js' %}"></script>
-<script src="{% static 'js/popper.min.js' %}"></script>
-<script src="{% static 'js/bootstrap.bundle.min.js' %}"></script>
-<script src="{% static 'js/jquery-3.0.0.min.js' %}"></script>
-<script src="{% static 'js/plugin.js' %}"></script>
-<script src="{% static 'js/jquery.mCustomScrollbar.concat.min.js' %}"></script>
-<script src="{% static 'js/custom.js' %}"></script>
-<script>
-    function openNav() {
-        document.getElementById("mySidenav").style.width = "250px";
-    }
-
-    function closeNav() {
-        document.getElementById("mySidenav").style.width = "0";
-    }
-</script>
-
-</body>
-</html>
+{% endblock %}

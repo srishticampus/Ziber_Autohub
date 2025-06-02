@@ -1,0 +1,71 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block tittle %}Order Confirmation{% endblock %}
+
+{% block extra_styles %}
+    <style>
+        .order-confirmation-container {
+            max-width: 800px;
+            margin: 50px auto;
+            padding: 30px;
+            background-color: #fff;
+            border-radius: 12px;
+            box-shadow: 0 0 15px rgba(0, 0, 0, 0.1);
+            text-align: center;
+        }
+        .order-confirmation-container h2 {
+            color: #28a745; /* Green color for success */
+            margin-bottom: 20px;
+        }
+        .order-details {
+            margin-top: 20px;
+            text-align: left;
+            border-top: 1px solid #eee;
+            padding-top: 20px;
+        }
+        .order-details p {
+            margin-bottom: 10px;
+        }
+        .order-details strong {
+            color: #333;
+        }
+        .btn-home {
+            margin-top: 30px;
+        }
+    </style>
+{% endblock %}
+
+{% block content %}
+    {# The banner_bg_main, header, logo, header section are in base.html, remove them here #}
+    {# You might want a simple banner or just start with the content area #}
+    <div class="container order-confirmation-container">
+        <h2>Order Placed Successfully!</h2>
+        <p>Thank you for your order. Your order details are below:</p>
+
+        <div class="order-details">
+            <h4>Order Summary</h4>
+            {% if order %}
+                <p><strong>Order ID:</strong> {{ order.id }}</p>
+                <p><strong>Car:</strong> {{ order.car.brand }} {{ order.car.model }}</p>
+                <p><strong>Quantity:</strong> {{ order.quantity }}</p>
+                <p><strong>Total Price:</strong> ₹{{ order.total_price }}</p>
+                <p><strong>Shipping To:</strong> {{ order.name }} ({{ order.email }})</p>
+                <p><strong>Address:</strong> {{ order.address }}</p>
+            {% else %}
+                <p>Order details could not be retrieved.</p>
+            {% endif %}
+        </div>
+
+        <a href="{% url 'home_page' %}" class="btn btn-primary btn-home">Back to Home</a>
+        {# You might want a link to 'my_orders' if you implement that view and template #}
+        {% comment %} <a href="{% url 'my_orders' %}" class="btn btn-outline-secondary btn-home ml-2">View My Orders</a> {% endcomment %}
+    </div>
+
+    {# The footer and copyright sections are in base.html, remove them here #}
+
+{% endblock %}
+
+{% block extra_scripts %}
+    {# Add any order_confirmation-specific scripts here if needed, otherwise leave empty #}
+{% endblock %}

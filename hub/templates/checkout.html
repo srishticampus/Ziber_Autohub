@@ -1,263 +1,118 @@
+{% extends 'base.html' %}
 {% load static %}
-<!DOCTYPE html>
-<html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <title>Checkout</title>
-    <link rel="stylesheet" href="{% static 'css/bootstrap.min.css' %}">
-    <style>
-        body {
-            background-color: #f8f9fa;
-        }
-        .checkout-container {
-            max-width: 700px;
-            margin: 50px auto;
-            background: white;
-            padding: 30px;
-            border-radius: 12px;
-            box-shadow: 0 0 10px rgba(0,0,0,0.1);
-        }
-        .car-image {
-            width: 100%;
-            height: 250px;
-            object-fit: cover;
-            border-radius: 10px;
-        }
-    </style>
 
+{% block tittle %}Checkout{% endblock %} {# Added title block #}
 
-      <link rel="stylesheet" type="text/css" href="{% static 'css/bootstrap.min.css' %}">
-      <link rel="stylesheet" type="text/css" href="{% static 'css/style.css' %}">
-      <link rel="stylesheet" href="{% static 'css/responsive.css' %}">
-      <link rel="icon" href="{% static 'images/fevicon.png' %}" type="image/gif" />
-      <link rel="stylesheet" href="{% static 'css/jquery.mCustomScrollbar.min.css' %}">
-      <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/font-awesome/4.7.0/css/font-awesome.min.css">
-      <link href="https://fonts.googleapis.com/css?family=Poppins:400,700&display=swap" rel="stylesheet">
-      <link rel="stylesheet" href="{% static 'css/owl.carousel.min.css' %}">
-      <link rel="stylesheet" href="{% static 'css/owl.theme.default.min.css' %}">
-      <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/fancybox/2.1.5/jquery.fancybox.min.css" media="screen">
-   </head>
-</head>
-<body>
+{% block extra_styles %}
+    {# Add any checkout-specific styles here if needed, but aim to put most in style.css #}
+{% endblock %}
 
-    <div class="banner_bg_main">
-        <div class="banner_bg_main" style="background-image: url('{% static 'images/c6.jpg' %}'); background-size: cover; background-position: center;">
+{% block content %}
+    {# The outer banner_bg_main div contains content that is in base.html, remove it here #}
+    {# The inner banner_bg_main div had inline styles, use a class instead #}
+    <div class="banner_bg_main checkout-banner-background">
 
-        <!-- header top section start -->
-        <div class="container">
-           <div class="header_section_top">
-              <div class="row">
-                 <div class="col-sm-12">
-                    <div class="custom_menu">
-                       <ul>
-                          <li><a href="#">Best Sellers</a></li>
-                          <li><a href="#">Gift Ideas</a></li>
-                          <li><a href="#">New Releases</a></li>
-                          <li><a href="#">Today's Deals</a></li>
-                          <li><a href="#">Customer Service</a></li>
-                       </ul>
-                    </div>
-                 </div>
-              </div>
-           </div>
-        </div>
-        <!-- header top section start -->
-        <!-- logo section start -->
-        <div class="logo_section">
-           <div class="container">
-              <div class="row">
-                 <div class="col-sm-12">
-                    <h1 class="text-white fw-bold text-center">Ziber Car Hub</h1>
-                </div>
-              </div>
-           </div>
-        </div>
-        <!-- logo section end -->
-        <!-- header section start -->
-        <div class="header_section">
-           <div class="container">
-              <div class="containt_main">
-                 <div id="mySidenav" class="sidenav">
-                    <a href="javascript:void(0)" class="closebtn" onclick="closeNav()">&times;</a>
-                    <a href="index.html">Home</a>
-                    <a href="fashion.html">Fashion</a>
-                    <a href="electronic.html">Electronic</a>
-                    <a href="jewellery.html">Jewellery</a>
-                 </div>
-                 <span class="toggle_icon" onclick="openNav()"><img src="{% static 'images/toggle-icon.png' %}"></span>
-                 <div class="dropdown">
-                    <button class="btn btn-secondary dropdown-toggle" type="button" id="dropdownMenuButton" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">All Category 
-                    </button>
-                    <div class="dropdown-menu" aria-labelledby="dropdownMenuButton">
-                       <a class="dropdown-item" href="#">Action</a>
-                       <a class="dropdown-item" href="#">Another action</a>
-                       <a class="dropdown-item" href="#">Something else here</a>
-                    </div>
-                 </div>
-                 <div class="main">
-                    <!-- Another variation with a button -->
-                    <div class="input-group">
-                       <input type="text" class="form-control" placeholder="Search this blog">
-                       <div class="input-group-append">
-                          <button class="btn btn-secondary" type="button" style="background-color: #f26522; border-color:#f26522 ">
-                          <i class="fa fa-search"></i>
-                          </button>
-                       </div>
-                    </div>
-                 </div>
-                 <div class="header_box">
-                    <div class="lang_box ">
-                       <a href="#" title="Language" class="nav-link" data-toggle="dropdown" aria-expanded="true">
-                       <img src="{% static 'images/flag-uk.png' %}" alt="flag" class="mr-2 " title="United Kingdom"> English <i class="fa fa-angle-down ml-2" aria-hidden="true"></i>
-                       </a>
-                       <div class="dropdown-menu ">
-                          <a href="#" class="dropdown-item">
-                          <img src="{% static 'images/flag-france.png' %}" class="mr-2" alt="flag">
-                          French
-                          </a>
-                       </div>
-                    </div>
-                    <div class="login_menu">
-                     <ul>
-                        <li><a href="{% url 'view_cart' %}">
-                            <i class="fa fa-shopping-cart" aria-hidden="true"></i>
-                            <span class="padding_10">Cart</span></a>
-                         </li>
-                        <li><a href="{% url 'logout' %}"><i class="fa fa-sign-out-alt"></i><span class="padding_10">Logout</span></a></li>
-                    </ul>
-                    </div>
-                 </div>
-              </div>
-           </div>
-        </div>
-        <!-- header section end -->
-        <!-- banner section start -->
+    {# The header, logo, header section are in base.html, remove them here #}
+
+    {# The banner section had inline styles, use a class #}
         <div class="banner_section layout_padding">
             <div class="container">
-               <div id="my_slider" class="carousel slide" data-ride="carousel">
-                  <div class="carousel-inner">
-                     <div class="carousel-item active">
-                        <div class="row">
-                           <div class="col-sm-12 d-flex flex-column align-items-center justify-content-center" style="height: 300px;">
-                              <!-- Text removed -->
-                              <div class="buynow_bt"><a href="#">Buy Now</a></div>
-                           </div>
+                <div id="my_slider" class="carousel slide" data-ride="carousel">
+                    <div class="carousel-inner">
+                        <div class="carousel-item active">
+                            <div class="row">
+                                {# The content div had inline style, use a class #}
+                                <div class="col-sm-12 d-flex flex-column align-items-center justify-content-center banner-carousel-content">
+                                    <!-- Text removed -->
+                                    <div class="buynow_bt"><a href="#">Buy Now</a></div>
+                                </div>
+                            </div>
                         </div>
-                     </div>
-                     <div class="carousel-item">
-                        <div class="row">
-                           <div class="col-sm-12 d-flex flex-column align-items-center justify-content-center" style="height: 300px;">
-                              <!-- Text removed -->
-                              <div class="buynow_bt"><a href="#">Buy Now</a></div>
-                           </div>
+                        <div class="carousel-item">
+                            <div class="row">
+                                {# The content div had inline style, use a class #}
+                                <div class="col-sm-12 d-flex flex-column align-items-center justify-content-center banner-carousel-content">
+                                    <!-- Text removed -->
+                                    <div class="buynow_bt"><a href="#">Buy Now</a></div>
+                                </div>
+                            </div>
                         </div>
-                     </div>
-                     <div class="carousel-item">
-                        <div class="row">
-                           <div class="col-sm-12 d-flex flex-column align-items-center justify-content-center" style="height: 300px;">
-                              <!-- Text removed -->
-                              <div class="buynow_bt"><a href="#">Buy Now</a></div>
-                           </div>
+                        <div class="carousel-item">
+                            <div class="row">
+                                {# The content div had inline style, use a class #}
+                                <div class="col-sm-12 d-flex flex-column align-items-center justify-content-center banner-carousel-content">
+                                    <!-- Text removed -->
+                                    <div class="buynow_bt"><a href="#">Buy Now</a></div>
+                                </div>
+                            </div>
                         </div>
-                     </div>
-                  </div>
-                  <a class="carousel-control-prev" href="#my_slider" role="button" data-slide="prev">
-                     <i class="fa fa-angle-left"></i>
-                  </a>
-                  <a class="carousel-control-next" href="#my_slider" role="button" data-slide="next">
-                     <i class="fa fa-angle-right"></i>
-                  </a>
-               </div>
+                    </div>
+                    <a class="carousel-control-prev" href="#my_slider" role="button" data-slide="prev">
+                        <i class="fa fa-angle-left"></i>
+                    </a>
+                    <a class="carousel-control-next" href="#my_slider" role="button" data-slide="next">
+                        <i class="fa fa-angle-right"></i>
+                    </a>
+                </div>
             </div>
-         </div>
-         
-        <!-- banner section end -->
-     </div>
+        </div>
+
+    </div> {# Close the checkout-banner-background div #}
+
     <!-- Checkout Section Start -->
-<div class="container checkout-container mt-5">
-    <h2 class="text-center mb-4 text-white fw-bold" style="text-shadow: 1px 1px 2px #000;">Checkout</h2>
+    <div class="container checkout-container mt-5"> {# The checkout-container class styles are moved to style.css #}
+        {# The h2 has Bootstrap classes and inline style, move inline style to style.css #}
+        <h2 class="text-center mb-4 text-white fw-bold checkout-heading-text-shadow">Checkout</h2>
 
-    <div class="row mb-4">
-        <div class="col-md-6">
-            <img src="{{ car.image.url }}" alt="Car Image" class="car-image">
+        <div class="row mb-4"> {# Bootstrap classes are fine #}
+            <div class="col-md-6"> {# Bootstrap classes are fine #}
+                {# The car-image class styles are moved to style.css #}
+                <img src="{{ car.image.url }}" alt="Car Image" class="car-image">
+            </div>
+            {# The col-md-6 has Bootstrap classes, which are fine #}
+            <div class="col-md-6 d-flex flex-column justify-content-center">
+                {# Bootstrap classes are fine #}
+                <h4 class="fw-bold mb-2">Car: <span class="text-dark">{{ car.brand }} {{ car.model }}</span></h4>
+                <h5 class="text-muted">Price: <strong class="text-success">₹{{ car.price }}</strong></h5>
+            </div>
         </div>
-        <div class="col-md-6 d-flex flex-column justify-content-center">
-            <h4 class="fw-bold mb-2">Car: <span class="text-dark">{{ car.brand }} {{ car.model }}</span></h4>
-            <h5 class="text-muted">Price: <strong class="text-success">₹{{ car.price }}</strong></h5>
-        </div>
+
+        <form method="post" action="{% url 'process_order' %}"> {# Form attributes are fine #}
+            {% csrf_token %} {# CSRF token is essential #}
+
+            <div class="row"> {# Bootstrap class is fine #}
+                <div class="col-md-6 mb-3"> {# Bootstrap classes are fine #}
+                    {# Bootstrap class is fine #}
+                    <label for="name" class="form-label fw-semibold">Full Name:</label>
+                    {# Bootstrap classes are fine #}
+                    <input type="text" name="name" class="form-control rounded" required>
+                </div>
+
+                <div class="col-md-6 mb-3"> {# Bootstrap classes are fine #}
+                    {# Bootstrap class is fine #}
+                    <label for="email" class="form-label fw-semibold">Email Address:</label>
+                    {# Bootstrap classes are fine #}
+                    <input type="email" name="email" class="form-control rounded" required>
+                </div>
+            </div>
+
+            <div class="mb-3"> {# Bootstrap class is fine #}
+                {# Bootstrap class is fine #}
+                <label for="address" class="form-label fw-semibold">Shipping Address:</label>
+                {# Bootstrap classes are fine #}
+                <textarea name="address" class="form-control rounded" rows="3" required></textarea>
+            </div>
+
+            {# Bootstrap classes are fine #}
+            <button type="submit" class="btn btn-success btn-lg w-100 mt-3 fw-bold">Place Order</button>
+        </form>
     </div>
+    <!-- Checkout Section End -->
 
-    <form method="post" action="{% url 'process_order' %}">
-        {% csrf_token %}
+    {# The footer and copyright sections are in base.html, remove them here #}
 
-        <div class="row">
-            <div class="col-md-6 mb-3">
-                <label for="name" class="form-label fw-semibold">Full Name:</label>
-                <input type="text" name="name" class="form-control rounded" required>
-            </div>
+{% endblock %}
 
-            <div class="col-md-6 mb-3">
-                <label for="email" class="form-label fw-semibold">Email Address:</label>
-                <input type="email" name="email" class="form-control rounded" required>
-            </div>
-        </div>
-
-        <div class="mb-3">
-            <label for="address" class="form-label fw-semibold">Shipping Address:</label>
-            <textarea name="address" class="form-control rounded" rows="3" required></textarea>
-        </div>
-
-        <button type="submit" class="btn btn-success btn-lg w-100 mt-3 fw-bold">Place Order</button>
-    </form>
-</div>
-<!-- Checkout Section End -->
-
-
-
-    
-      <!-- footer section start -->
-      <div class="footer_section layout_padding">
-        <div class="container">
-           <div class="footer_logo"><a href="#"><img src="{% static 'images/footer-logo.png' %}" alt="Ziber Footer Logo"></a></div>
-           <div class="input_bt">
-              <input type="text" class="mail_bt" placeholder="Your Email" name="Your Email">
-              <span class="subscribe_bt" id="basic-addon2"><a href="#">Subscribe</a></span>
-           </div>
-           <div class="footer_menu">
-              <ul>
-                 <li><a href="#">Cars</a></li>
-                 <li><a href="#">Parts</a></li>
-                 <li><a href="#">New Arrivals</a></li>
-                 <li><a href="#">Offers</a></li>
-                 <li><a href="#">Support</a></li>
-              </ul>
-           </div>
-           <div class="location_main">Customer Care : <a href="#">+1 1800 555 8899</a></div>
-        </div>
-     </div>
-     <!-- footer section end -->
-
-     <!-- copyright section -->
-     <div class="copyright_section">
-        <div class="container">
-           <p class="copyright_text">© 2025 Ziber Automobiles. All Rights Reserved. Designed by <a href="https://html.design">HTML Design</a></p>
-        </div>
-     </div>
-
-     <!-- Javascript files-->
-     <script src="{% static 'js/jquery.min.js' %}"></script>
-     <script src="{% static 'js/popper.min.js' %}"></script>
-     <script src="{% static 'js/bootstrap.bundle.min.js' %}"></script>
-     <script src="{% static 'js/plugin.js' %}"></script>
-     <script src="{% static 'js/jquery.mCustomScrollbar.concat.min.js' %}"></script>
-     <script src="{% static 'js/custom.js' %}"></script>
-     <script>
-        function openNav() {
-          document.getElementById("mySidenav").style.width = "250px";
-        }
-        function closeNav() {
-          document.getElementById("mySidenav").style.width = "0";
-        }
-     </script>
-</body>
-</html>
+{% block extra_scripts %}
+{% comment %} Add any specific scripts for checkout.html here if needed, otherwise leave empty {% endcomment %}
+{% endblock %}
