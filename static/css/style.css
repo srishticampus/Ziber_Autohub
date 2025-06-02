@@ -872,9 +872,16 @@ a:hover {
 
 .footer_section {
     width: 100%;
-.footer_logo_styles {
+    float: left;
+    background-color: #252525;
+    height: auto;
+}
+.footer_logo {
 /* register page styles */
+    width: 100%;
+    text-align: center;
 
+}
 .form-container {
     background-color: #ffffff;
     padding: 30px;

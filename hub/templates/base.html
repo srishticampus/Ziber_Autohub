@@ -134,9 +134,9 @@
                 {% endif %}
               {% endif %}
             </div>
-            <span class="toggle_icon" onclick="openNav()"
-              ><img src="{% static 'images/toggle-icon.png' %}"
-            /></span>
+            <span class="toggle_icon" onclick="openNav()">
+              <img src="{% static 'images/toggle-icon.png' %}" alt="toggle icon"/>
+            </span>
             <div class="dropdown">
               <button
                 class="btn btn-secondary dropdown-toggle"
@@ -214,9 +214,7 @@
     <div class="footer_section layout_padding">
       <div class="container">
         <div class="footer_logo">
-          <a href="index.html"
-            ><img src="{% static 'images/footer-logo.png' %}"
-          /></a>
+         <a href="{% url 'home' %}"> <h1 class="text-white fw-bold">Ziber Autohub</h1></a>
         </div>
         <div class="input_bt">
           <input
