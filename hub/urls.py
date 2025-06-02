@@ -46,4 +46,4 @@ urlpatterns = [
 
     #ml prediction page
     path('predict/', views.predict_price, name='predict_price'),
-]
+] 

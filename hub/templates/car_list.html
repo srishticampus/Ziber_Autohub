@@ -52,11 +52,12 @@
 
       <!-- fashion section start -->
       {# The fashion section has a py-5 class which is fine, keep it #}
-      <div class="fashion_section py-5">
+      <div class="fashion_section bg-dark py-5">
          <div class="container">
             {# The h2 has Bootstrap classes, which is fine #}
             <h2 class="text-center mb-5 text-white fw-bold">Collection</h2>
             <div class="row">
+                 {% if cars %}
                  {% for car in cars %}
                  <div class="col-lg-4 col-md-6 mb-4">
                      {# The card has Bootstrap classes, which is fine #}
@@ -90,10 +91,16 @@
                      </div>
                  </div>
                  {% endfor %}
-             </div>
+                 {% else %}
+                 <div class="col-12 m-auto d-flex justify-content-center align-items-center ">
+                     <div class="alert alert-light text-center mt-4" role="alert">
+                         No cars available at the moment.
+                     </div>  
+                  </div>
+                  {% endif %}
          </div>
      </div>
-
+   </div>
       <!-- fashion section end -->
 
       {# The footer and copyright sections are in base.html, remove them here #}

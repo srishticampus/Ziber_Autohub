@@ -6,22 +6,16 @@ from django.contrib import messages
 from django.contrib.auth.decorators import login_required
 from django.contrib.auth import authenticate, login as auth_login, logout as auth_logout
 from django.db.models import Q
-from django.utils import timezone
-from django.views.generic import TemplateView, CreateView, ListView
-from django.contrib.auth.mixins import LoginRequiredMixin,UserPassesTestMixin
-from django.contrib.admin.views.decorators import staff_member_required
 from django.core.exceptions import PermissionDenied
 from django.contrib.auth.models import User
 from django.core.validators import validate_email
 from django.core.exceptions import ValidationError
-from django.urls import reverse_lazy
 from .models import UserProfile
 from .models import (
     Car, Cart, CartItem, Order, OrderItem, 
     ServiceBooking, JobVacancy, JobApplication
 )
-from .forms import (
-    UserRegistrationForm, ServiceBookingForm,
+from .forms import ( ServiceBookingForm,
     JobApplicationForm, JobVacancyForm, CheckoutForm,CarDetailsForm
 )
 
