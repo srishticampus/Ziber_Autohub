@@ -1,118 +1,19 @@
 {% extends 'base.html' %}
 {% load static %}
 
-{% block tittle %}Checkout{% endblock %} {# Added title block #}
-
-{% block extra_styles %}
-    {# Add any checkout-specific styles here if needed, but aim to put most in style.css #}
-{% endblock %}
-
 {% block content %}
-    {# The outer banner_bg_main div contains content that is in base.html, remove it here #}
-    {# The inner banner_bg_main div had inline styles, use a class instead #}
-    <div class="banner_bg_main checkout-banner-background">
+<div class="container mt-5">
+    <h2>Checkout</h2>
 
-    {# The header, logo, header section are in base.html, remove them here #}
+    <form method="post">
+        {% csrf_token %}
+        {{ form.as_p }}
 
-    {# The banner section had inline styles, use a class #}
-        <div class="banner_section layout_padding">
-            <div class="container">
-                <div id="my_slider" class="carousel slide" data-ride="carousel">
-                    <div class="carousel-inner">
-                        <div class="carousel-item active">
-                            <div class="row">
-                                {# The content div had inline style, use a class #}
-                                <div class="col-sm-12 d-flex flex-column align-items-center justify-content-center banner-carousel-content">
-                                    <!-- Text removed -->
-                                    <div class="buynow_bt"><a href="#">Buy Now</a></div>
-                                </div>
-                            </div>
-                        </div>
-                        <div class="carousel-item">
-                            <div class="row">
-                                {# The content div had inline style, use a class #}
-                                <div class="col-sm-12 d-flex flex-column align-items-center justify-content-center banner-carousel-content">
-                                    <!-- Text removed -->
-                                    <div class="buynow_bt"><a href="#">Buy Now</a></div>
-                                </div>
-                            </div>
-                        </div>
-                        <div class="carousel-item">
-                            <div class="row">
-                                {# The content div had inline style, use a class #}
-                                <div class="col-sm-12 d-flex flex-column align-items-center justify-content-center banner-carousel-content">
-                                    <!-- Text removed -->
-                                    <div class="buynow_bt"><a href="#">Buy Now</a></div>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-                    <a class="carousel-control-prev" href="#my_slider" role="button" data-slide="prev">
-                        <i class="fa fa-angle-left"></i>
-                    </a>
-                    <a class="carousel-control-next" href="#my_slider" role="button" data-slide="next">
-                        <i class="fa fa-angle-right"></i>
-                    </a>
-                </div>
-            </div>
+        <div class="total-checkout-price mb-3">
+            <strong>Total Price:</strong> ₹{{ total_price }}
         </div>
 
-    </div> {# Close the checkout-banner-background div #}
-
-    <!-- Checkout Section Start -->
-    <div class="container checkout-container mt-5"> {# The checkout-container class styles are moved to style.css #}
-        {# The h2 has Bootstrap classes and inline style, move inline style to style.css #}
-        <h2 class="text-center mb-4 text-white fw-bold checkout-heading-text-shadow">Checkout</h2>
-
-        <div class="row mb-4"> {# Bootstrap classes are fine #}
-            <div class="col-md-6"> {# Bootstrap classes are fine #}
-                {# The car-image class styles are moved to style.css #}
-                <img src="{{ car.image.url }}" alt="Car Image" class="car-image">
-            </div>
-            {# The col-md-6 has Bootstrap classes, which are fine #}
-            <div class="col-md-6 d-flex flex-column justify-content-center">
-                {# Bootstrap classes are fine #}
-                <h4 class="fw-bold mb-2">Car: <span class="text-dark">{{ car.brand }} {{ car.model }}</span></h4>
-                <h5 class="text-muted">Price: <strong class="text-success">₹{{ car.price }}</strong></h5>
-            </div>
-        </div>
-
-        <form method="post" action="{% url 'process_order' %}"> {# Form attributes are fine #}
-            {% csrf_token %} {# CSRF token is essential #}
-
-            <div class="row"> {# Bootstrap class is fine #}
-                <div class="col-md-6 mb-3"> {# Bootstrap classes are fine #}
-                    {# Bootstrap class is fine #}
-                    <label for="name" class="form-label fw-semibold">Full Name:</label>
-                    {# Bootstrap classes are fine #}
-                    <input type="text" name="name" class="form-control rounded" required>
-                </div>
-
-                <div class="col-md-6 mb-3"> {# Bootstrap classes are fine #}
-                    {# Bootstrap class is fine #}
-                    <label for="email" class="form-label fw-semibold">Email Address:</label>
-                    {# Bootstrap classes are fine #}
-                    <input type="email" name="email" class="form-control rounded" required>
-                </div>
-            </div>
-
-            <div class="mb-3"> {# Bootstrap class is fine #}
-                {# Bootstrap class is fine #}
-                <label for="address" class="form-label fw-semibold">Shipping Address:</label>
-                {# Bootstrap classes are fine #}
-                <textarea name="address" class="form-control rounded" rows="3" required></textarea>
-            </div>
-
-            {# Bootstrap classes are fine #}
-            <button type="submit" class="btn btn-success btn-lg w-100 mt-3 fw-bold">Place Order</button>
-        </form>
-    </div>
-    <!-- Checkout Section End -->
-
-    {# The footer and copyright sections are in base.html, remove them here #}
-
-{% endblock %}
-
-{% block extra_scripts %}
-{% comment %} Add any specific scripts for checkout.html here if needed, otherwise leave empty {% endcomment %}
+        <button type="submit" class="btn btn-success">Place Order</button>
+    </form>
+</div>
 {% endblock %}
