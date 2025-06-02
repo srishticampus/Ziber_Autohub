@@ -77,15 +77,24 @@
                                        <a href="{% url 'car_detail' car.id %}" class="btn btn-outline-primary btn-sm">See More</a>
                                    </div>
 
-                                    <form method="post" action="{% url 'buy_now' car.id %}">
-                                         {% csrf_token %}
-                                         <button type="submit" class="btn btn-success btn-sm">Buy Now</button>
-                                     </form>
+                                    <div class="action-buttons mt-4">
+                                    {% if car.is_new %}
+                                       <form method="post" action="">
+                                             {% csrf_token %}
+                                             <button type="submit" class="btn btn-info">Pre Book</button>
+                                       </form>
+                                    {% else %}
+                                       <form method="post" action="{% url 'buy_now' car.id %}">
+                                             {% csrf_token %}
+                                             <button type="submit" class="btn btn-success">Buy Now</button>
+                                       </form>
+                                       <!-- <form method="post" action="{% url 'add_to_cart' car.id %}">
+                                             {% csrf_token %}
+                                             <button type="submit" class="btn btn-primary">Add to Cart</button>
+                                       </form> -->
+                                    {% endif %}
                                  </div>
-                                 <form method="post" action="{% url 'add_to_cart' car.id %}" class="mt-2">
-                                     {% csrf_token %}
-                                     <button type="submit" class="btn btn-primary btn-sm w-100">Add to Cart</button>
-                                 </form>
+                              </div>
                              </div>
                          </div>
                      </div>
