@@ -1,4 +1,4 @@
-#hub/urls.py
+# hub/urls.py
 from django.urls import path
 from . import views
 
@@ -14,6 +14,7 @@ urlpatterns = [
 
     # Cars
     path('cars/', views.car_list, name='car_list'),
+    path('used-cars/', views.used_car_list, name='used_car_list'), # New URL for used cars
     path('cars/<int:pk>/', views.car_detail, name='car_detail'),
     
     # Cart
@@ -41,14 +42,13 @@ urlpatterns = [
     path('buy_now/<int:pk>/', views.buy_now, name='buy_now'),
 
     # pre-booking
-    # path('pre_book/<int:car_id>/', views.pre_book_car, name='pre_book_car'),
     path('pre-book/<int:car_id>/', views.pre_book_car, name='pre_book_car'),
     path('my-prebookings/', views.my_prebookings, name='my_prebookings'),
     
     # Other pages
     path('news/', views.news, name='news'),
-    path('products/', views.products, name='products'),
+    path('products/', views.products, name='products'), # This should ideally be 'new_releases' or something similar
 
     #ml prediction page
     path('predict/', views.predict_price, name='predict_price'),
-] 
+]
