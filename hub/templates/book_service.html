@@ -1,0 +1,36 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block tittle %}Service booking{% endblock %} {# Added title block #}
+
+{% block extra_styles %}
+    {# Add any car_detail-specific styles here if needed, but aim to put most in style.css #}
+{% endblock %}
+
+{% block content %}
+<h2>Book a Service</h2>
+
+<form method="post">
+    {% csrf_token %}
+    <label>Select Car:</label>
+    <select name="car" required>
+        {% for car in eligible_cars %}
+            <option value="{{ car.id }}">{{ car.name }} - {{ car.model }}</option>
+        {% endfor %}
+    </select><br><br>
+
+    <label>Service Type:</label>
+    <select name="service_type" required>
+        <option value="1st">1st Service</option>
+        <option value="2nd">2nd Service</option>
+        <option value="3rd">3rd Service</option>
+        <option value="4th">4th Service</option>
+    </select><br><br>
+
+    <label>Description:</label><br>
+    <textarea name="description" rows="4" cols="40" required></textarea><br><br>
+
+    <button type="submit" class="btn btn-primary">Book Service</button>
+</form>
+
+{% endblock %}

@@ -38,25 +38,25 @@ class UserRegistrationForm(UserCreationForm):
             )
         return user
 
-class ServiceBookingForm(forms.ModelForm):
-    class Meta:
-        model = ServiceBooking
-        fields = ['car_model', 'service_date', 'description', 'car_image']
-        widgets = {
-            'service_date': forms.DateInput(attrs={'type': 'date'}),
-            'description': forms.Textarea(attrs={'rows': 3}),
-        }
+# class ServiceBookingForm(forms.ModelForm):
+#     class Meta:
+#         model = ServiceBooking
+#         fields = ['car_model', 'service_date', 'description', 'car_image']
+#         widgets = {
+#             'service_date': forms.DateInput(attrs={'type': 'date'}),
+#             'description': forms.Textarea(attrs={'rows': 3}),
+#         }
 
-    def __init__(self, *args, **kwargs):
-        super().__init__(*args, **kwargs)
-        for field in self.fields:
-            self.fields[field].widget.attrs.update({'class': 'form-control'})
+#     def __init__(self, *args, **kwargs):
+#         super().__init__(*args, **kwargs)
+#         for field in self.fields:
+#             self.fields[field].widget.attrs.update({'class': 'form-control'})
 
-    def clean_service_date(self):
-        date = self.cleaned_data.get('service_date')
-        if date and date < timezone.now().date():
-            raise ValidationError("Service date cannot be in the past.")
-        return date
+#     def clean_service_date(self):
+#         date = self.cleaned_data.get('service_date')
+#         if date and date < timezone.now().date():
+#             raise ValidationError("Service date cannot be in the past.")
+#         return date
 
 class JobApplicationForm(forms.ModelForm):
     cover_letter = forms.CharField(widget=forms.Textarea(attrs={'rows': 4}), required=False)
