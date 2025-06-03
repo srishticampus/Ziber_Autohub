@@ -13,11 +13,12 @@ from django.core.exceptions import ValidationError
 from .models import UserProfile
 from .models import (
     Car, Cart, CartItem, Order, OrderItem, 
-    ServiceBooking, JobVacancy, JobApplication
+    ServiceBooking, JobVacancy, JobApplication, PreBooking
 )
 from .forms import ( ServiceBookingForm,
-    JobApplicationForm, JobVacancyForm, CheckoutForm,CarDetailsForm
+    JobApplicationForm, JobVacancyForm, CheckoutForm,CarDetailsForm, PreBookingForm
 )
+from datetime import timedelta, date
 
 @login_required
 def index(request):
@@ -445,3 +446,32 @@ def predict_price(request):
 
     return render(request, 'predict_form.html', {'form': form})
 
+# pre bookng code 
+
+@login_required
+def pre_book_car(request, car_id):
+    car = get_object_or_404(Car, pk=car_id, is_new=True)
+    existing_booking = PreBooking.objects.filter(user=request.user, car=car).exists()
+
+    if existing_booking:
+        messages.error(request, 'You have already pre-booked this car.')
+        return redirect('my_prebookings')
+
+    if request.method == 'POST':
+        form = PreBookingForm(request.POST)
+        if form.is_valid():
+            booking = form.save(commit=False)
+            booking.user = request.user
+            booking.car = car
+            booking.delivery_date = date.today() + timedelta(days=60)
+            booking.save()
+            return redirect('my_prebookings')
+    else:
+        form = PreBookingForm()
+
+    return render(request, 'prebook_car.html', {'form': form, 'car': car})
+
+@login_required
+def my_prebookings(request):
+    bookings = PreBooking.objects.filter(user=request.user)
+    return render(request, 'my_prebookings.html', {'bookings': bookings})

@@ -87,14 +87,21 @@
 
                         {# The action-buttons class styles are moved to style.css #}
                         <div class="action-buttons mt-4">
-                            <form method="post" action="{% url 'buy_now' car.id %}">
-                                {% csrf_token %}
-                                <button type="submit" class="btn btn-success">Buy Now</button>
-                            </form>
-                            <!-- <form method="post" action="{% url 'add_to_cart' car.id %}">
-                                {% csrf_token %}
-                                <button type="submit" class="btn btn-primary">Add to Cart</button>
-                            </form> -->
+                            {% if car.is_new %}
+                                <form method="post" action="{% url 'pre_book_car' car.id %}">
+                                    {% csrf_token %}
+                                    <button type="submit" class="btn btn-info">Pre Book</button>
+                                </form>
+                            {% else %}
+                                <form method="post" action="{% url 'buy_now' car.id %}">
+                                    {% csrf_token %}
+                                    <button type="submit" class="btn btn-success">Buy Now</button>
+                                </form>
+                                <!-- <form method="post" action="{% url 'add_to_cart' car.id %}">
+                                    {% csrf_token %}
+                                    <button type="submit" class="btn btn-primary">Add to Cart</button>
+                                </form> -->
+                            {% endif %}
                         </div>
                     </div>
                 </div> <!-- /car-detail-card -->
@@ -110,3 +117,4 @@
 {% comment %} Add any specific scripts for car_detail.html here if needed, otherwise leave empty {% endcomment %}
 {% endblock %}
 {# Removed extra closing body and html tags #}
+

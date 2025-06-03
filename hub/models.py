@@ -3,6 +3,7 @@ from django.db import models
 from django.core.exceptions import ValidationError
 from django.utils import timezone
 from django.contrib.auth.models import User
+from datetime import timedelta, date
 
 class UserProfile(models.Model):
     GENDER_CHOICES = [
@@ -199,3 +200,20 @@ class JobApplication(models.Model):
 
     def __str__(self):
         return f"Application for {self.job.title} by {self.applicant.username}"
+    
+class PreBooking(models.Model):
+    user = models.ForeignKey(User, on_delete=models.CASCADE)
+    car = models.ForeignKey(Car, on_delete=models.CASCADE)
+    booking_date = models.DateField(auto_now_add=True)
+    delivery_date = models.DateField()
+    address = models.TextField()
+    payment_status = models.CharField(max_length=20, default="Pending")
+    status = models.CharField(max_length=20, default="Booked")
+
+    def save(self, *args, **kwargs):
+        if not self.delivery_date:
+            self.delivery_date = self.booking_date + timedelta(days=60)
+  
+        if date.today() >= self.delivery_date:
+            self.status = "Delivered"
+        super().save(*args, **kwargs)
