@@ -1,12 +1,75 @@
-{% extends "base.html" %} 
+{% extends "base.html" %}
+
 {% block title %}
 Car Price Prediction - Ziber Autohub
-{% endblock %} 
+{% endblock %}
+
+{% block extra_styles %}
+<style>
+    /* Styles for the Prediction Form Card */
+    .predict-card { /* Renamed from .login-card */
+        background-color: #ffffff; /* White background for visibility */
+        padding: 30px;
+        border-radius: 8px;
+        box-shadow: 0 4px 12px rgba(0, 0, 0, 0.2); /* Subtle shadow for depth */
+        margin-top: 50px; /* Adjust as needed to push it down from header */
+        margin-bottom: 50px; /* Adjust as needed */
+    }
+    .predict-card h2 {
+        color: #333333; /* Darker heading color */
+        margin-bottom: 25px;
+        font-weight: 700;
+    }
+    .predict-card .form-label {
+        color: #555555; /* Dark gray for labels */
+        font-weight: 500;
+        margin-bottom: 5px;
+    }
+    .predict-card .form-control {
+        border: 1px solid #ced4da; /* Standard border */
+        padding: 10px 15px;
+        border-radius: 5px;
+        margin-bottom: 15px; /* Spacing below each input */
+    }
+    .predict-card .form-control:focus {
+        border-color: #f26522; /* Highlight on focus */
+        box-shadow: 0 0 0 0.25rem rgba(242, 101, 34, 0.25);
+    }
+    .predict-card .text-danger {
+        color: #dc3545; /* Bootstrap red for error messages */
+        font-size: 0.875em;
+        margin-top: -10px; /* Pull error message closer to field */
+        margin-bottom: 10px;
+    }
+    .predict-card .btn-danger {
+        background-color: #f26522; /* Your brand color for buttons */
+        border-color: #f26522;
+        color: white;
+        padding: 10px 20px;
+        font-size: 1.1em;
+        font-weight: 600;
+        border-radius: 5px;
+        transition: background-color 0.3s ease;
+    }
+    .predict-card .btn-danger:hover {
+        background-color: #e05e1e; /* Darker shade on hover */
+        border-color: #e05e1e;
+    }
+
+    /* Ensure the main content area has enough vertical padding if needed,
+       though my-5 on col-md-6 usually handles this well for the container */
+    .container.my-5 {
+        padding-top: 50px;
+        padding-bottom: 50px;
+    }
+</style>
+{% endblock %}
+
 {% block content %}
-<div class="container my-5">
+<div class="container bg-dark">
   <div class="row justify-content-center">
-    <div class="col-md-6 col-lg-5 my-5">
-      <div class="login-card">
+    <div class="col-md-6 col-lg-5">
+      <div class="predict-card"> 
         <h2 class="text-center">Predict Car Selling Price</h2>
         <form method="post" novalidate>
           {% csrf_token %}
@@ -16,7 +79,7 @@ Car Price Prediction - Ziber Autohub
               <label class="form-label" for="{{ field.id_for_label }}">{{ field.label }}</label>
               {{ field }}
               {% if field.errors %}
-                <div class="text-danger">{{ field.errors|striptags }}</div>
+                <div class="text-danger mt-3">{{ field.errors|striptags }}</div>
               {% endif %}
             </div>
           {% endfor %}
@@ -27,4 +90,3 @@ Car Price Prediction - Ziber Autohub
   </div>
 </div>
 {% endblock %}
-

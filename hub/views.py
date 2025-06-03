@@ -1,4 +1,4 @@
-#hub/views.py
+# hub/views.py
 import os
 import joblib
 from django.shortcuts import render, redirect, get_object_or_404
@@ -16,7 +16,7 @@ from .models import (
     ServiceBooking, JobVacancy, JobApplication, PreBooking
 )
 from .forms import ( ServiceBookingForm,
-    JobApplicationForm, JobVacancyForm, CheckoutForm,CarDetailsForm, PreBookingForm
+    JobApplicationForm, JobVacancyForm, CheckoutForm,CarDetailsForm, PreBookingForm, UsedCarFilterForm
 )
 from datetime import timedelta, date
 
@@ -148,6 +148,65 @@ def car_list(request):
     }
     
     return render(request, 'car_list.html', context)
+
+@login_required
+def used_car_list(request):
+    query = request.GET.get('q', '')
+    year_filter = request.GET.get('year', '')
+    brand_filter = request.GET.get('brand', '')
+    min_price = request.GET.get('min_price', '')
+    max_price = request.GET.get('max_price', '')
+    min_kms = request.GET.get('min_kms', '')
+    max_kms = request.GET.get('max_kms', '')
+    
+    cars = Car.objects.filter(is_new=False).order_by('-year', 'brand')
+    
+    # Apply filters
+    if query:
+        cars = cars.filter(
+            Q(name__icontains=query) | 
+            Q(brand__icontains=query) |
+            Q(model__icontains=query)
+        )
+    
+    if year_filter:
+        cars = cars.filter(year=year_filter)
+    
+    if brand_filter:
+        cars = cars.filter(brand=brand_filter)
+    
+    if min_price:
+        cars = cars.filter(price__gte=min_price)
+    
+    if max_price:
+        cars = cars.filter(price__lte=max_price)
+
+    if min_kms:
+        cars = cars.filter(kms_driven__gte=min_kms)
+
+    if max_kms:
+        cars = cars.filter(kms_driven__lte=max_kms)
+    
+    # Get unique years and brands for filter dropdowns for used cars
+    years = Car.objects.filter(is_new=False).values_list('year', flat=True).distinct().order_by('-year')
+    brands = Car.objects.filter(is_new=False).values_list('brand', flat=True).distinct().order_by('brand')
+    
+    context = {
+        'cars': cars,
+        'query': query,
+        'years': years,
+        'brands': brands,
+        'selected_year': year_filter,
+        'selected_brand': brand_filter,
+        'min_price': min_price,
+        'max_price': max_price,
+        'min_kms': min_kms,
+        'max_kms': max_kms,
+        'form': UsedCarFilterForm(request.GET), # Pass the form for rendering filters
+    }
+    
+    return render(request, 'used_car_list.html', context)
+
 @login_required
 def car_detail(request, pk):
     car = get_object_or_404(Car, pk=pk)
@@ -244,7 +303,7 @@ def checkout(request):
             messages.success(request, "Order placed successfully!")
             return redirect('payment_success')
     else:
-        form = CheckoutForm()
+        form = CheckoutForm(user=request.user) # Pass user to pre-fill email/phone
 
     return render(request, 'checkout.html', {
         'form': form,
@@ -255,12 +314,24 @@ def checkout(request):
 @login_required
 def buy_now(request, pk):
     car = get_object_or_404(Car, pk=pk)
-    cart_item = CartItem.objects.get_or_create(cart=request.user.cart, car=car)
-    if cart_item[1]:
-        messages.success(request, "Item added to cart.")
+    # If the car is new, redirect to pre-booking
+    if car.is_new:
+        return redirect('pre_book_car', car_id=pk)
+
+    # Otherwise, add to cart for immediate purchase flow
+    cart, created = Cart.objects.get_or_create(user=request.user)
+    cart_item, created = CartItem.objects.get_or_create(cart=cart, car=car, defaults={'quantity': 1})
+    if not created:
+        if cart_item.quantity < car.stock:
+            cart_item.quantity += 1
+            cart_item.save()
+            messages.success(request, f"Added another {car} to your cart.")
+        else:
+            messages.error(request, f"Only {car.stock} available in stock.")
     else:
-        messages.success(request, "Item updated in cart.")
-    return redirect('view_cart')
+        messages.success(request, f"Added {car} to your cart for purchase.")
+    
+    return redirect('checkout') # Redirect to checkout directly for "Buy Now"
 
 @login_required
 def process_order(request):
@@ -351,6 +422,8 @@ def apply_job(request, pk):
 @login_required
 def create_job_vacancy(request):
     if not request.user.is_staff:
+        # Instead of PermissionDenied, redirect with a message
+        messages.error(request, "You do not have permission to access this page.")
         return redirect('home')
     
     if request.method == 'POST':
@@ -362,13 +435,16 @@ def create_job_vacancy(request):
     else:
         form = JobVacancyForm()
     
-    return render(request, 'job_list.html', {'form': form})
+    return render(request, 'create_job_vacancy.html', {'form': form}) # Point to a dedicated template
 
 def news(request):
     return render(request, 'news_details.html')
 
 def products(request):
-    return render(request, 'p_details.html')
+    # This view likely serves as a "new releases" or general products page.
+    # Consider renaming it to 'new_releases' for clarity if that's its sole purpose.
+    new_cars = Car.objects.filter(is_new=True).order_by('-created_at')
+    return render(request, 'p_details.html', {'new_cars': new_cars})
 
 @login_required
 def order_detail(request, pk):
@@ -386,9 +462,14 @@ def my_applications(request):
         applicant=request.user
     ).select_related('job').order_by('-applied_at')
     return render(request, 'my_applications.html', {'applications': applications})
+
 # Load model once
 model_path = os.path.join(os.path.dirname(__file__), 'ml_model/random_forest_regression_model.pkl')
-model = joblib.load(model_path)
+try:
+    model = joblib.load(model_path)
+except FileNotFoundError:
+    model = None # Handle case where model file is not found
+    print(f"Warning: ML model not found at {model_path}. Prediction functionality will be unavailable.")
 
 # StaffRequiredMixin definition
 class StaffRequiredMixin:
@@ -397,9 +478,12 @@ class StaffRequiredMixin:
         if not request.user.is_staff:
             raise PermissionDenied
         return super().dispatch(request, *args, **kwargs)
-model = joblib.load(model_path)
 
 def predict_price(request):
+    if not model:
+        messages.error(request, "The car price prediction model is currently unavailable. Please try again later.")
+        return render(request, 'predict_form.html', {'form': CarDetailsForm(), 'model_unavailable': True})
+
     if request.method == 'POST':
         form = CarDetailsForm(request.POST)
         if form.is_valid():
@@ -446,15 +530,13 @@ def predict_price(request):
 
     return render(request, 'predict_form.html', {'form': form})
 
-# pre bookng code 
-
 @login_required
 def pre_book_car(request, car_id):
-    car = get_object_or_404(Car, pk=car_id, is_new=True)
-    existing_booking = PreBooking.objects.filter(user=request.user, car=car).exists()
+    car = get_object_or_404(Car, pk=car_id, is_new=True) # Ensure only new cars can be pre-booked
+    existing_booking = PreBooking.objects.filter(user=request.user, car=car, status__in=['Booked', 'Pending']).exists()
 
     if existing_booking:
-        messages.error(request, 'You have already pre-booked this car.')
+        messages.error(request, 'You have already pre-booked this car, or a booking is pending.')
         return redirect('my_prebookings')
 
     if request.method == 'POST':
@@ -463,8 +545,10 @@ def pre_book_car(request, car_id):
             booking = form.save(commit=False)
             booking.user = request.user
             booking.car = car
-            booking.delivery_date = date.today() + timedelta(days=60)
+            # delivery_date is now handled in the model's save method, but can be explicitly set here if needed
+            # booking.delivery_date = date.today() + timedelta(days=60) 
             booking.save()
+            messages.success(request, f'Successfully pre-booked {car.brand} {car.model}!')
             return redirect('my_prebookings')
     else:
         form = PreBookingForm()
@@ -473,5 +557,5 @@ def pre_book_car(request, car_id):
 
 @login_required
 def my_prebookings(request):
-    bookings = PreBooking.objects.filter(user=request.user)
+    bookings = PreBooking.objects.filter(user=request.user).order_by('-booking_date')
     return render(request, 'my_prebookings.html', {'bookings': bookings})

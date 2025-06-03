@@ -1,10 +1,10 @@
-#hub/forms.py
+# hub/forms.py
 from django.utils import timezone
 from django import forms
 from django.core.exceptions import ValidationError
 from django.contrib.auth.models import User
 from django.contrib.auth.forms import UserCreationForm
-from .models import UserProfile, ServiceBooking, JobApplication, JobVacancy, PreBooking
+from .models import UserProfile, ServiceBooking, JobApplication, JobVacancy, PreBooking,Car
 
 class UserRegistrationForm(UserCreationForm):
     age = forms.IntegerField(min_value=0)
@@ -16,7 +16,7 @@ class UserRegistrationForm(UserCreationForm):
     class Meta:
         model = User
         fields = ['username', 'email', 'password1', 'password2', 
-                 'age', 'place', 'contact_number', 'image', 'gender']
+                  'age', 'place', 'contact_number', 'image', 'gender']
 
     def clean_email(self):
         email = self.cleaned_data.get('email')
@@ -118,3 +118,26 @@ class PreBookingForm(forms.ModelForm):
     class Meta:
         model = PreBooking
         fields = ['address']
+
+# Added for used car filters
+class UsedCarFilterForm(forms.Form):
+    q = forms.CharField(max_length=100, required=False, label='Search',
+                        widget=forms.TextInput(attrs={'placeholder': 'Search by model, brand...'}))
+    year = forms.ChoiceField(choices=[], required=False, label='Year')
+    brand = forms.ChoiceField(choices=[], required=False, label='Brand')
+    min_price = forms.FloatField(required=False, label='Min Price',
+                                 widget=forms.NumberInput(attrs={'placeholder': 'Min Price'}))
+    max_price = forms.FloatField(required=False, label='Max Price',
+                                 widget=forms.NumberInput(attrs={'placeholder': 'Max Price'}))
+    min_kms = forms.IntegerField(required=False, label='Min Kilometers Driven',
+                                 widget=forms.NumberInput(attrs={'placeholder': 'Min Kms'}))
+    max_kms = forms.IntegerField(required=False, label='Max Kilometers Driven',
+                                 widget=forms.NumberInput(attrs={'placeholder': 'Max Kms'}))
+
+    def __init__(self, *args, **kwargs):
+        super().__init__(*args, **kwargs)
+        self.fields['year'].choices = [('', 'All Years')] + [(str(y), str(y)) for y in Car.objects.filter(is_new=False).values_list('year', flat=True).distinct().order_by('-year')]
+        self.fields['brand'].choices = [('', 'All Brands')] + [(b, b) for b in Car.objects.filter(is_new=False).values_list('brand', flat=True).distinct().order_by('brand')]
+        for field_name, field in self.fields.items():
+            field.widget.attrs.update({'class': 'form-control'})
+

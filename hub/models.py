@@ -1,4 +1,4 @@
-#hub/models.py 
+# hub/models.py
 from django.db import models
 from django.core.exceptions import ValidationError
 from django.utils import timezone
@@ -54,6 +54,9 @@ class Car(models.Model):
     image = models.ImageField(upload_to='car_images/')
     description = models.TextField()
     stock = models.PositiveIntegerField(default=1)
+    # Added for used cars
+    kms_driven = models.PositiveIntegerField(blank=True, null=True) 
+    owner = models.PositiveIntegerField(blank=True, null=True)
     created_at = models.DateTimeField(auto_now_add=True)
     updated_at = models.DateTimeField(auto_now=True)
 
@@ -213,7 +216,7 @@ class PreBooking(models.Model):
     def save(self, *args, **kwargs):
         if not self.delivery_date:
             self.delivery_date = self.booking_date + timedelta(days=60)
-  
+ 
         if date.today() >= self.delivery_date:
             self.status = "Delivered"
         super().save(*args, **kwargs)

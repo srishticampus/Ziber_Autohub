@@ -1,16 +1,18 @@
 {% extends 'base.html' %}
 {% load static %}
 
-{% block title %}Car List{% endblock %}
+{% block title %}All Vehicles{% endblock %}
 
 {% block extra_styles %}
 <style>
     .filter-section {
         border-radius: 5px;
+        padding: 20px;
+        margin-bottom: 30px;
     }
     .filter-section h4 {
         margin-bottom: 15px;
-        color: #343a40;
+        color: #ffffff; /* White text for headings */
     }
     .filter-group {
         margin-bottom: 15px;
@@ -28,131 +30,108 @@
     }
     .filter-button{
       background-color: #f26522;
+      color: white; /* White text for the filter button */
+      border: none;
+    }
+    .filter-button:hover {
+        background-color: #e05e1e; /* Slightly darker on hover */
+    }
+    .card-body {
+        background-color: #f8f9fa; /* Light background for card body */
+        color: #343a40; /* Dark text for card body */
+    }
+    .card-title {
+        color: #007bff; /* Blue for car titles */
+    }
+    .car-list-banner-background {
+        background-image: url("{% static 'images/banner-bg.png.jpg' %}"); /* Ensure this path is correct */
+        background-size: cover;
+        background-position: center;
+    }
+    .btn-outline-primary {
+        color: #007bff;
+        border-color: #007bff;
+    }
+    .btn-outline-primary:hover {
+        background-color: #007bff;
+        color: white;
+    }
+    .btn-success {
+        background-color: #28a745;
+        border-color: #28a745;
+    }
+    .btn-success:hover {
+        background-color: #218838;
+        border-color: #1e7e34;
+    }
+    .btn-primary {
+        background-color: #007bff;
+        border-color: #007bff;
+    }
+    .btn-primary:hover {
+        background-color: #0069d9;
+        border-color: #0062cc;
+    }
+    .btn-info { /* Style for Pre Book button */
+        background-color: #17a2b8;
+        border-color: #17a2b8;
+        color: white;
+    }
+    .btn-info:hover {
+        background-color: #138496;
+        border-color: #117a8b;
     }
 </style>
 {% endblock %}
 
 {% block content %}
 <div class="banner_bg_main car-list-banner-background">
-    <!-- Your existing banner content -->
-</div>
-
-
-
-<!-- Car Listing Section -->
-<div class="fashion_section bg-dark py-5">
-
-      <!-- fashion section start -->
-      {# The fashion section has a py-5 class which is fine, keep it #}
-      <div class="fashion_section bg-dark py-5">
-         <div class="container">
-            {# The h2 has Bootstrap classes, which is fine #}
-            <h2 class="text-center mb-5 text-white fw-bold">Collection</h2>
-            <div class="row">
-                 {% if cars %}
-                 {% for car in cars %}
-                 <div class="col-lg-4 col-md-6 mb-4">
-                     {# The card has Bootstrap classes, which is fine #}
-                     <div class="card shadow-sm h-100">
-                         {# The img had inline styles, use a class instead #}
-                         <img src="{{ car.image.url }}" class="card-img-top car-image-style" alt="{{ car.brand }} {{ car.model }}">
-                         {# The card-body has Bootstrap classes, which is fine #}
-                         <div class="card-body d-flex flex-column">
-                             {# The h5 and p have Bootstrap classes, which is fine #}
-                             <h5 class="card-title">{{ car.brand }} {{ car.model }}</h5>
-                             <p class="card-text mb-2">Price: ₹{{ car.price }}</p>
-
-                             {# The action buttons are fine as is #}
-                             <div class="mt-auto">
-                                 <div class="d-flex justify-content-between">
-                                    <div class="text-center mt-3">
-                                       <a href="{% url 'car_detail' car.id %}" class="btn btn-outline-primary btn-sm">See More</a>
-                                   </div>
-
-                                    <div class="action-buttons mt-4">
-                                    {% if car.is_new %}
-                                       <form method="post" action="{% url 'pre_book_car' car.id %}">
-                                             {% csrf_token %}
-                                             <button type="submit" class="btn btn-info">Pre Book</button>
-                                       </form>
-                                    {% else %}
-                                       <form method="post" action="{% url 'buy_now' car.id %}">
-                                             {% csrf_token %}
-                                             <button type="submit" class="btn btn-success">Buy Now</button>
-                                       </form>
-                                       <!-- <form method="post" action="{% url 'add_to_cart' car.id %}">
-                                             {% csrf_token %}
-                                             <button type="submit" class="btn btn-primary">Add to Cart</button>
-                                       </form> -->
-                                    {% endif %}
-                                 </div>
-                              </div>
-                             </div>
-                         </div>
-                     </div>
-                 </div>
-                 {% endfor %}
-                 {% else %}
-                 <div class="col-12 m-auto d-flex justify-content-center align-items-center ">
-                     <div class="alert alert-light text-center mt-4" role="alert">
-                         No cars available at the moment.
-                     </div>  
-                  </div>
-                  {% endif %}
+<div class="fashion_section  py-5">
     <div class="container">
-      <div class="row">
-         <div class="col">
-            <h2 class="text-center mb-5 text-white fw-bold">Car Collection</h2>
-
-      </div>
-      <div class="row">
-       <div class="col">
-   <!-- Filter Section -->
-<div class="container m-4">
-    <div class="filter-section">
-        <form method="get" action="{% url 'car_list' %}">
-            <div class="row mt-5">
-                <div class="col-md-3 filter-group">
-                    <input type="text" name="q" class="form-control" placeholder="Search by name, brand or model" value="{{ query }}">
+        <h2 class="text-center mb-5 text-white fw-bold">All Vehicles</h2>
+        <div class="row">
+            <div class="col-12">
+                <div class="filter-section">
+                    <form method="get" action="{% url 'car_list' %}">
+                        <div class="row">
+                            <div class="col-md-3 filter-group">
+                                <input type="text" name="q" class="form-control" placeholder="Search by name, brand or model" value="{{ query }}">
+                            </div>
+                            
+                            <div class="col-md-2 filter-group">
+                                <select name="brand" class="form-control">
+                                    <option value="">All Brands</option>
+                                    {% for brand in brands %}
+                                        <option value="{{ brand }}" {% if selected_brand == brand %}selected{% endif %}>{{ brand }}</option>
+                                    {% endfor %}
+                                </select>
+                            </div>
+                            
+                            <div class="col-md-2 filter-group">
+                                <select name="year" class="form-control">
+                                    <option value="">All Years</option>
+                                    {% for year in years %}
+                                        <option value="{{ year }}" {% if selected_year == year|stringformat:"s" %}selected{% endif %}>{{ year }}</option>
+                                    {% endfor %}
+                                </select>
+                            </div>
+                            
+                            <div class="col-md-3 filter-group">
+                                <div class="price-range-inputs">
+                                    <input type="number" name="min_price" class="form-control" placeholder="Min price" value="{{ min_price }}">
+                                    <input type="number" name="max_price" class="form-control" placeholder="Max price" value="{{ max_price }}">
+                                </div>
+                            </div>
+                            
+                            <div class="col-md-2 d-flex align-items-end filter-group">
+                                <button type="submit" class="btn filter-button w-100">Apply Filters</button>
+                                <a href="{% url 'car_list' %}" class="btn btn-secondary w-100 ml-2">Clear All</a>
+                            </div>
+                        </div>
+                    </form>
                 </div>
-                
-                <div class="col-md-2 filter-group">
-                    <select name="brand" class="form-control">
-                        <option value="">All Brands</option>
-                        {% for brand in brands %}
-                            <option value="{{ brand }}" {% if selected_brand == brand %}selected{% endif %}>{{ brand }}</option>
-                        {% endfor %}
-                    </select>
-                </div>
-                
-                <div class="col-md-2 filter-group">
-                    <select name="year" class="form-control">
-                        <option value="">All Years</option>
-                        {% for year in years %}
-                            <option value="{{ year }}" {% if selected_year == year|stringformat:"s" %}selected{% endif %}>{{ year }}</option>
-                        {% endfor %}
-                    </select>
-                </div>
-                
-                <div class="col-md-3 filter-group">
-                    <div class="price-range-inputs">
-                        <input type="number" name="min_price" class="form-control" placeholder="Min price" value="{{ min_price }}">
-                        <input type="number" name="max_price" class="form-control" placeholder="Max price" value="{{ max_price }}">
-                    </div>
-                </div>
-                
-                <div class="col-md-2 d-flex align-items-end filter-group">
-    <button type="submit" class="btn filter-button w-100 text-white">Apply Filters</button>
-    <a href="{% url 'car_list' %}" class="btn btn-secondary w-100 ml-2">Clear All</a>
-</div>
             </div>
-        </form>
-    </div>
-</div>
-       </div>
-      </div>
-      
-        
+        </div>
         
         <div class="row">
             {% if cars %}
@@ -161,8 +140,11 @@
                     <div class="card shadow-sm h-100">
                         <img src="{{ car.image.url }}" class="card-img-top car-image-style" alt="{{ car.brand }} {{ car.model }}">
                         <div class="card-body d-flex flex-column">
-                            <h5 class="card-title text-white">{{ car.brand }} {{ car.model }}</h5>
+                            <h5 class="card-title">{{ car.brand }} {{ car.model }}</h5>
                             <p class="card-text mb-1">Year: {{ car.year }}</p>
+                            {% if not car.is_new and car.kms_driven %}
+                                <p class="card-text mb-1">Kms Driven: {{ car.kms_driven }}</p>
+                            {% endif %}
                             <p class="card-text mb-2">Price: ₹ {{ car.price }}</p>
                             
                             <div class="mt-auto">
@@ -170,32 +152,44 @@
                                     <div class="text-center mt-3">
                                         <a href="{% url 'car_detail' car.id %}" class="btn btn-outline-primary btn-sm">See More</a>
                                     </div>
-                                    <form method="post" action="{% url 'buy_now' car.id %}">
-                                        {% csrf_token %}
-                                        <button type="submit" class="btn btn-success btn-sm">Buy Now</button>
-                                    </form>
+                                    {% if car.is_new %}
+                                        <form method="post" action="{% url 'pre_book_car' car.id %}">
+                                            {% csrf_token %}
+                                            <button type="submit" class="btn btn-info btn-sm">Pre Book</button>
+                                        </form>
+                                    {% else %}
+                                        <form method="post" action="{% url 'buy_now' car.id %}">
+                                            {% csrf_token %}
+                                            <button type="submit" class="btn btn-success btn-sm">Buy Now</button>
+                                        </form>
+                                    {% endif %}
                                 </div>
-                                <form method="post" action="{% url 'add_to_cart' car.id %}" class="mt-2">
-                                    {% csrf_token %}
-                                    <button type="submit" class="btn btn-primary btn-sm w-100">Add to Cart</button>
-                                </form>
+                                {% if not car.is_new %}
+                                    <form method="post" action="{% url 'add_to_cart' car.id %}" class="mt-2">
+                                        {% csrf_token %}
+                                        <button type="submit" class="btn btn-primary btn-sm w-100">Add to Cart</button>
+                                    </form>
+                                {% endif %}
                             </div>
                         </div>
                     </div>
                 </div>
                 {% endfor %}
             {% else %}
-                <div class="col-12 m-auto d-flex justify-content-center align-items-center">
+                <div class="col-12 m-auto d-flex justify-content-center align-items-center ">
                     <div class="alert alert-light text-center mt-4" role="alert">
                         No cars found matching your filters.
-                    </div>  
+                    </div>
                 </div>
             {% endif %}
         </div>
     </div>
 </div>
+ </div>
 {% endblock %}
-{% block extra_scripts %}
+
+{% block scripts %}
+{{ block.super }} {# Include base.html scripts #}
 <script>
     document.addEventListener('DOMContentLoaded', function() {
         const minPriceInput = document.querySelector('input[name="min_price"]');
