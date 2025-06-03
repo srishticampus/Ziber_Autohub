@@ -1,0 +1,204 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block title %}New Vehicles{% endblock %}
+
+{% block extra_styles %}
+<style>
+    .filter-section {
+        border-radius: 5px;
+        padding: 20px;
+        margin-bottom: 30px;
+    }
+    .filter-section h4 {
+        margin-bottom: 15px;
+        color: #ffffff; /* White text for headings */
+    }
+    .filter-group {
+        margin-bottom: 15px;
+    }
+    .price-range-inputs {
+        display: flex;
+        gap: 10px;
+    }
+    .price-range-inputs input {
+        flex: 1;
+    }
+    .car-image-style {
+        height: 200px;
+        object-fit: cover;
+    }
+    .filter-button{
+      background-color: #f26522;
+      color: white; /* White text for the filter button */
+      border: none;
+    }
+    .filter-button:hover {
+        background-color: #e05e1e; /* Slightly darker on hover */
+    }
+    .card-body {
+        background-color: #f8f9fa; /* Light background for card body */
+        color: #343a40; /* Dark text for card body */
+    }
+    .card-title {
+        color: #007bff; /* Blue for car titles */
+    }
+    .car-list-banner-background {
+        background-image: url("{% static 'images/banner-bg.png.jpg' %}"); /* Ensure this path is correct */
+        background-size: cover;
+        background-position: center;
+    }
+    .btn-outline-primary {
+        color: #007bff;
+        border-color: #007bff;
+    }
+    .btn-outline-primary:hover {
+        background-color: #007bff;
+        color: white;
+    }
+    .btn-success {
+        background-color: #28a745;
+        border-color: #28a745;
+    }
+    .btn-success:hover {
+        background-color: #218838;
+        border-color: #1e7e34;
+    }
+    .btn-primary {
+        background-color: #007bff;
+        border-color: #007bff;
+    }
+    .btn-primary:hover {
+        background-color: #0069d9;
+        border-color: #0062cc;
+    }
+    .btn-info { /* Style for Pre Book button */
+        background-color: #17a2b8;
+        border-color: #17a2b8;
+        color: white;
+    }
+    .btn-info:hover {
+        background-color: #138496;
+        border-color: #117a8b;
+    }
+</style>
+{% endblock %}
+
+{% block content %}
+<div class="banner_bg_main car-list-banner-background">
+<div class="fashion_section py-5">
+    <div class="container">
+        <h2 class="text-center mb-5 text-white fw-bold">New Vehicles</h2>
+        <div class="row">
+            <div class="col-12">
+                <div class="filter-section">
+                    <form method="get" action="{% url 'new_car_list' %}"> {# Changed form action #}
+                        <div class="row">
+                            <div class="col-md-3 filter-group">
+                                <input type="text" name="q" class="form-control" placeholder="Search by name, brand or model" value="{{ query }}">
+                            </div>
+
+                            <div class="col-md-2 filter-group">
+                                <select name="brand" class="form-control">
+                                    <option value="">All Brands</option>
+                                    {% for brand in brands %}
+                                        <option value="{{ brand }}" {% if selected_brand == brand %}selected{% endif %}>{{ brand }}</option>
+                                    {% endfor %}
+                                </select>
+                            </div>
+
+                            <div class="col-md-2 filter-group">
+                                <select name="year" class="form-control">
+                                    <option value="">All Years</option>
+                                    {% for year in years %}
+                                        <option value="{{ year }}" {% if selected_year == year|stringformat:"s" %}selected{% endif %}>{{ year }}</option>
+                                    {% endfor %}
+                                </select>
+                            </div>
+
+                            <div class="col-md-3 filter-group">
+                                <div class="price-range-inputs">
+                                    <input type="number" name="min_price" class="form-control" placeholder="Min price" value="{{ min_price }}">
+                                    <input type="number" name="max_price" class="form-control" placeholder="Max price" value="{{ max_price }}">
+                                </div>
+                            </div>
+
+                            <div class="col-md-2 d-flex align-items-end filter-group">
+                                <button type="submit" class="btn filter-button w-100">Apply Filters</button>
+                                <a href="{% url 'new_car_list' %}" class="btn btn-secondary w-100 ml-2">Clear All</a> {# Changed clear all href #}
+                            </div>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+
+        <div class="row">
+            {% if cars %}
+                {% for car in cars %}
+                <div class="col-lg-4 col-md-6 mb-4">
+                    <div class="card shadow-sm h-100">
+                        <img src="{{ car.image.url }}" class="card-img-top car-image-style" alt="{{ car.brand }} {{ car.model }}">
+                        <div class="card-body d-flex flex-column">
+                            <h5 class="card-title">{{ car.brand }} {{ car.model }}</h5>
+                            <p class="card-text mb-1">Year: {{ car.year }}</p>
+                            {# Kms Driven section is only for used cars, so remove it here #}
+                            <p class="card-text mb-2">Price: ₹ {{ car.price }}</p>
+
+                            <div class="mt-auto">
+                                <div class="d-flex justify-content-between">
+                                    <div class="text-center mt-3">
+                                        <a href="{% url 'car_detail' car.id %}" class="btn btn-outline-primary btn-sm">See More</a>
+                                    </div>
+                                    {# Only show Pre Book button for new cars #}
+                                    {% if car.is_new %}
+                                        <form method="post" action="{% url 'pre_book_car' car.id %}">
+                                            {% csrf_token %}
+                                            <button type="submit" class="btn btn-info btn-sm">Pre Book</button>
+                                        </form>
+                                    {% endif %}
+                                </div>
+                                {# No Add to Cart button for new cars #}
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                {% endfor %}
+            {% else %}
+                <div class="col-12 m-auto d-flex justify-content-center align-items-center ">
+                    <div class="alert alert-light text-center mt-4" role="alert">
+                        No new cars found matching your filters.
+                    </div>
+                </div>
+            {% endif %}
+        </div>
+    </div>
+</div>
+</div>
+{% endblock %}
+
+{% block scripts %}
+{{ block.super }} {# Include base.html scripts #}
+<script>
+    document.addEventListener('DOMContentLoaded', function() {
+        const minPriceInput = document.querySelector('input[name="min_price"]');
+        const maxPriceInput = document.querySelector('input[name="max_price"]');
+
+        if (minPriceInput && maxPriceInput) {
+            minPriceInput.addEventListener('change', function() {
+                if (maxPriceInput.value && parseFloat(this.value) > parseFloat(maxPriceInput.value)) {
+                    alert('Minimum price cannot be greater than maximum price');
+                    this.value = '';
+                }
+            });
+
+            maxPriceInput.addEventListener('change', function() {
+                if (minPriceInput.value && parseFloat(this.value) < parseFloat(minPriceInput.value)) {
+                    alert('Maximum price cannot be less than minimum price');
+                    this.value = '';
+                }
+            });
+        }
+    });
+</script>
+{% endblock %}
