@@ -150,6 +150,8 @@ def login_view(request):
         if user is not None:
             auth_login(request, user)
             messages.success(request, "You have been successfully logged in.")
+            if user.is_superuser:
+                return redirect('admin_dashboard')
             return redirect('home')
         else:
             messages.error(request, "Invalid username or password.")

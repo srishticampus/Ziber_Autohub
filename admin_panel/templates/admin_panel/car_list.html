@@ -1,0 +1,31 @@
+<h2>All Cars</h2>
+<table border="1">
+    <tr>
+        <th>Image</th><th>Name</th><th>Brand</th><th>Model</th>
+        <th>Fuel</th><th>Year</th><th>New/Used</th><th>Stock</th><th>Price</th>
+        <th>KMs Driven</th><th>Owner</th>
+    </tr>
+    {% for car in cars %}
+    <tr>
+        <td><img src="{{ car.image.url }}" width="100"></td>
+        <td>{{ car.name }}</td>
+        <td>{{ car.brand }}</td>
+        <td>{{ car.model }}</td>
+        <td>{{ car.fuel_type }}</td>
+        <td>{{ car.year }}</td>
+        <td>
+            {% if car.is_new %}
+                New
+            {% else %}
+                Used
+            {% endif %}
+        </td>
+
+        <td>{{ car.stock }}</td>
+        <td>₹{{ car.price }}</td>
+        <td>{{ car.kms_driven|default:"-" }}</td>
+        <td>{{ car.owner|default:"-" }}</td>
+    </tr>
+    {% endfor %}
+</table>
+<a href="{% url 'admin_dashboard' %}">← Back to Dashboard</a>
