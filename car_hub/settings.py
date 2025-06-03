@@ -13,8 +13,8 @@ https://docs.djangoproject.com/en/5.1/ref/settings/
 from pathlib import Path
 import os
 # Custom admin login URL
-LOGIN_URL = 'login'
-LOGOUT_REDIRECT_URL = 'login'
+LOGIN_URL = 'hub:login'
+LOGOUT_REDIRECT_URL = 'hub:login'
 
 # Custom admin site header
 ADMIN_SITE_HEADER = "Ziber Autohub Administration"
@@ -49,6 +49,8 @@ CSRF_TRUSTED_ORIGINS = [
 
 INSTALLED_APPS = [
     'hub',
+    'admin_panel',
+    'chat',
     'django.contrib.admin',
     'django.contrib.auth',
     'django.contrib.contenttypes',

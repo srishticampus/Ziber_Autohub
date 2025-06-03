@@ -32,7 +32,7 @@ class CarAdmin(admin.ModelAdmin):
     ordering = ('-year', 'brand')
     fieldsets = (
         (None, {
-            'fields': ('name', 'brand', 'model', 'year', 'fuel_type', 'is_new')
+            'fields': ('seller', 'name', 'brand', 'model', 'year', 'fuel_type', 'is_new')
         }),
         ('Details', {
             'fields': ('price', 'stock', 'description', 'image')

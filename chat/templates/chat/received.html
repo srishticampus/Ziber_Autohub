@@ -1,0 +1,8 @@
+<h2>Messages Received</h2>
+<ul>
+  {% for msg in messages %}
+    <li><strong>{{ msg.sender.username }}</strong> about <strong>{{ msg.car.name }}</strong>: {{ msg.content }} ({{ msg.sent_at }})</li>
+  {% empty %}
+    <li>No messages yet.</li>
+  {% endfor %}
+</ul>

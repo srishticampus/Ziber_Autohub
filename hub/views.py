@@ -12,12 +12,14 @@ from django.contrib.auth.models import User
 from django.core.validators import validate_email
 from django.core.exceptions import ValidationError
 from .models import UserProfile
+from chat.models import Message
+from django.db.models import Q
 from .models import (
     Car, Cart, CartItem, Order, OrderItem, 
     ServiceBooking, JobVacancy, JobApplication, PreBooking
 )
 from .forms import ( ServiceBookingForm,
-    JobApplicationForm, JobVacancyForm, CheckoutForm,CarDetailsForm, PreBookingForm, UsedCarFilterForm
+    JobApplicationForm, JobVacancyForm, CheckoutForm,CarDetailsForm, PreBookingForm, UsedCarFilterForm, UsedCarForm
 )
 from datetime import timedelta, date
 
@@ -128,7 +130,7 @@ def register_user(request):
         )
 
         messages.success(request, "Registration successful! You can now log in.")
-        return redirect('login')
+        return redirect('hub:login')
 
     return render(request, 'register.html')
 
@@ -150,7 +152,9 @@ def login_view(request):
         if user is not None:
             auth_login(request, user)
             messages.success(request, "You have been successfully logged in.")
-            return redirect('home')
+            if user.is_superuser:
+                return redirect('admin_panel:admin_dashboard')
+            return redirect('hub:home')
         else:
             messages.error(request, "Invalid username or password.")
 
@@ -160,7 +164,7 @@ def login_view(request):
 def logout_user(request):
     auth_logout(request)
     messages.success(request, "You have been logged out.")
-    return redirect('home')
+    return redirect('hub:demo')
 
 @login_required
 def car_list(request):
@@ -343,7 +347,7 @@ def add_to_cart(request, pk):
     else:
         messages.success(request, f"Added {car} to your cart.")
     
-    return redirect('view_cart')
+    return redirect('hub:view_cart')
 
 @login_required
 def view_cart(request):
@@ -369,14 +373,14 @@ def update_cart_item(request, pk):
             cart_item.save()
             messages.success(request, "Cart updated successfully.")
     
-    return redirect('view_cart')
+    return redirect('hub:view_cart')
 
 @login_required
 def remove_from_cart(request, pk):
     cart_item = get_object_or_404(CartItem, pk=pk, cart__user=request.user)
     cart_item.delete()
     messages.success(request, "Item removed from cart.")
-    return redirect('view_cart')
+    return redirect('hub:view_cart')
 
 @login_required
 def checkout(request):
@@ -385,7 +389,7 @@ def checkout(request):
 
     if not cart_items.exists():
         messages.warning(request, "Your cart is empty.")
-        return redirect('view_cart')
+        return redirect('hub:view_cart')
 
     if request.method == 'POST':
         form = CheckoutForm(request.POST)
@@ -411,7 +415,7 @@ def checkout(request):
 
             cart.items.all().delete()
             messages.success(request, "Order placed successfully!")
-            return redirect('payment_success')
+            return redirect('hub:payment_success')
     else:
         form = CheckoutForm(user=request.user) # Pass user to pre-fill email/phone
 
@@ -426,7 +430,7 @@ def buy_now(request, pk):
     car = get_object_or_404(Car, pk=pk)
     # If the car is new, redirect to pre-booking
     if car.is_new:
-        return redirect('pre_book_car', car_id=pk)
+        return redirect('hub:pre_book_car', car_id=pk)
 
     # Otherwise, add to cart for immediate purchase flow
     cart, created = Cart.objects.get_or_create(user=request.user)
@@ -441,14 +445,14 @@ def buy_now(request, pk):
     else:
         messages.success(request, f"Added {car} to your cart for purchase.")
     
-    return redirect('checkout') # Redirect to checkout directly for "Buy Now"
+    return redirect('hub:checkout') # Redirect to checkout directly for "Buy Now"
 
 @login_required
 def process_order(request):
     if request.method == 'POST':
         buy_now = request.session.get('buy_now')
         if not buy_now:
-            return redirect('car_list')
+            return redirect('hub:car_list')
 
         car = get_object_or_404(Car, id=buy_now['car_id'])
         order = Order.objects.create(
@@ -462,8 +466,8 @@ def process_order(request):
         )
         
         del request.session['buy_now']
-        return redirect('payment_success')
-    return redirect('car_list')
+        return redirect('hub:payment_success')
+    return redirect('hub:car_list')
 
 @login_required
 def payment(request):
@@ -491,7 +495,7 @@ def book_service(request):
             else:
                 booking.save()
                 messages.success(request, 'Service booked successfully!')
-                return redirect('my_bookings')
+                return redirect('hub:my_bookings')
     else:
         form = ServiceBookingForm()
     
@@ -513,7 +517,7 @@ def apply_job(request, pk):
     
     if JobApplication.objects.filter(job=job, applicant=request.user).exists():
         messages.warning(request, 'You have already applied for this position.')
-        return redirect('job_list')
+        return redirect('hub:job_list')
     
     if request.method == 'POST':
         form = JobApplicationForm(request.POST, request.FILES)
@@ -523,7 +527,7 @@ def apply_job(request, pk):
             application.applicant = request.user
             application.save()
             messages.success(request, 'Application submitted successfully!')
-            return redirect('job_list')
+            return redirect('hub:job_list')
     else:
         form = JobApplicationForm()
     
@@ -534,14 +538,14 @@ def create_job_vacancy(request):
     if not request.user.is_staff:
         # Instead of PermissionDenied, redirect with a message
         messages.error(request, "You do not have permission to access this page.")
-        return redirect('home')
+        return redirect('hub:home')
     
     if request.method == 'POST':
         form = JobVacancyForm(request.POST)
         if form.is_valid():
             form.save()
             messages.success(request, 'Job vacancy created!')
-            return redirect('job_list')
+            return redirect('hub:job_list')
     else:
         form = JobVacancyForm()
     
@@ -647,7 +651,7 @@ def pre_book_car(request, car_id):
 
     if existing_booking:
         messages.error(request, 'You have already pre-booked this car, or a booking is pending.')
-        return redirect('my_prebookings')
+        return redirect('hub:my_prebookings')
 
     if request.method == 'POST':
         form = PreBookingForm(request.POST)
@@ -659,7 +663,7 @@ def pre_book_car(request, car_id):
             # booking.delivery_date = date.today() + timedelta(days=60) 
             booking.save()
             messages.success(request, f'Successfully pre-booked {car.brand} {car.model}!')
-            return redirect('my_prebookings')
+            return redirect('hub:my_prebookings')
     else:
         form = PreBookingForm()
 
@@ -669,3 +673,34 @@ def pre_book_car(request, car_id):
 def my_prebookings(request):
     bookings = PreBooking.objects.filter(user=request.user).order_by('-booking_date')
     return render(request, 'my_prebookings.html', {'bookings': bookings})
+
+@login_required
+def add_used_car(request):
+    if request.method == 'POST':
+        form = UsedCarForm(request.POST, request.FILES)
+        if form.is_valid():
+            car = form.save()
+            return redirect('hub:used_car_list')
+    else:
+        form = UsedCarForm()
+    return render(request, 'add_used_car.html', {'form': form})
+
+@login_required
+def my_chats(request):
+    # Get all unique conversations where the user is either sender or receiver
+    messages = Message.objects.filter(Q(sender=request.user) | Q(receiver=request.user))
+
+    # Get distinct (car, other_user) combinations
+    threads = {}
+    for msg in messages:
+        car = msg.car
+        other_user = msg.receiver if msg.sender == request.user else msg.sender
+        key = (car.id, other_user.id)
+        if key not in threads:
+            threads[key] = {
+                'car': car,
+                'other_user': other_user,
+                'last_message': msg
+            }
+
+    return render(request, 'my_chats.html', {'threads': threads.values()})

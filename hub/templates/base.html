@@ -70,13 +70,13 @@
             <div class="col-sm-12">
               <div class="custom_menu">
                 <ul>
-                  <li><a href="{% url 'new_car_list' %}">New Releases</a></li>
-                  <li><a href="{% url 'car_list' %}">All Vehicles</a></li>
-                  <li><a href="{% url 'used_car_list' %}">Used Cars</a></li> 
-                  <li><a href="{% url 'book_service' %}">Service Booking</a></li>
-                  <li><a href="{% url 'predict_price' %}">Price Predictor</a></li>
-                  <li><a href="{% url 'job_list' %}">Careers</a></li>
-                  <li><a href="{% url 'news' %}">News</a></li>
+                  <li><a href="{% url 'hub:new_car_list' %}">New Releases</a></li>
+                  <li><a href="{% url 'hub:car_list' %}">All Vehicles</a></li>
+                  <li><a href="{% url 'hub:used_car_list' %}">Used Cars</a></li> 
+                  <li><a href="{% url 'hub:book_service' %}">Service Booking</a></li>
+                  <li><a href="{% url 'hub:predict_price' %}">Price Predictor</a></li>
+                  <li><a href="{% url 'hub:job_list' %}">Careers</a></li>
+                  <li><a href="{% url 'hub:news' %}">News</a></li>
                 </ul>
               </div>
             </div>
@@ -88,7 +88,7 @@
           <div class="row">
             <div class="col-sm-12">
               <div class="logo">
-                <a href="{% if user.is_authenticated %}{% url 'home' %} {% else %} {% url 'demo' %}{% endif %}"> <h1 class="text-white">Ziber Autohub</h1></a>
+                <a href="{% if user.is_authenticated %}{% url 'hub:home' %} {% else %} {% url 'hub:demo' %}{% endif %}"> <h1 class="text-white">Ziber Autohub</h1></a>
               </div>
             </div>
           </div>
@@ -101,19 +101,19 @@
               <a href="javascript:void(0)" class="closebtn" onclick="closeNav()"
                 >&times;</a
               >
-              <a href="{% url 'home' %}">Home</a>
-              <a href="{% url 'car_list' %}">All Vehicles</a>
-              <a href="{% url 'new_car_list' %}">New Releases</a>
-              <a href="{% url 'used_car_list' %}">Used Cars</a> <a href="{% url 'predict_price' %}">Price Predictor</a>
-              <a href="{% url 'book_service' %}">Services</a>
-              <a href="{% url 'job_list' %}">Careers</a>
-              <a href="{% url 'news' %}">News</a>
+              <a href="{% url 'hub:home' %}">Home</a>
+              <a href="{% url 'hub:car_list' %}">All Vehicles</a>
+              <a href="{% url 'hub:new_car_list' %}">New Releases</a>
+              <a href="{% url 'hub:used_car_list' %}">Used Cars</a> <a href="{% url 'hub:predict_price' %}">Price Predictor</a>
+              <a href="{% url 'hub:book_service' %}">Services</a>
+              <a href="{% url 'hub:job_list' %}">Careers</a>
+              <a href="{% url 'hub:news' %}">News</a>
               {% if user.is_authenticated %}
-                <a href="{% url 'view_cart' %}">My Cart</a>
-                <a href="{% url 'order_history' %}">My Orders</a>
-                <a href="{% url 'my_bookings' %}">My Bookings</a>
-                <a href="{% url 'my_prebookings' %}">My Pre-Bookings</a> {% if user.is_staff %}
-                  <a href="{% url 'create_job_vacancy' %}">Post Job</a>
+                <a href="{% url 'hub:view_cart' %}">My Cart</a>
+                <a href="{% url 'hub:order_history' %}">My Orders</a>
+                <a href="{% url 'hub:my_bookings' %}">My Bookings</a>
+                <a href="{% url 'hub:my_prebookings' %}">My Pre-Bookings</a> {% if user.is_staff %}
+                  <a href="{% url 'hub:reate_job_vacancy' %}">Post Job</a>
                 {% endif %}
               {% endif %}
             </div>
@@ -132,16 +132,16 @@
                 Quick Links
               </button>
               <div class="dropdown-menu" aria-labelledby="dropdownMenuButton">
-                <a class="dropdown-item" href="{% url 'car_list' %}">All Vehicles</a>
-                <a class="dropdown-item" href="{% url 'new_car_list' %}">New Releases</a>
-                <a class="dropdown-item" href="{% url 'used_car_list' %}">Used Cars</a> <a class="dropdown-item" href="{% url 'predict_price' %}">Price Predictor</a>
+                <a class="dropdown-item" href="{% url 'hub:car_list' %}">All Vehicles</a>
+                <a class="dropdown-item" href="{% url 'hub:new_car_list' %}">New Releases</a>
+                <a class="dropdown-item" href="{% url 'hub:used_car_list' %}">Used Cars</a> <a class="dropdown-item" href="{% url 'hub:predict_price' %}">Price Predictor</a>
                 <div class="dropdown-divider"></div>
-                <a class="dropdown-item" href="{% url 'book_service' %}">Book Service</a>
-                <a class="dropdown-item" href="{% url 'job_list' %}">Career Opportunities</a>
+                <a class="dropdown-item" href="{% url 'hub:book_service' %}">Book Service</a>
+                <a class="dropdown-item" href="{% url 'hub:job_list' %}">Career Opportunities</a>
               </div>
             </div>
             <div class="main">
-              <form action="{% url 'car_list' %}" method="get">
+              <form action="{% url 'hub:car_list' %}" method="get">
                 <div class="input-group">
                   <input
                     type="text"
@@ -162,11 +162,12 @@
                     {% if user.is_authenticated %}
                       <div class="login_menu">
                         <ul>
-                            <li class="mx-1"><a href="{% url 'view_cart' %}">
+                          <a href="{% url 'hub:my_chats' %}">My Chats</a>
+                            <li class="mx-1"><a href="{% url 'hub:view_cart' %}">
                                 <i class="fa fa-shopping-cart" aria-hidden="true"></i>
                                 <span class="padding_10">Cart</span></a>
                             </li>
-                            <li class="mx-1"><a href="{% url 'logout' %}">
+                            <li class="mx-1"><a href="{% url 'hub:logout' %}">
                                 <i class="fa fa-user" aria-hidden="true"></i>
                                 <span class="padding_10">Logout</span></a>
                             </li>
@@ -175,9 +176,9 @@
                     {% else %}
                       <div class="login_menu">
                         <ul>
-                           <li><a href="{% url 'register' %}"><i class="fa fa-user-plus"></i><span class="padding_10 mx-1">Register</span></a></li>
+                           <li><a href="{% url 'hub:register' %}"><i class="fa fa-user-plus"></i><span class="padding_10 mx-1">Register</span></a></li>
 
-                           <li><a href="{% url 'login' %}"><i class="fa fa-user"></i><span class="padding_10 mx-1">Login</span></a></li>
+                           <li><a href="{% url 'hub:login' %}"><i class="fa fa-user"></i><span class="padding_10 mx-1">Login</span></a></li>
                         </ul>
                       </div>
                     {% endif %}
@@ -191,7 +192,7 @@
     <div class="footer_section layout_padding">
       <div class="container">
         <div class="footer_logo">
-         <a href="{% url 'home' %}"> <h1 class="text-white fw-bold">Ziber Autohub</h1></a>
+         <a href="{% url 'hub:home' %}"> <h1 class="text-white fw-bold">Ziber Autohub</h1></a>
         </div>
         <div class="input_bt">
           <input
@@ -206,12 +207,12 @@
         </div>
         <div class="footer_menu">
           <ul>
-            <li><a href="{% url 'new_car_list' %}">New Releases</a></li>
-            <li><a href="{% url 'car_list' %}">All Vehicles</a></li>
-            <li><a href="{% url 'used_car_list' %}">Used Cars</a></li> <li><a href="{% url 'book_service' %}">Service Booking</a></li>
-            <li><a href="{% url 'predict_price' %}">Price Predictor</a></li>
-            <li><a href="{% url 'job_list' %}">Careers</a></li>
-            <li><a href="{% url 'news' %}">News</a></li>
+            <li><a href="{% url 'hub:new_car_list' %}">New Releases</a></li>
+            <li><a href="{% url 'hub:car_list' %}">All Vehicles</a></li>
+            <li><a href="{% url 'hub:used_car_list' %}">Used Cars</a></li> <li><a href="{% url 'hub:book_service' %}">Service Booking</a></li>
+            <li><a href="{% url 'hub:predict_price' %}">Price Predictor</a></li>
+            <li><a href="{% url 'hub:job_list' %}">Careers</a></li>
+            <li><a href="{% url 'hub:news' %}">News</a></li>
           </ul>
         </div>
         <div class="location_main">

@@ -1,0 +1,21 @@
+chat_room.html<h2>Chat with {{ other_user.username }} about {{ car.name }}</h2>
+
+<div style="max-height: 400px; overflow-y: auto; border: 1px solid #ccc; padding: 10px;">
+  {% for msg in messages %}
+    <div style="text-align: {% if msg.sender == request.user %}right{% else %}left{% endif %}; margin-bottom: 10px;">
+      <div style="display: inline-block; padding: 10px; border-radius: 10px; background-color: {% if msg.sender == request.user %}#dcf8c6{% else %}#eee{% endif %};">
+        <strong>{{ msg.sender.username }}:</strong><br>
+        {{ msg.content }}<br>
+        <small>{{ msg.timestamp }}</small>
+      </div>
+    </div>
+  {% empty %}
+    <p>No messages yet. Start the conversation.</p>
+  {% endfor %}
+</div>
+
+<form method="post" style="margin-top: 20px;">
+  {% csrf_token %}
+  <textarea name="content" rows="2" class="form-control" placeholder="Type a message..."></textarea>
+  <button type="submit" class="btn btn-primary mt-2">Send</button>
+</form>

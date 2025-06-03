@@ -115,6 +115,11 @@ class CarDetailsForm(forms.Form):
 
 
 class PreBookingForm(forms.ModelForm):
+    address = forms.CharField(
+        widget=forms.Textarea(attrs={'class': 'form-control', 'rows': 3}),
+        label="Your Delivery Address"
+    )
+
     class Meta:
         model = PreBooking
         fields = ['address']
@@ -141,3 +146,14 @@ class UsedCarFilterForm(forms.Form):
         for field_name, field in self.fields.items():
             field.widget.attrs.update({'class': 'form-control'})
 
+class UsedCarForm(forms.ModelForm):
+    class Meta:
+        model = Car
+        exclude = ['is_new','stock']
+
+    def save(self, commit=True):
+        car = super().save(commit=False)
+        car.is_new = False
+        if commit:
+            car.save()
+        return car
