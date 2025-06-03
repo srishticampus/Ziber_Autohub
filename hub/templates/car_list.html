@@ -92,7 +92,7 @@
         <div class="row">
             <div class="col-12">
                 <div class="filter-section">
-                    <form method="get" action="{% url 'car_list' %}">
+                    <form method="get" action="{% url 'hub:car_list' %}">
                         <div class="row">
                             <div class="col-md-3 filter-group">
                                 <input type="text" name="q" class="form-control" placeholder="Search by name, brand or model" value="{{ query }}">
@@ -125,7 +125,7 @@
                             
                             <div class="col-md-2 d-flex align-items-end filter-group">
                                 <button type="submit" class="btn filter-button w-100">Apply Filters</button>
-                                <a href="{% url 'car_list' %}" class="btn btn-secondary w-100 ml-2">Clear All</a>
+                                <a href="{% url 'hub:car_list' %}" class="btn btn-secondary w-100 ml-2">Clear All</a>
                             </div>
                         </div>
                     </form>
@@ -150,22 +150,22 @@
                             <div class="mt-auto">
                                 <div class="d-flex justify-content-between">
                                     <div class="text-center mt-3">
-                                        <a href="{% url 'car_detail' car.id %}" class="btn btn-outline-primary btn-sm">See More</a>
+                                        <a href="{% url 'hub:car_detail' car.id %}" class="btn btn-outline-primary btn-sm">See More</a>
                                     </div>
                                     {% if car.is_new %}
-                                        <form method="post" action="{% url 'pre_book_car' car.id %}">
+                                        <form method="post" action="{% url 'hub:pre_book_car' car.id %}">
                                             {% csrf_token %}
                                             <button type="submit" class="btn btn-info btn-sm">Pre Book</button>
                                         </form>
                                     {% else %}
-                                        <form method="post" action="{% url 'buy_now' car.id %}">
+                                        <form method="post" action="{% url 'hub:buy_now' car.id %}">
                                             {% csrf_token %}
                                             <button type="submit" class="btn btn-success btn-sm">Buy Now</button>
                                         </form>
                                     {% endif %}
                                 </div>
                                 {% if not car.is_new %}
-                                    <form method="post" action="{% url 'add_to_cart' car.id %}" class="mt-2">
+                                    <form method="post" action="{% url 'hub:add_to_cart' car.id %}" class="mt-2">
                                         {% csrf_token %}
                                         <button type="submit" class="btn btn-primary btn-sm w-100">Add to Cart</button>
                                     </form>

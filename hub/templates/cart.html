@@ -34,7 +34,7 @@
                     <td>{{ item.quantity }}</td>
                     <td>₹{{ item.car.price }}</td>
                     {% comment %} <td>
-                        <a href="{% url 'remove_from_cart' car_id=item.car.id %}" class="btn btn-remove">Remove</a>
+                        <a href="{% url 'hub:remove_from_cart' car_id=item.car.id %}" class="btn btn-remove">Remove</a>
                     </td> {% endcomment %}
                 </tr>
                 {% endfor %}

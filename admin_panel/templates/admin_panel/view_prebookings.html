@@ -1,0 +1,16 @@
+<h2>All Pre-Bookings</h2>
+<table>
+    <tr>
+        <th>User</th><th>Car</th><th>Status</th><th>Delivery Date</th>
+    </tr>
+    {% for b in bookings %}
+    <tr>
+        <td>{{ b.user.username }}</td>
+        <td>{{ b.car.name }}</td>
+        <td>{{ b.status }}</td>
+        <td>{{ b.delivery_date }}</td>
+    </tr>
+    {% endfor %}
+</table>
+<a href="{% url 'admin_panel:admin_dashboard' %}">Back to Dashboard</a>
+

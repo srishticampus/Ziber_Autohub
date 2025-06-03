@@ -1,0 +1,10 @@
+dashboard.html:<h1>Admin Dashboard</h1>
+<ul>
+    <li><a href="{% url 'admin_panel:add_car' %}">Add Car</a></li>
+    <li><a href="{% url 'admin_panel:car_list' %}">View All Cars</a></li>
+    <li><a href="{% url 'admin_panel:add_job' %}">Post Job Vacancy</a></li>
+    <li><a href="{% url 'admin_panel:job_list' %}">View Job Listings</a></li>
+
+    <li><a href="{% url 'admin_panel:view_prebookings' %}">View Pre-Bookings</a></li>
+    <li><a href="{% url 'hub:logout' %}">Logout</a></li>
+</ul>

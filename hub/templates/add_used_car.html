@@ -1,0 +1,99 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block title %}Used Car List{% endblock %}
+
+{% block extra_styles %}
+<style>
+    /* Additional styles if needed */
+    .filter-section {
+        background-color: rgba(0, 0, 0, 0.5); /* Semi-transparent background for filter section */
+        border-radius: 5px;
+        padding: 20px;
+        margin-bottom: 30px;
+        box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2); /* Subtle shadow */
+    }
+    .filter-section h4 {
+        margin-bottom: 15px;
+        color: #ffffff; /* White text for headings */
+    }
+    /* Removed .filter-group as mb-3 will be used directly on cols */
+    .price-range-inputs, .kms-range-inputs {
+        display: flex;
+        gap: 10px; /* Spacing between min/max inputs */
+    }
+    .price-range-inputs input, .kms-range-inputs input {
+        flex: 1; /* Make inputs take equal width */
+    }
+    .car-image-style {
+        height: 200px;
+        object-fit: cover;
+    }
+    .filter-button{
+      background-color: #f26522;
+      color: white;
+      border: none;
+    }
+    .filter-button:hover {
+        background-color: #e05e1e;
+    }
+    .card-body {
+        background-color: #f8f9fa;
+        color: #343a40;
+    }
+    .card-title {
+        color: #007bff;
+    }
+    .car-list-banner-background {
+        background-image: url("{% static 'images/banner-bg.png.jpg' %}");
+        background-size: cover;
+        background-position: center;
+        background-repeat: no-repeat; /* Ensure it doesn't repeat */
+    }
+    /* Added some padding to the banner to give content space */
+    .banner_bg_main {
+        padding-top: 50px;
+        padding-bottom: 50px;
+    }
+    /* Style for the clear all button */
+    .btn-secondary {
+        background-color: #6c757d;
+        border-color: #6c757d;
+        color: white;
+    }
+    .btn-secondary:hover {
+        background-color: #5a6268;
+        border-color: #545b62;
+    }
+    /* Ensure labels are white in the filter section */
+    .filter-section label {
+        color: #ffffff;
+        margin-bottom: 5px; /* Spacing between label and input */
+    }
+    /* Adjust input height for better visual alignment within the filter section */
+    .filter-section .form-control {
+        height: calc(1.5em + .75rem + 2px); /* Default Bootstrap height for inputs */
+        padding: .375rem .75rem;
+    }
+    .filter-form{
+        display: flex;
+        justify-content: space-around;
+    }
+    .add-car-form{
+        height: auto;
+        margin-top: 21rem;
+    }
+    
+</style>
+{% endblock %}
+
+{% block content %}
+<div class="add-car-form">
+    <h2>Add Used Car</h2>
+    <form method="POST" enctype="multipart/form-data">
+        {% csrf_token %}
+        {{ form.as_p }}
+        <button type="submit">Submit Car</button>
+    </form>
+</div>
+{% endblock content %}
