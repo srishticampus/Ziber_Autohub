@@ -18,7 +18,7 @@ from .models import (
     Car, Cart, CartItem, Order, OrderItem, 
     ServiceBooking, JobVacancy, JobApplication, PreBooking
 )
-from .forms import ( ServiceBookingForm,
+from .forms import (
     JobApplicationForm, JobVacancyForm, CheckoutForm,CarDetailsForm, PreBookingForm, UsedCarFilterForm, UsedCarForm
 )
 from datetime import timedelta, date
@@ -477,29 +477,29 @@ def payment(request):
 def payment_success(request):
     return render(request, 'payment_success.html')
 
-@login_required
-def book_service(request):
-    if request.method == 'POST':
-        form = ServiceBookingForm(request.POST, request.FILES)
-        if form.is_valid():
-            booking = form.save(commit=False)
-            booking.user = request.user
+# @login_required
+# def book_service(request):
+#     if request.method == 'POST':
+#         form = ServiceBookingForm(request.POST, request.FILES)
+#         if form.is_valid():
+#             booking = form.save(commit=False)
+#             booking.user = request.user
             
-            existing = ServiceBooking.objects.filter(
-                service_date=booking.service_date,
-                status__in=['Pending', 'Approved']
-            ).count()
+#             existing = ServiceBooking.objects.filter(
+#                 service_date=booking.service_date,
+#                 status__in=['Pending', 'Approved']
+#             ).count()
             
-            if existing >= 6:
-                messages.error(request, 'All slots are booked for this date.')
-            else:
-                booking.save()
-                messages.success(request, 'Service booked successfully!')
-                return redirect('hub:my_bookings')
-    else:
-        form = ServiceBookingForm()
+#             if existing >= 6:
+#                 messages.error(request, 'All slots are booked for this date.')
+#             else:
+#                 booking.save()
+#                 messages.success(request, 'Service booked successfully!')
+#                 return redirect('hub:my_bookings')
+#     else:
+#         form = ServiceBookingForm()
     
-    return render(request, 'service-booking.html', {'form': form})
+#     return render(request, 'service-booking.html', {'form': form})
 
 @login_required
 def my_bookings(request):
@@ -704,3 +704,38 @@ def my_chats(request):
             }
 
     return render(request, 'my_chats.html', {'threads': threads.values()})
+
+@login_required
+def book_service(request):
+    # Find user's delivered new cars
+    delivered_cars_ids = PreBooking.objects.filter(
+        user=request.user,
+        car__is_new=True,
+        status="Delivered"
+    ).values_list('car_id', flat=True)
+
+    eligible_cars = Car.objects.filter(id__in=delivered_cars_ids)
+
+    if request.method == 'POST':
+        car_id = request.POST.get('car')
+        service_type = request.POST.get('service_type')
+        description = request.POST.get('description')
+
+        car = Car.objects.get(id=car_id)
+        ServiceBooking.objects.create(
+            user=request.user,
+            car=car,
+            service_type=service_type,
+            description=description
+        )
+        messages.success(request, "Service booked successfully!")
+        return redirect('my_service_bookings')
+
+    return render(request, 'book_service.html', {
+        'eligible_cars': eligible_cars,
+    })
+
+@login_required
+def my_service_bookings(request):
+    services = ServiceBooking.objects.filter(user=request.user)
+    return render(request, 'my_services.html', {'services': services})

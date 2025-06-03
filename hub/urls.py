@@ -33,8 +33,10 @@ urlpatterns = [
     path('payment_success/', views.payment_success, name='payment_success'),
 
     # Services
-    path('services/book/', views.book_service, name='book_service'),
+    # path('services/book/', views.book_service, name='book_service'),
     path('services/', views.my_bookings, name='my_bookings'),
+    path('book-service/', views.book_service, name='book_service'),
+    path('my-services/', views.my_service_bookings, name='my_service_bookings'),
     
     # Jobs
     path('jobs/', views.job_list, name='job_list'),
