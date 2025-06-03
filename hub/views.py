@@ -164,7 +164,7 @@ def login_view(request):
 def logout_user(request):
     auth_logout(request)
     messages.success(request, "You have been logged out.")
-    return redirect('hub:home')
+    return redirect('hub:demo')
 
 @login_required
 def car_list(request):
