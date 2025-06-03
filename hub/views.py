@@ -1,6 +1,7 @@
 # hub/views.py
 import os
 import joblib
+import re
 from django.shortcuts import render, redirect, get_object_or_404
 from django.contrib import messages
 from django.contrib.auth.decorators import login_required
@@ -43,25 +44,75 @@ def register_user(request):
 
         errors = {}
 
+        # Username validation
         if User.objects.filter(username=username).exists():
             errors['username'] = "Username already exists!"
+        if username.isdigit(): # Check if username consists only of digits
+            errors['username'] = "Username cannot consist only of numbers."
+        if not username:
+            errors['username'] = "Username is required."
 
+
+        # Email validation
         try:
             validate_email(email)
         except ValidationError:
             errors['email'] = "Invalid email format!"
-
         if User.objects.filter(email=email).exists():
             errors['email'] = "Email already exists!"
+        if not email:
+            errors['email'] = "Email is required."
 
-        if UserProfile.objects.filter(contact_number=contact_number).exists():
-            errors['contact_number'] = "This contact number is already registered!"
-
+        # Password validation
         if password != confirm_password:
             errors['password'] = "Passwords do not match!"
+        # Password complexity: at least one uppercase, one number, one symbol
+        if not re.search(r'[A-Z]', password):
+            errors['password_uppercase'] = "Password must contain at least one uppercase letter."
+        if not re.search(r'\d', password):
+            errors['password_digit'] = "Password must contain at least one number."
+        if not re.search(r'[!@#$%^&*(),.?":{}|<>]', password): # Common symbols
+            errors['password_symbol'] = "Password must contain at least one symbol."
+        if len(password) < 8: # Example: minimum length
+            errors['password_length'] = "Password must be at least 8 characters long."
+        if not password:
+            errors['password'] = "Password is required."
+
+
+        # Age validation
+        try:
+            age = int(age)
+            if age < 0:
+                errors['age'] = "Age cannot be negative."
+        except ValueError:
+            errors['age'] = "Age must be a number."
+        if not age:
+            errors['age'] = "Age is required."
+
+        # Place validation
+        if not re.fullmatch(r'[a-zA-Z\s]+', place): # Only letters and spaces
+            errors['place'] = "Place can only contain letters and spaces."
+        if not place:
+            errors['place'] = "Place is required."
+
+        # Contact number validation
+        if not contact_number.isdigit():
+            errors['contact_number'] = "Contact number can only contain digits."
+        if len(contact_number) != 10:
+            errors['contact_number'] = "Contact number must be exactly 10 digits long."
+        if UserProfile.objects.filter(contact_number=contact_number).exists():
+            errors['contact_number'] = "This contact number is already registered!"
+        if not contact_number:
+            errors['contact_number'] = "Contact number is required."
+
+        # Image validation
+        if not image:
+            errors['user_image'] = "User image is required."
+
 
         if errors:
-            return render(request, 'register.html', {'errors': errors})
+            # Pass back the original POST data to re-populate the form
+            return render(request, 'register.html', {'errors': errors, 'form_data': request.POST})
 
         user = User.objects.create_user(username=username, email=email, password=password)
         user.is_active = True
@@ -81,21 +132,30 @@ def register_user(request):
 
     return render(request, 'register.html')
 
-
 def login_view(request):
     if request.method == "POST":
         username = request.POST.get('username')
         password = request.POST.get('password')
+
+        # Basic validations for login fields
+        if not username:
+            messages.error(request, "Username is required.")
+            return render(request, 'login.html', {'username_value': username})
+        if not password:
+            messages.error(request, "Password is required.")
+            return render(request, 'login.html', {'username_value': username})
+
         user = authenticate(request, username=username, password=password)
-        
+
         if user is not None:
             auth_login(request, user)
             messages.success(request, "You have been successfully logged in.")
             return redirect('home')
         else:
             messages.error(request, "Invalid username or password.")
-    
-    return render(request, 'login.html')
+
+    return render(request, 'login.html', {'username_value': request.POST.get('username', '')})
+
 
 def logout_user(request):
     auth_logout(request)
@@ -148,6 +208,56 @@ def car_list(request):
     }
     
     return render(request, 'car_list.html', context)
+
+def new_car_list(request):
+    cars = Car.objects.filter(is_new=True) 
+    query = request.GET.get('q')
+    selected_brand = request.GET.get('brand')
+    selected_year = request.GET.get('year')
+    min_price = request.GET.get('min_price')
+    max_price = request.GET.get('max_price')
+
+    if query:
+        cars = cars.filter(
+            Q(name__icontains=query) |
+            Q(brand__icontains=query) |
+            Q(model__icontains=query)
+        )
+
+    if selected_brand:
+        cars = cars.filter(brand=selected_brand)
+
+    if selected_year:
+        cars = cars.filter(year=selected_year)
+
+    if min_price:
+        try:
+            min_price = float(min_price)
+            cars = cars.filter(price__gte=min_price)
+        except ValueError:
+            pass # Handle invalid input gracefully
+
+    if max_price:
+        try:
+            max_price = float(max_price)
+            cars = cars.filter(price__lte=max_price)
+        except ValueError:
+            pass # Handle invalid input gracefully
+
+    brands = Car.objects.filter(is_new=True).values_list('brand', flat=True).distinct().order_by('brand')
+    years = Car.objects.filter(is_new=True).values_list('year', flat=True).distinct().order_by('-year')
+
+    context = {
+        'cars': cars,
+        'query': query,
+        'brands': brands,
+        'years': years,
+        'selected_brand': selected_brand,
+        'selected_year': selected_year,
+        'min_price': min_price,
+        'max_price': max_price,
+    }
+    return render(request, 'new_car_list.html', context)
 
 @login_required
 def used_car_list(request):

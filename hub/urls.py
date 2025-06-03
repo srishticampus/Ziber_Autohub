@@ -14,6 +14,7 @@ urlpatterns = [
 
     # Cars
     path('cars/', views.car_list, name='car_list'),
+    path('new-cars/', views.new_car_list, name='new_car_list'),
     path('used-cars/', views.used_car_list, name='used_car_list'), # New URL for used cars
     path('cars/<int:pk>/', views.car_detail, name='car_detail'),
     

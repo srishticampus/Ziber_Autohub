@@ -1,28 +1,41 @@
 {% extends 'base.html' %}
 {% load static %}
 
-{% block tittle %}Login to Your Account{% endblock %} {# Added title block #}
+{% block title %}Login to Your Account{% endblock %}
 
 {% block extra_styles %}
-    {# No template-specific styles needed here after moving them to style.css #}
+    {{ block.super }} {# Inherit styles from base.html if needed #}
+    <style>
+        /* Styles for password toggle icon */
+        .password-input-group {
+            position: relative;
+        }
+
+        .password-toggle {
+            position: absolute;
+            right: 15px;
+            top: 50%;
+            transform: translateY(-50%);
+            cursor: pointer;
+            color: #bbb; /* Adjust color as needed */
+            z-index: 10; /* Ensure it's above the input */
+        }
+
+        .password-toggle:hover {
+            color: #f26522; /* Highlight on hover */
+        }
+    </style>
 {% endblock %}
 
 {% block content %}
-{# Use a CSS class for the background div instead of inline styles #}
 <div class="fashion_section ">
     <div class="login-background">
-        <!-- Header content will be inherited from base.html -->
-
-        <!-- Login Form Full Height -->
-        {# Use a CSS class for the inner container instead of inline styles #}
         <div class="d-flex justify-content-center align-items-center login-container-height">
             <div class="col-md-5">
-                {# Use a CSS class for the card with background and color styles #}
                 <div class="card p-4 rounded-4 login-card-style">
                     <h2 class="text-center mb-4 text-white">Login here</h2>
 
                     {% if messages %}
-                        {# Message display is fine as is #}
                         {% for message in messages %}
                             <div class="alert alert-{{ message.tags }}">{{ message }}</div>
                         {% endfor %}
@@ -31,31 +44,29 @@
                     <form method="POST">
                         {% csrf_token %}
                         <div class="mb-3">
-                            {# Use a CSS class for input styles #}
                             <input type="text" name="username" class="form-control login-input-style"
-                                    placeholder="Enter Username *" required>
+                                    placeholder="Enter Username *" required
+                                    value="{{ username_value|default:'' }}">
                         </div>
-                        <div class="mb-3">
-                            {# Use a CSS class for input styles #}
-                            <input type="password" name="password" class="form-control login-input-style"
-                                    placeholder="Enter Password *" required>
+                        <div class="mb-3 password-input-group">
+                            <input type="password" name="password" id="login-password-field"
+                                   class="form-control login-input-style"
+                                   placeholder="Enter Password *" required>
+                            <i class="fa fa-eye password-toggle" id="toggle-login-password"></i>
                         </div>
                         <div class="d-flex justify-content-center">
-                            {# Use a CSS class for button styles #}
                             <button type="submit" class="btn login-button-style">
                                 Login
                             </button>
                         </div>
                     </form>
 
-
-                <div class="text-center mt-3">
-                    <small>Don't have an account?
-                        {# The register link is fine as is #}
-                        <a href="{% url 'register' %}" class="text-decoration-none text-warning">Register here</a>
-                    </small><br>
-                    {% comment %} <small><a href="{% url 'forgot_password' %}" class="text-decoration-none text-light">Forgot Password?</a></small> {% endcomment %}
-                </div>
+                    <div class="text-center mt-3">
+                        <small>Don't have an account?
+                            <a href="{% url 'register' %}" class="text-decoration-none text-warning">Register here</a>
+                        </small><br>
+                        {% comment %} <small><a href="{% url 'forgot_password' %}" class="text-decoration-none text-light">Forgot Password?</a></small> {% endcomment %}
+                    </div>
                 </div>
             </div>
         </div>
@@ -63,6 +74,35 @@
 </div>
 {% endblock %}
 
-{% block extra_scripts %}
-{% comment %} Add any specific scripts for login.html here if needed, otherwise leave empty {% endcomment %}
+{% block scripts %}
+{{ block.super }} {# Include base.html scripts, especially the message timeout script #}
+<script>
+    document.addEventListener('DOMContentLoaded', function() {
+        console.log("DOM Content Loaded for login page."); // Log when script starts
+
+        const togglePassword = document.getElementById('toggle-login-password');
+        const passwordField = document.getElementById('login-password-field');
+
+        console.log("togglePassword element:", togglePassword); // Check if element is found
+        console.log("passwordField element:", passwordField); // Check if element is found
+
+        if (togglePassword && passwordField) {
+            togglePassword.addEventListener('click', function() {
+                console.log("Eye icon clicked!"); // Log when click event fires
+
+                const type = passwordField.getAttribute('type') === 'password' ? 'text' : 'password';
+                passwordField.setAttribute('type', type);
+
+                console.log("Password field type changed to:", type); // Log the new type
+
+                // Toggle the eye icon class
+                this.classList.toggle('fa-eye');
+                this.classList.toggle('fa-eye-slash');
+                console.log("Eye icon classes toggled."); // Log icon class change
+            });
+        } else {
+            console.warn("Password toggle elements not found on login page (this is an issue).");
+        }
+    });
+</script>
 {% endblock %}

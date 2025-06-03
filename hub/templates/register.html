@@ -1,84 +1,210 @@
 {% extends 'base.html' %}
 {% load static %}
 
-{% block tittle %}Register Account{% endblock %} {# Added title block #}
+{% block title %}Register Account{% endblock %}
 
 {% block extra_styles %}
-    {# Add any register-specific styles here if needed, but aim to put most in style.css #}
+<style>
+    /* Style for select dropdowns with dark-input class */
+    .form-select.dark-input {
+        color: white; /* Text color for the selected option */
+        background-color: transparent;
+        border-bottom: 1px solid #e50914;
+        font-weight: bold;
+    }
+
+    /* ADD THESE NEW RULES FOR SELECT OPTIONS */
+    .form-select.dark-input option {
+        background-color: #333; /* Dark background for options */
+        color: white; /* White text for options */
+    }
+
+    /* Optional: Style for when an option is hovered/selected in the dropdown */
+    .form-select.dark-input option:hover,
+    .form-select.dark-input option:checked {
+        background-color: #f26522; /* Highlight color on hover/selection */
+        color: white;
+    }
+
+    /* Styles for password toggle icon */
+    .password-input-group {
+        position: relative;
+    }
+
+    .password-toggle {
+        position: absolute;
+        right: 15px;
+        top: 50%;
+        transform: translateY(-50%);
+        cursor: pointer;
+        color: #bbb; /* Adjust color as needed */
+        z-index: 10; /* Ensure it's above the input */
+    }
+
+    .password-toggle:hover {
+        color: #f26522; /* Highlight on hover */
+    }
+</style>
 {% endblock %}
 
 {% block content %}
-{# Use the new CSS class for the background div #}
 <div class="register-background">
-    <!-- login form -->
-    {# Use the new CSS class for the inner container div #}
     <div class="container d-flex justify-content-center align-items-center register-container-height">
         <div class="col-lg-8 col-md-10">
-            {# The card and text styles are likely handled by Bootstrap and your style.css #}
             <div class="card p-4 rounded-4">
                 <h2 class="text-center mb-4 text-white">Create Your Account</h2>
 
                 {% if errors %}
-                    {# Error display is fine as is #}
-                    <div class="alert alert-danger">
-                        <ul class="mb-0">
-                            {% for field, error in errors.items %}
-                                <li><strong>{{ field|capfirst }}:</strong> {{ error }}</li>
-                            {% endfor %}
-                        </ul>
-                    </div>
+                <div class="alert alert-danger">
+                    <ul class="mb-0">
+                        {% for field, error in errors.items %}
+                        <li><strong>{{ field|capfirst }}:</strong> {{ error }}</li>
+                        {% endfor %}
+                    </ul>
+                </div>
                 {% endif %}
 
-                {# Form structure and input classes are fine as is #}
                 <form method="POST" enctype="multipart/form-data">
                     {% csrf_token %}
                     <div class="row">
                         <div class="col-md-6 mb-3">
-                            <input type="text" name="username" class="form-control dark-input" placeholder="Enter Username *" required>
+                            <input
+                                type="text"
+                                name="username"
+                                class="form-control dark-input"
+                                placeholder="Enter Username *"
+                                required
+                                value="{{ form_data.username|default:'' }}"
+                            />
                         </div>
                         <div class="col-md-6 mb-3">
-                            <input type="email" name="email" class="form-control dark-input" placeholder="Enter Email *" required>
+                            <input
+                                type="email"
+                                name="email"
+                                class="form-control dark-input"
+                                placeholder="Enter Email *"
+                                required
+                                value="{{ form_data.email|default:'' }}"
+                            />
+                        </div>
+                        <div class="col-md-6 mb-3 password-input-group">
+                            <input
+                                type="password"
+                                name="password"
+                                id="password-field"
+                                class="form-control dark-input"
+                                placeholder="Enter Password *"
+                                required
+                            />
+                            <i class="fa fa-eye password-toggle" id="toggle-password"></i>
+                        </div>
+                        <div class="col-md-6 mb-3 password-input-group">
+                            <input
+                                type="password"
+                                name="confirm_password"
+                                id="confirm-password-field"
+                                class="form-control dark-input"
+                                placeholder="Confirm Password *"
+                                required
+                            />
+                            <i class="fa fa-eye password-toggle" id="toggle-confirm-password"></i>
                         </div>
                         <div class="col-md-6 mb-3">
-                            <input type="password" name="password" class="form-control dark-input" placeholder="Enter Password *" required>
+                            <input
+                                type="number"
+                                name="age"
+                                class="form-control dark-input"
+                                placeholder="Enter Age *"
+                                required
+                                value="{{ form_data.age|default:'' }}"
+                            />
                         </div>
                         <div class="col-md-6 mb-3">
-                            <input type="password" name="confirm_password" class="form-control dark-input" placeholder="Confirm Password *" required>
+                            <input
+                                type="text"
+                                name="place"
+                                class="form-control dark-input"
+                                placeholder="Enter Place *"
+                                required
+                                value="{{ form_data.place|default:'' }}"
+                            />
                         </div>
                         <div class="col-md-6 mb-3">
-                            <input type="number" name="age" class="form-control dark-input" placeholder="Enter Age *" required>
-                        </div>
-                        <div class="col-md-6 mb-3">
-                            <input type="text" name="place" class="form-control dark-input" placeholder="Enter Place *" required>
-                        </div>
-                        <div class="col-md-6 mb-3">
-                            <input type="text" name="contact_number" class="form-control dark-input" placeholder="Enter Contact Number *" required>
+                            <input
+                                type="text"
+                                name="contact_number"
+                                class="form-control dark-input"
+                                placeholder="Enter Contact Number *"
+                                required
+                                value="{{ form_data.contact_number|default:'' }}"
+                            />
                         </div>
                         <div class="col-md-6 mb-3">
                             <select name="gender" class="form-select dark-input" required>
                                 <option value="">-- Select Gender --</option>
-                                <option value="Male">Male</option>
-                                <option value="Female">Female</option>
-                                <option value="Other">Other</option>
+                                <option value="Male" {% if form_data.gender == 'Male' %}selected{% endif %}>Male</option>
+                                <option value="Female" {% if form_data.gender == 'Female' %}selected{% endif %}>Female</option>
+                                <option value="Other" {% if form_data.gender == 'Other' %}selected{% endif %}>Other</option>
                             </select>
                         </div>
                         <div class="col-md-12 mb-3">
-                            <input type="file" name="user_image" class="form-control dark-input" required>
+                            <input
+                                type="file"
+                                name="user_image"
+                                class="form-control dark-input"
+                                required
+                                accept=".jpg,.jpeg,.png" {# Added accept attribute #}
+                            />
                         </div>
                     </div>
 
                     <div class="text-center">
-                        {# The button class is fine as is #}
-                        <button type="submit" class="btn btn-danger px-5 mt-3">Register</button>
+                        <button type="submit" class="btn btn-danger px-5 mt-3">
+                            Register
+                        </button>
                     </div>
                 </form>
 
-                {# The login link is fine as is #}
                 <div class="text-center mt-3">
-                    <small class="text-light">Already have an account? <a href="{% url 'login' %}" class="text-decoration-none text-danger">Login here</a></small>
+                    <small class="text-light"
+                        >Already have an account?
+                        <a href="{% url 'login' %}" class="text-decoration-none text-danger"
+                            >Login here</a
+                        ></small
+                    >
                 </div>
             </div>
         </div>
     </div>
 </div>
+{% endblock %}
+
+{% block scripts %}
+{{ block.super }} {# Include base.html scripts #}
+<script>
+    document.addEventListener('DOMContentLoaded', function() {
+        // Password toggle functionality
+        const togglePassword = document.getElementById('toggle-password');
+        const passwordField = document.getElementById('password-field');
+        const toggleConfirmPassword = document.getElementById('toggle-confirm-password');
+        const confirmPasswordField = document.getElementById('confirm-password-field');
+
+        function setupPasswordToggle(toggleBtn, passwordInput) {
+            if (toggleBtn && passwordInput) {
+                toggleBtn.addEventListener('click', function() {
+                    // Toggle the type attribute
+                    const type = passwordInput.getAttribute('type') === 'password' ? 'text' : 'password';
+                    passwordInput.setAttribute('type', type);
+
+                    // Toggle the icon
+                    this.classList.toggle('fa-eye');
+                    this.classList.toggle('fa-eye-slash');
+                });
+            }
+        }
+
+        setupPasswordToggle(togglePassword, passwordField);
+        setupPasswordToggle(toggleConfirmPassword, confirmPasswordField);
+    });
+</script>
 {% endblock %}
