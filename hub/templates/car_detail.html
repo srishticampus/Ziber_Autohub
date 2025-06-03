@@ -88,19 +88,22 @@
                         {# The action-buttons class styles are moved to style.css #}
                         <div class="action-buttons mt-4">
                             {% if car.is_new %}
-                                <form method="post" action="{% url 'pre_book_car' car.id %}">
+                                <form method="post" action="{% url 'hub:pre_book_car' car.id %}">
                                     {% csrf_token %}
                                     <button type="submit" class="btn btn-info">Pre Book</button>
                                 </form>
                             {% else %}
-                                <form method="post" action="{% url 'buy_now' car.id %}">
+                                <form method="post" action="{% url 'hub:buy_now' car.id %}">
                                     {% csrf_token %}
                                     <button type="submit" class="btn btn-success">Buy Now</button>
                                 </form>
-                                <form method="post" action="{% url 'add_to_cart' car.id %}">
+                                <form method="post" action="{% url 'hub:add_to_cart' car.id %}">
                                     {% csrf_token %}
                                     <button type="submit" class="btn btn-primary">Add to Cart</button>
                                 </form> 
+                                {% if request.user != car.seller %}
+                                    <a href="{% url 'chat:chat_view' car.id car.seller.id %}" class="btn btn-success">Chat with Seller</a>
+                                {% endif %}
                             {% endif %}
                         </div>
                     </div>

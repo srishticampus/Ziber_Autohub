@@ -1,0 +1,14 @@
+<h2>My Chats</h2>
+
+{% for thread in threads %}
+  <div class="card my-2 p-3">
+    <strong>Car:</strong> {{ thread.car.name }} <br>
+    <strong>With:</strong> {{ thread.other_user.username }} <br>
+    <strong>Last Message:</strong> {{ thread.last_message.content|truncatechars:50 }} <br>
+    <a href="{% url 'chat:chat_view' thread.car.id thread.other_user.id %}" class="btn btn-sm btn-primary mt-2">
+      Open Chat
+    </a>
+  </div>
+{% empty %}
+  <p>No chats yet.</p>
+{% endfor %}

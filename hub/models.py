@@ -43,7 +43,7 @@ class Car(models.Model):
         ('Electric', 'Electric'),
         ('Hybrid', 'Hybrid'),
     ]
-    
+    seller = models.ForeignKey(User, on_delete=models.CASCADE, related_name='cars', null=True)
     brand = models.CharField(max_length=50, choices=BRAND_CHOICES)
     name = models.CharField(max_length=50)
     model = models.CharField(max_length=100)

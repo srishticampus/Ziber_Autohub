@@ -1,0 +1,8 @@
+<h2>Contact Seller: {{ seller.username }}</h2>
+<p><strong>Car:</strong> {{ car.name }} ({{ car.year }})</p>
+
+<form method="POST">
+    {% csrf_token %}
+    {{ form.as_p }}
+    <button type="submit">Send Message</button>
+</form>

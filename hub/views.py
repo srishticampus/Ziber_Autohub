@@ -12,6 +12,8 @@ from django.contrib.auth.models import User
 from django.core.validators import validate_email
 from django.core.exceptions import ValidationError
 from .models import UserProfile
+from chat.models import Message
+from django.db.models import Q
 from .models import (
     Car, Cart, CartItem, Order, OrderItem, 
     ServiceBooking, JobVacancy, JobApplication, PreBooking
@@ -682,3 +684,23 @@ def add_used_car(request):
     else:
         form = UsedCarForm()
     return render(request, 'add_used_car.html', {'form': form})
+
+@login_required
+def my_chats(request):
+    # Get all unique conversations where the user is either sender or receiver
+    messages = Message.objects.filter(Q(sender=request.user) | Q(receiver=request.user))
+
+    # Get distinct (car, other_user) combinations
+    threads = {}
+    for msg in messages:
+        car = msg.car
+        other_user = msg.receiver if msg.sender == request.user else msg.sender
+        key = (car.id, other_user.id)
+        if key not in threads:
+            threads[key] = {
+                'car': car,
+                'other_user': other_user,
+                'last_message': msg
+            }
+
+    return render(request, 'my_chats.html', {'threads': threads.values()})
