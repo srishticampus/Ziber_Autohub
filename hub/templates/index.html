@@ -39,15 +39,15 @@
                         <div class="row">
                             {% if new_cars %}
                                 {% for new_car in new_cars %}
-                                <a href="{% url 'car_detail' new_car.id %}">
+                                <a href="{% url 'hub:car_detail' new_car.id %}">
                                     <div class="col-lg-4 col-sm-4">
                                         <div class="box_main">
                                             <h4 class="shirt_text">{{new_car.name}}</h4>
                                             <p class="price_text">Start Price <span class="price-color">$ {{new_car.price}}</span></p>
                                             <div class="tshirt_img"><img src="{% static 'images/carbg10.jpg' %}" alt="Skoda Kodiaq"></div>
                                             <div class="btn_main">
-                                                <div class="buy_bt"><a href="{% url 'car_list' %}">Buy Now</a></div>
-                                                <div class="seemore_bt"><a href="{% url 'car_list' %}">See More</a></div>
+                                                <div class="buy_bt"><a href="{% url 'hub:car_list' %}">Buy Now</a></div>
+                                                <div class="seemore_bt"><a href="{% url 'hub:car_list' %}">See More</a></div>
                                             </div>
                                         </div>
                                     </div>
@@ -75,15 +75,15 @@
                         <div class="row">
                             {% if old_cars %}
                                 {% for old_car in old_cars %}
-                                <a href="{% url 'car_detail' old_car.id %}">
+                                <a href="{% url 'hub:car_detail' old_car.id %}">
                                     <div class="col-lg-4 col-sm-4">
                                         <div class="box_main">
                                             <h4 class="shirt_text">{{old_car.name}}</h4>
                                             <p class="price_text">Start Price <span class="price-color">$ {{old_car.price}}</span></p>
                                             <div class="electronic_img"><img src="{% static 'images/used1.jpg' %}" alt="Maruti Suzuki Swift"></div>
                                             <div class="btn_main">
-                                                <div class="buy_bt"><a href="{% url 'car_list' %}">Buy Now</a></div>
-                                                <div class="seemore_bt"><a href="{% url 'car_list' %}">See More</a></div>
+                                                <div class="buy_bt"><a href="{% url 'hub:car_list' %}">Buy Now</a></div>
+                                                <div class="seemore_bt"><a href="{% url 'hub:car_list' %}">See More</a></div>
                                             </div>
                                         </div>
                                     </div>
@@ -124,8 +124,8 @@
                                         <p class="price_text">Start Price <span class="price-color">$ 100</span></p>
                                         <div class="jewellery_img"><img src="{% static 'images/a1.jpg' %}" alt="Floor Mats"></div>
                                         <div class="btn_main">
-                                            <div class="buy_bt"><a href="{% url 'car_list' %}">Buy Now</a></div>
-                                            <div class="seemore_bt"><a href="{% url 'car_list' %}">See More</a></div>
+                                            <div class="buy_bt"><a href="{% url 'hub:car_list' %}">Buy Now</a></div>
+                                            <div class="seemore_bt"><a href="{% url 'hub:car_list' %}">See More</a></div>
                                         </div>
                                     </div>
                                 </div>
@@ -135,8 +135,8 @@
                                         <p class="price_text">Start Price <span class="price-color">$ 100</span></p>
                                         <div class="jewellery_img"><img src="{% static 'images/a3.jpg' %}" alt="Vacuum Cleaner"></div>
                                         <div class="btn_main">
-                                            <div class="buy_bt"><a href="{% url 'car_list' %}">Buy Now</a></div>
-                                            <div class="seemore_bt"><a href="{% url 'car_list' %}">See More</a></div>
+                                            <div class="buy_bt"><a href="{% url 'hub:car_list' %}">Buy Now</a></div>
+                                            <div class="seemore_bt"><a href="{% url 'hub:car_list' %}">See More</a></div>
                                         </div>
                                     </div>
                                 </div>
@@ -146,8 +146,8 @@
                                         <p class="price_text">Start Price <span class="price-color">$ 100</span></p>
                                         <div class="jewellery_img"><img src="{% static 'images/a2.jpg' %}" alt="Seat Covers"></div>
                                         <div class="btn_main">
-                                            <div class="buy_bt"><a href="{% url 'car_list' %}">Buy Now</a></div>
-                                            <div class="seemore_bt"><a href="{% url 'car_list' %}">See More</a></div>
+                                            <div class="buy_bt"><a href="{% url 'hub:car_list' %}">Buy Now</a></div>
+                                            <div class="seemore_bt"><a href="{% url 'hub:car_list' %}">See More</a></div>
                                         </div>
                                     </div>
                                 </div>

@@ -87,7 +87,7 @@
             <div class="row">
                 <div class="col-12">
                     <div class="filter-section">
-                        <form method="get" action="{% url 'used_car_list' %}" class="needs-validation" novalidate>
+                        <form method="get" action="{% url 'hub:used_car_list' %}" class="needs-validation" novalidate>
                             <div class="row g-3 align-items-end"> {# Use g-3 for gutter and align-items-end to align bottom of inputs #}
                                 <div class="col-md-3">
                                     <label for="{{ form.q.id_for_label }}" class="form-label">Search</label>
@@ -122,7 +122,7 @@
                                 
                                 <div class="col-md-2 d-flex align-items-end"> {# Use d-grid for full width buttons in a column, gap-2 for spacing #}
                                     <button type="submit" class="btn filter-button mx-5">Apply Filters</button>
-                                    <a href="{% url 'used_car_list' %}" class="btn btn-secondary mx-5">Clear All</a>
+                                    <a href="{% url 'hub:used_car_list' %}" class="btn btn-secondary mx-5">Clear All</a>
                                 </div>
                             </div>
                         </form>
@@ -148,13 +148,13 @@
                                 
                                 <div class="mt-auto">
                                     <div class="d-flex justify-content-between align-items-center mt-3"> {# align-items-center for horizontal button alignment #}
-                                        <a href="{% url 'car_detail' car.id %}" class="btn btn-outline-primary btn-sm flex-grow-1 me-2">See More</a> {# flex-grow-1 and me-2 for spacing #}
-                                        <form method="post" action="{% url 'buy_now' car.id %}" class="m-0">
+                                        <a href="{% url 'hub:car_detail' car.id %}" class="btn btn-outline-primary btn-sm flex-grow-1 me-2">See More</a> {# flex-grow-1 and me-2 for spacing #}
+                                        <form method="post" action="{% url 'hub:buy_now' car.id %}" class="m-0">
                                             {% csrf_token %}
                                             <button type="submit" class="btn btn-success btn-sm flex-grow-1">Buy Now</button>
                                         </form>
                                     </div>
-                                    <form method="post" action="{% url 'add_to_cart' car.id %}" class="mt-2">
+                                    <form method="post" action="{% url 'hub:add_to_cart' car.id %}" class="mt-2">
                                         {% csrf_token %}
                                         <button type="submit" class="btn btn-primary btn-sm w-100">Add to Cart</button>
                                     </form>

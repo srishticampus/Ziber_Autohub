@@ -23,8 +23,8 @@ from django.conf import settings
 
 urlpatterns = [
     path('admin/', admin.site.urls),
-    path('', include('hub.urls')),
-    path('admin_panel/', include('admin_panel.urls')),
+    path('', include('hub.urls',namespace='hub')),
+    path('admin_panel/', include('admin_panel.urls', namespace="admin_panel")),
 
 ]
 

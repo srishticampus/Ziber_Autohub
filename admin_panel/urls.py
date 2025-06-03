@@ -2,8 +2,9 @@
 from django.urls import path
 from . import views
 
+app_name = 'admin_panel'
 
-urlpatterns = [
+patterns = [
     path('dashboard/', views.admin_dashboard, name='admin_dashboard'),
     path('add-car/', views.add_car, name='add_car'),
     path('add-job/', views.add_job, name='add_job'),

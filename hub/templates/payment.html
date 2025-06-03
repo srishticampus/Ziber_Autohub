@@ -45,7 +45,7 @@
         {# The payment-box class styles are moved to style.css #}
         <div class="payment-box">
             <h3 class="text-center mb-4">Select a Payment Option</h3> {# Bootstrap classes are fine #}
-            <form method="post" action="{% url 'payment_success' %}"> {# Form attributes are fine #}
+            <form method="post" action="{% url 'hub:payment_success' %}"> {# Form attributes are fine #}
                 {% csrf_token %} {# CSRF token is essential #}
 
                 {# The payment-option class styles are moved to style.css #}

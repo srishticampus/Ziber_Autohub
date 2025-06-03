@@ -60,7 +60,7 @@
     </div> {# Close the car-detail-banner-background div #}
     {# Removed the incorrect <class="bg-light"> tag #}
     <div class="container mt-5 mb-5">
-        <a href="{% url 'car_list' %}" class="btn btn-outline-secondary mb-4">← Back to Cars</a>
+        <a href="{% url 'hub:car_list' %}" class="btn btn-outline-secondary my-4">← Back to Cars</a>
 
         <div class="row justify-content-center">
             <div class="col-md-10">
@@ -72,12 +72,12 @@
                     </div>
                     <div class="col-md-6">
                         <h2 class="mb-3">{{ car.brand }} {{ car.model }}</h2>
-                        <p><strong>Price:</strong> ₹{{ car.price }}</p>
+                        <p><strong>Price:</strong> ₹{{ car.price }} Lakhs</p>
                         <p><strong>Fuel Type:</strong> {{ car.fuel_type }}</p>
                         <p><strong>Year:</strong> {{ car.year }}</p>
                         <p><strong>Status:</strong>
                             {% if car.is_new %}
-                                <span class="badge bg-success">New</span>
+                                <span class="badge bg-success px-5 text-white ">New</span>
                             {% else %}
                                 <span class="badge bg-secondary">Used</span>
                             {% endif %}
@@ -97,10 +97,10 @@
                                     {% csrf_token %}
                                     <button type="submit" class="btn btn-success">Buy Now</button>
                                 </form>
-                                <!-- <form method="post" action="{% url 'add_to_cart' car.id %}">
+                                <form method="post" action="{% url 'add_to_cart' car.id %}">
                                     {% csrf_token %}
                                     <button type="submit" class="btn btn-primary">Add to Cart</button>
-                                </form> -->
+                                </form> 
                             {% endif %}
                         </div>
                     </div>
@@ -113,7 +113,7 @@
 
 {% endblock %}
 
-{% block extra_scripts %}
+{% block scripts %}
 {% comment %} Add any specific scripts for car_detail.html here if needed, otherwise leave empty {% endcomment %}
 {% endblock %}
 {# Removed extra closing body and html tags #}

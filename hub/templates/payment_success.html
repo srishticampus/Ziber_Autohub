@@ -69,8 +69,8 @@
             {# Bootstrap class is fine #}
             <p class="mt-3">Thank you for your purchase! Your order has been placed successfully.</p>
             {# The btn-primary, btn-home classes are fine, btn-home styles moved to style.css #}
-            <a href="{% url 'home' %}" class="btn btn-primary btn-home">Back to Home</a> {# Using 'home', ensure this matches your urls.py #}
-            {% comment %} <a href="{% url 'my_orders' %}" class="btn btn-outline-success btn-home ml-2">View My Orders</a> {% endcomment %}
+            <a href="{% url 'hub:home' %}" class="btn btn-primary btn-home">Back to Home</a> {# Using 'home', ensure this matches your urls.py #}
+            {% comment %} <a href="{% url 'hub:my_orders' %}" class="btn btn-outline-success btn-home ml-2">View My Orders</a> {% endcomment %}
         </div>
     </div>
 
