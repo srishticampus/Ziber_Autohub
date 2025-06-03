@@ -19,324 +19,161 @@
     .buy_bt a:hover, .seemore_bt a:hover {
         color: #f26522;
     }
+    .no-items-message {
+        text-align: center;
+        padding: 30px 0;
+        font-size: 1.2em;
+        color: #777;
+    }
 </style>
 {% endblock %}
 
 {% block content %}
-<!-- fashion section start -->
 <div class="fashion_section">
-   <div id="main_slider" class="carousel slide" data-ride="carousel">
-      <div class="carousel-inner">
-         <div class="carousel-item active">
-            <div class="container">
-               <h1 class="fashion_taital">New Cars</h1>
-               <div class="fashion_section_2">
-                  <div class="row">
-                      {% for new_car in new_cars %}
-                      <a href="{% url 'car_detail' new_car.id %}">
-                         <div class="col-lg-4 col-sm-4">
-                            <div class="box_main">
-                               <h4 class="shirt_text">{{new_car.name}}</h4>
-                               <p class="price_text">Start Price <span class="price-color">$ {{new_car.price}}</span></p>
-                               <div class="tshirt_img"><img src="{% static 'images/carbg10.jpg' %}" alt="Skoda Kodiaq"></div>
-                               <div class="btn_main">
-                                  <div class="buy_bt"><a href="{% url 'car_list' %}">Buy Now</a></div>
-                                  <div class="seemore_bt"><a href="{% url 'car_list' %}">See More</a></div>
-                               </div>
-                            </div>
-                         </div>
-                      </a>
-                     {% endfor %}
-                  </div>
-               </div>
+    <div id="main_slider" class="carousel slide" data-ride="carousel">
+        <div class="carousel-inner">
+            <div class="carousel-item active">
+                <div class="container">
+                    <h1 class="fashion_taital">New Cars</h1>
+                    <div class="fashion_section_2">
+                        <div class="row">
+                            {% if new_cars %}
+                                {% for new_car in new_cars %}
+                                <a href="{% url 'car_detail' new_car.id %}">
+                                    <div class="col-lg-4 col-sm-4">
+                                        <div class="box_main">
+                                            <h4 class="shirt_text">{{new_car.name}}</h4>
+                                            <p class="price_text">Start Price <span class="price-color">$ {{new_car.price}}</span></p>
+                                            <div class="tshirt_img"><img src="{% static 'images/carbg10.jpg' %}" alt="Skoda Kodiaq"></div>
+                                            <div class="btn_main">
+                                                <div class="buy_bt"><a href="{% url 'car_list' %}">Buy Now</a></div>
+                                                <div class="seemore_bt"><a href="{% url 'car_list' %}">See More</a></div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </a>
+                                {% endfor %}
+                            {% else %}
+                                <div class="col-12">
+                                    <p class="no-items-message">No new cars available at the moment. Please check back later!</p>
+                                </div>
+                            {% endif %}
+                        </div>
+                    </div>
+                </div>
             </div>
-         </div>
-         <!-- <div class="carousel-item ">
-            <div class="container">
-               <h1 class="fashion_taital">New Cars</h1>
-               <div class="fashion_section_2">
-                  <div class="row">
-                     <div class="col-lg-4 col-sm-4">
-                        <div class="box_main">
-                           <h4 class="shirt_text">Toyota innova hycross</h4>
-                           <p class="price_text">Start Price <span class="price-color">$ 300</span></p>
-                           <div class="tshirt_img"><img src="{% static 'images/car20.jpg' %}" alt="Toyota Innova hycross"></div>
-                           <div class="btn_main">
-                              <div class="buy_bt"><a href="{% url 'car_list' %}">Buy Now</a></div>
-                              <div class="seemore_bt"><a href="{% url 'car_list' %}">See More</a></div>
-                           </div>
-                        </div>
-                     </div>
-                     <div class="col-lg-4 col-sm-4">
-                        <div class="box_main">
-                           <h4 class="shirt_text">Kia EV6</h4>
-                           <p class="price_text">Start Price <span class="price-color">$ 300</span></p>
-                           <div class="tshirt_img"><img src="{% static 'images/carbg12.png' %}" alt="Kia EV6"></div>
-                           <div class="btn_main">
-                              <div class="buy_bt"><a href="{% url 'car_list' %}">Buy Now</a></div>
-                              <div class="seemore_bt"><a href="{% url 'car_list' %}">See More</a></div>
-                           </div>
-                        </div>
-                     </div>
-                     <div class="col-lg-4 col-sm-4">
-                        <div class="box_main">
-                           <h4 class="shirt_text">Tata Harrier Facelift</h4>
-                           <p class="price_text">Start Price <span class="price-color">$ 300</span></p>
-                           <div class="tshirt_img"><img src="{% static 'images/car23.jpg' %}" alt="Tata Harrier Facelift"></div>
-                           <div class="btn_main">
-                              <div class="buy_bt"><a href="{% url 'car_list' %}">Buy Now</a></div>
-                              <div class="seemore_bt"><a href="{% url 'car_list' %}">See More</a></div>
-                           </div>
-                        </div>
-                     </div>
-                  </div>
-               </div>
-            </div>
-         </div>
-         <div class="carousel-item ">
-            <div class="container">
-               <h1 class="fashion_taital">New Cars</h1>
-               <div class="fashion_section_2">
-                  <div class="row">
-                     <div class="col-lg-4 col-sm-4">
-                        <div class="box_main">
-                           <h4 class="shirt_text">Mahindra XUV700</h4>
-                           <p class="price_text">Start Price <span class="price-color">$ 300</span></p>
-                           <div class="tshirt_img"><img src="{% static 'images/car22.jpg' %}" alt="Mahindra XUV700"></div>
-                           <div class="btn_main">
-                              <div class="buy_bt"><a href="{% url 'car_list' %}">Buy Now</a></div>
-                              <div class="seemore_bt"><a href="{% url 'car_list' %}">See More</a></div>
-                           </div>
-                        </div>
-                     </div>
-                     <div class="col-lg-4 col-sm-4">
-                        <div class="box_main">
-                           <h4 class="shirt_text">Kia Seltos 2024</h4>
-                           <p class="price_text">Start Price <span class="price-color">$ 300</span></p>
-                           <div class="tshirt_img"><img src="{% static 'images/car24.jpg' %}" alt="Kia Seltos 2024"></div>
-                           <div class="btn_main">
-                              <div class="buy_bt"><a href="{% url 'car_list' %}">Buy Now</a></div>
-                              <div class="seemore_bt"><a href="{% url 'car_list' %}">See More</a></div>
-                           </div>
-                        </div>
-                     </div>
-                     <div class="col-lg-4 col-sm-4">
-                        <div class="box_main">
-                           <h4 class="shirt_text">Maruti Suzuki Grand Vitara</h4>
-                           <p class="price_text">Start Price <span class="price-color">$ 300</span></p>
-                           <div class="tshirt_img"><img src="{% static 'images/car25.jpg' %}" alt="Maruti Suzuki Grand Vitara"></div>
-                           <div class="btn_main">
-                              <div class="buy_bt"><a href="{% url 'car_list' %}">Buy Now</a></div>
-                              <div class="seemore_bt"><a href="{% url 'car_list' %}">See More</a></div>
-                           </div>
-                        </div>
-                     </div>
-                  </div>
-               </div>
-            </div>
-         </div> -->
-         <!-- Additional carousel items would go here -->
-      </div>
-      <!-- <a class="carousel-control-prev" href="#main_slider" role="button" data-slide="prev">
-         <i class="fa fa-angle-left"></i>
-         <span class="sr-only">Previous</span>
-      </a>
-      <a class="carousel-control-next" href="#main_slider" role="button" data-slide="next">
-         <i class="fa fa-angle-right"></i>
-         <span class="sr-only">Next</span>
-      </a> -->
-   </div>
+        </div>
+    </div>
 </div>
-<!-- fashion section end -->
-
-<!-- electronic section start -->
 <div class="fashion_section">
-   <div id="electronic_main_slider" class="carousel slide" data-ride="carousel">
-      <div class="carousel-inner">
-         <div class="carousel-item active">
-            <div class="container">
-               <h1 class="fashion_taital">Used Cars</h1>
-               <div class="fashion_section_2">
-                  <div class="row">
-                     {% for old_car in old_cars %}
-                     <a href="{% url 'car_detail' old_car.id %}">
-                        <div class="col-lg-4 col-sm-4">
-                           <div class="box_main">
-                              <h4 class="shirt_text">{{old_car.name}}</h4>
-                              <p class="price_text">Start Price <span class="price-color">$ {{old_car.price}}</span></p>
-                              <div class="electronic_img"><img src="{% static 'images/used1.jpg' %}" alt="Maruti Suzuki Swift"></div>
-                              <div class="btn_main">
-                                 <div class="buy_bt"><a href="{% url 'car_list' %}">Buy Now</a></div>
-                                 <div class="seemore_bt"><a href="{% url 'car_list' %}">See More</a></div>
-                              </div>
-                           </div>
+    <div id="electronic_main_slider" class="carousel slide" data-ride="carousel">
+        <div class="carousel-inner">
+            <div class="carousel-item active">
+                <div class="container">
+                    <h1 class="fashion_taital">Used Cars</h1>
+                    <div class="fashion_section_2">
+                        <div class="row">
+                            {% if old_cars %}
+                                {% for old_car in old_cars %}
+                                <a href="{% url 'car_detail' old_car.id %}">
+                                    <div class="col-lg-4 col-sm-4">
+                                        <div class="box_main">
+                                            <h4 class="shirt_text">{{old_car.name}}</h4>
+                                            <p class="price_text">Start Price <span class="price-color">$ {{old_car.price}}</span></p>
+                                            <div class="electronic_img"><img src="{% static 'images/used1.jpg' %}" alt="Maruti Suzuki Swift"></div>
+                                            <div class="btn_main">
+                                                <div class="buy_bt"><a href="{% url 'car_list' %}">Buy Now</a></div>
+                                                <div class="seemore_bt"><a href="{% url 'car_list' %}">See More</a></div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </a>
+                                {% endfor %}
+                            {% else %}
+                                <div class="col-12">
+                                    <p class="no-items-message">No used cars available at the moment. Check out our new car collection!</p>
+                                </div>
+                            {% endif %}
                         </div>
-                     </a>
-                     {% endfor %}
-                  </div>
-               </div>
+                    </div>
+                </div>
             </div>
-         </div>
-          <!-- <div class="carousel-item ">
-            <div class="container">
-               <h1 class="fashion_taital">Used Cars</h1>
-               <div class="fashion_section_2">
-                  <div class="row">
-                     <div class="col-lg-4 col-sm-4">
-                        <div class="box_main">
-                           <h4 class="shirt_text">Ford EcoSport</h4>
-                           <p class="price_text">Start Price <span class="price-color">$ 100</span></p>
-                           <div class="electronic_img"><img src="{% static 'images/used8.jpg' %}" alt="Ford EcoSport"></div>
-                           <div class="btn_main">
-                              <div class="buy_bt"><a href="{% url 'car_list' %}">Buy Now</a></div>
-                              <div class="seemore_bt"><a href="{% url 'car_list' %}">See More</a></div>
-                           </div>
-                        </div>
-                     </div>
-                     <div class="col-lg-4 col-sm-4">
-                        <div class="box_main">
-                           <h4 class="shirt_text">Volkswagen Polo</h4>
-                           <p class="price_text">Start Price <span class="price-color">$ 100</span></p>
-                           <div class="electronic_img"><img src="{% static 'images/used6.jpg' %}" alt="Volkswagen Polo"></div>
-                           <div class="btn_main">
-                              <div class="buy_bt"><a href="{% url 'car_list' %}">Buy Now</a></div>
-                              <div class="seemore_bt"><a href="{% url 'car_list' %}">See More</a></div>
-                           </div>
-                        </div>
-                     </div>
-                     <div class="col-lg-4 col-sm-4">
-                        <div class="box_main">
-                           <h4 class="shirt_text">Renault Kwid</h4>
-                           <p class="price_text">Start Price <span class="price-color">$ 100</span></p>
-                           <div class="electronic_img"><img src="{% static 'images/used9.jpg' %}" alt="Renault Kwid"></div>
-                           <div class="btn_main">
-                              <div class="buy_bt"><a href="{% url 'car_list' %}">Buy Now</a></div>
-                              <div class="seemore_bt"><a href="{% url 'car_list' %}">See More</a></div>
-                           </div>
-                        </div>
-                     </div>
-                  </div>
-               </div>
-            </div>
-         </div>
-          <div class="carousel-item ">
-            <div class="container">
-               <h1 class="fashion_taital">Used Cars</h1>
-               <div class="fashion_section_2">
-                  <div class="row">
-                     <div class="col-lg-4 col-sm-4">
-                        <div class="box_main">
-                           <h4 class="shirt_text">Tata Tiago</h4>
-                           <p class="price_text">Start Price <span class="price-color">$ 100</span></p>
-                           <div class="electronic_img"><img src="{% static 'images/used10.jpg' %}" alt="Tata Tiago"></div>
-                           <div class="btn_main">
-                              <div class="buy_bt"><a href="{% url 'car_list' %}">Buy Now</a></div>
-                              <div class="seemore_bt"><a href="{% url 'car_list' %}">See More</a></div>
-                           </div>
-                        </div>
-                     </div>
-                     <div class="col-lg-4 col-sm-4">
-                        <div class="box_main">
-                           <h4 class="shirt_text">Maruti Suzuki Baleno</h4>
-                           <p class="price_text">Start Price <span class="price-color">$ 100</span></p>
-                           <div class="electronic_img"><img src="{% static 'images/used11.jpg' %}" alt="Maruti Suzuki Baleno"></div>
-                           <div class="btn_main">
-                              <div class="buy_bt"><a href="{% url 'car_list' %}">Buy Now</a></div>
-                              <div class="seemore_bt"><a href="{% url 'car_list' %}">See More</a></div>
-                           </div>
-                        </div>
-                     </div>
-                     <div class="col-lg-4 col-sm-4">
-                        <div class="box_main">
-                           <h4 class="shirt_text">Honda Amaze</h4>
-                           <p class="price_text">Start Price <span class="price-color">$ 100</span></p>
-                           <div class="electronic_img"><img src="{% static 'images/used12.jpg' %}" alt="Honda Amaze"></div>
-                           <div class="btn_main">
-                              <div class="buy_bt"><a href="{% url 'car_list' %}">Buy Now</a></div>
-                              <div class="seemore_bt"><a href="{% url 'car_list' %}">See More</a></div>
-                           </div>
-                        </div>
-                     </div>
-                  </div>
-               </div>
-            </div>
-         </div> -->
-         <!-- Additional carousel items would go here -->
-      </div>
-      <!-- <a class="carousel-control-prev" href="#electronic_main_slider" role="button" data-slide="prev">
-         <i class="fa fa-angle-left"></i>
-         <span class="sr-only">Previous</span>
-      </a>
-      <a class="carousel-control-next" href="#electronic_main_slider" role="button" data-slide="next">
-         <i class="fa fa-angle-right"></i>
-         <span class="sr-only">Next</span>
-      </a> -->
-   </div>
+        </div>
+    </div>
 </div>
-<!-- electronic section end -->
-
-<!-- jewellery section start -->
 <div class="jewellery_section">
-   <div id="jewellery_main_slider" class="carousel slide" data-ride="carousel">
-      <div class="carousel-inner">
-         <div class="carousel-item active">
-            <div class="container">
-               <h1 class="fashion_taital">Car Accessories</h1>
-               <div class="fashion_section_2">
-                  <div class="row">
-                     <div class="col-lg-4 col-sm-4">
-                        <div class="box_main">
-                           <h4 class="shirt_text">All-Weather Floor Mats</h4>
-                           <p class="price_text">Start Price <span class="price-color">$ 100</span></p>
-                           <div class="jewellery_img"><img src="{% static 'images/a1.jpg' %}" alt="Floor Mats"></div>
-                           <div class="btn_main">
-                              <div class="buy_bt"><a href="{% url 'car_list' %}">Buy Now</a></div>
-                              <div class="seemore_bt"><a href="{% url 'car_list' %}">See More</a></div>
-                           </div>
+    <div id="jewellery_main_slider" class="carousel slide" data-ride="carousel">
+        <div class="carousel-inner">
+            <div class="carousel-item active">
+                <div class="container">
+                    <h1 class="fashion_taital">Car Accessories</h1>
+                    <div class="fashion_section_2">
+                        <div class="row">
+                            {# Since accessories are hardcoded, we can simply check if there are any, though usually you'd loop through a context variable #}
+                            {% comment %}
+                            The original code had hardcoded accessory items. If these are expected to always be present or fetched dynamically,
+                            you would use an 'if accessories_list' and 'for accessory in accessories_list' structure.
+                            For this example, assuming the hardcoded accessories represent a fixed display or you'll fetch them from a context variable later,
+                            I'm adding a conditional check. If you plan to retrieve accessories from the database, ensure your view passes an 'accessories' context variable.
+                            For now, I'll demonstrate with a simple check that assumes some content, or you can uncomment the hardcoded items.
+                            {% endcomment %}
+                            {% if True %} {# Replace 'True' with 'accessories' if you pass an accessories list from context #}
+                                <div class="col-lg-4 col-sm-4">
+                                    <div class="box_main">
+                                        <h4 class="shirt_text">All-Weather Floor Mats</h4>
+                                        <p class="price_text">Start Price <span class="price-color">$ 100</span></p>
+                                        <div class="jewellery_img"><img src="{% static 'images/a1.jpg' %}" alt="Floor Mats"></div>
+                                        <div class="btn_main">
+                                            <div class="buy_bt"><a href="{% url 'car_list' %}">Buy Now</a></div>
+                                            <div class="seemore_bt"><a href="{% url 'car_list' %}">See More</a></div>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="col-lg-4 col-sm-4">
+                                    <div class="box_main">
+                                        <h4 class="shirt_text">Car Vacuum Cleaner</h4>
+                                        <p class="price_text">Start Price <span class="price-color">$ 100</span></p>
+                                        <div class="jewellery_img"><img src="{% static 'images/a3.jpg' %}" alt="Vacuum Cleaner"></div>
+                                        <div class="btn_main">
+                                            <div class="buy_bt"><a href="{% url 'car_list' %}">Buy Now</a></div>
+                                            <div class="seemore_bt"><a href="{% url 'car_list' %}">See More</a></div>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="col-lg-4 col-sm-4">
+                                    <div class="box_main">
+                                        <h4 class="shirt_text">Seat Covers</h4>
+                                        <p class="price_text">Start Price <span class="price-color">$ 100</span></p>
+                                        <div class="jewellery_img"><img src="{% static 'images/a2.jpg' %}" alt="Seat Covers"></div>
+                                        <div class="btn_main">
+                                            <div class="buy_bt"><a href="{% url 'car_list' %}">Buy Now</a></div>
+                                            <div class="seemore_bt"><a href="{% url 'car_list' %}">See More</a></div>
+                                        </div>
+                                    </div>
+                                </div>
+                            {% else %}
+                                <div class="col-12">
+                                    <p class="no-items-message">No car accessories available at the moment.</p>
+                                </div>
+                            {% endif %}
                         </div>
-                     </div>
-                     <div class="col-lg-4 col-sm-4">
-                        <div class="box_main">
-                           <h4 class="shirt_text">Car Vacuum Cleaner</h4>
-                           <p class="price_text">Start Price <span class="price-color">$ 100</span></p>
-                           <div class="jewellery_img"><img src="{% static 'images/a3.jpg' %}" alt="Vacuum Cleaner"></div>
-                           <div class="btn_main">
-                              <div class="buy_bt"><a href="{% url 'car_list' %}">Buy Now</a></div>
-                              <div class="seemore_bt"><a href="{% url 'car_list' %}">See More</a></div>
-                           </div>
-                        </div>
-                     </div>
-                     <div class="col-lg-4 col-sm-4">
-                        <div class="box_main">
-                           <h4 class="shirt_text">Seat Covers</h4>
-                           <p class="price_text">Start Price <span class="price-color">$ 100</span></p>
-                           <div class="jewellery_img"><img src="{% static 'images/a2.jpg' %}" alt="Seat Covers"></div>
-                           <div class="btn_main">
-                              <div class="buy_bt"><a href="{% url 'car_list' %}">Buy Now</a></div>
-                              <div class="seemore_bt"><a href="{% url 'car_list' %}">See More</a></div>
-                           </div>
-                        </div>
-                     </div>
-                  </div>
-               </div>
+                    </div>
+                </div>
             </div>
-         </div>
-         <!-- Additional carousel items would go here -->
-      </div>
-      <a class="carousel-control-prev" href="#jewellery_main_slider" role="button" data-slide="prev">
-         <i class="fa fa-angle-left"></i>
-         <span class="sr-only">Previous</span>
-      </a>
-      <a class="carousel-control-next" href="#jewellery_main_slider" role="button" data-slide="next">
-         <i class="fa fa-angle-right"></i>
-         <span class="sr-only">Next</span>
-      </a>
-      <div class="loader_main">
-         <div class="loader"></div>
-      </div>
-   </div>
+        </div>
+        <a class="carousel-control-prev" href="#jewellery_main_slider" role="button" data-slide="prev">
+            <i class="fa fa-angle-left"></i>
+            <span class="sr-only">Previous</span>
+        </a>
+        <a class="carousel-control-next" href="#jewellery_main_slider" role="button" data-slide="next">
+            <i class="fa fa-angle-right"></i>
+            <span class="sr-only">Next</span>
+        </a>
+        <div class="loader_main">
+            <div class="loader"></div>
+        </div>
+    </div>
 </div>
-<!-- jewellery section end -->
 {% endblock %}
 
 {% block extra_scripts %}
