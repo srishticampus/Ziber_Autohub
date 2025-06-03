@@ -13,8 +13,8 @@ https://docs.djangoproject.com/en/5.1/ref/settings/
 from pathlib import Path
 import os
 # Custom admin login URL
-LOGIN_URL = 'login'
-LOGOUT_REDIRECT_URL = 'login'
+LOGIN_URL = 'hub:login'
+LOGOUT_REDIRECT_URL = 'hub:login'
 
 # Custom admin site header
 ADMIN_SITE_HEADER = "Ziber Autohub Administration"

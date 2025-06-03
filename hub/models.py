@@ -208,15 +208,40 @@ class PreBooking(models.Model):
     user = models.ForeignKey(User, on_delete=models.CASCADE)
     car = models.ForeignKey(Car, on_delete=models.CASCADE)
     booking_date = models.DateField(auto_now_add=True)
-    delivery_date = models.DateField()
+    # Make delivery_date nullable in the database
+    delivery_date = models.DateField(null=True, blank=True) # <--- ADDED null=True, blank=True
     address = models.TextField()
     payment_status = models.CharField(max_length=20, default="Pending")
     status = models.CharField(max_length=20, default="Booked")
 
     def save(self, *args, **kwargs):
-        if not self.delivery_date:
+        # Set booking_date if it's a new instance and not already set
+        # (auto_now_add handles this usually, but good for robustness if you manipulate objects)
+        if not self.booking_date:
+            self.booking_date = date.today() # Or timezone.now().date()
+
+        # Calculate delivery_date ONLY if it's a new instance AND it hasn't been set yet
+        # or if you specifically want to recalculate it if it's None.
+        # The 'if not self.pk' ensures it's only set on creation.
+        if not self.pk and self.delivery_date is None: # Use self.pk for new instance check
             self.delivery_date = self.booking_date + timedelta(days=60)
- 
-        if date.today() >= self.delivery_date:
+
+        # Ensure that if booking_date is already set by auto_now_add or manually,
+        # it's used for the delivery_date calculation.
+        # The error was primarily because `delivery_date` was `None` initially.
+        # By setting `null=True, blank=True`, we allow it to be None in the database.
+        # The `if not self.pk` block handles the initial calculation.
+        # For existing objects, if delivery_date needs recalculation,
+        # you'd need additional logic.
+
+        # Update status based on delivery_date
+        # This check should happen *after* delivery_date is guaranteed to have a value
+        # and it should apply to both new and existing objects when they are saved.
+        # Ensure self.delivery_date is not None before comparison.
+        if self.delivery_date and date.today() >= self.delivery_date:
             self.status = "Delivered"
+
         super().save(*args, **kwargs)
+
+    def __str__(self):
+        return f"Pre-Booking for {self.car.brand} {self.car.model} by {self.user.username}"

@@ -92,7 +92,7 @@
         <div class="row">
             <div class="col-12">
                 <div class="filter-section">
-                    <form method="get" action="{% url 'new_car_list' %}"> {# Changed form action #}
+                    <form method="get" action="{% url 'hub:new_car_list' %}"> {# Changed form action #}
                         <div class="row">
                             <div class="col-md-3 filter-group">
                                 <input type="text" name="q" class="form-control" placeholder="Search by name, brand or model" value="{{ query }}">
@@ -152,7 +152,7 @@
                                     </div>
                                     {# Only show Pre Book button for new cars #}
                                     {% if car.is_new %}
-                                        <form method="post" action="{% url 'pre_book_car' car.id %}">
+                                        <form method="post" action="{% url 'hub:pre_book_car' car.id %}">
                                             {% csrf_token %}
                                             <button type="submit" class="btn btn-info btn-sm">Pre Book</button>
                                         </form>

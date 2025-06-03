@@ -115,6 +115,11 @@ class CarDetailsForm(forms.Form):
 
 
 class PreBookingForm(forms.ModelForm):
+    address = forms.CharField(
+        widget=forms.Textarea(attrs={'class': 'form-control', 'rows': 3}),
+        label="Your Delivery Address"
+    )
+
     class Meta:
         model = PreBooking
         fields = ['address']
