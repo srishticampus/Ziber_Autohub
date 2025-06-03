@@ -1,0 +1,135 @@
+{% load static %} {# Load static files for custom CSS/JS if any #}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>{% block title %}Admin Dashboard - Ziber Autohub{% endblock %}</title>
+
+    {# Bootstrap CSS (using CDN for simplicity, consider local hosting for production) #}
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-QWTKZyjpPEjISv5WaRU9OFeRpok6YctnYmDr5pNlyT2bRjXh0JMhjY6hW+ALEwIH" crossorigin="anonymous">
+    {# Optional: Font Awesome for icons #}
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css" integrity="sha512-SnH5WK+bZxgPHs44uWIX+LLJAJ9/2PkPKZ5QiAj6Ta86w+fsb2TkcmfRyVX3pBnMFcV7oQPJkl9QevSCWr3W6A==" crossorigin="anonymous" referrerpolicy="no-referrer" />
+
+    {# Custom Admin CSS (create this file if you need further customization) #}
+    <link rel="stylesheet" href="{% static 'admin_panel/css/admin_custom.css' %}"> 
+    <style>
+        /* Basic custom styles for admin panel */
+        body {
+            background-color: #f8f9fa; /* Light gray background */
+        }
+        .sidebar {
+            height: 100vh;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 250px; /* Fixed width for sidebar */
+            background-color: #343a40; /* Dark background for sidebar */
+            padding-top: 20px;
+            color: #fff;
+        }
+        .sidebar .nav-link {
+            color: #adb5bd; /* Lighter text color */
+            padding: 10px 15px;
+            transition: all 0.3s ease;
+        }
+        .sidebar .nav-link:hover, .sidebar .nav-link.active {
+            color: #fff;
+            background-color: #007bff; /* Primary blue on hover/active */
+            border-radius: 5px;
+        }
+        .content {
+            margin-left: 250px; /* Offset content by sidebar width */
+            padding: 20px;
+        }
+        .navbar-brand {
+            padding-left: 15px;
+            font-size: 1.5rem;
+            font-weight: bold;
+        }
+        .card {
+            margin-bottom: 20px;
+        }
+        .table-responsive {
+            background-color: #fff; /* White background for table container */
+            border-radius: .25rem;
+            box-shadow: 0 .125rem .25rem rgba(0,0,0,.075);
+        }
+    </style>
+</head>
+<body>
+    <div class="d-flex">
+        {# Sidebar Navigation #}
+        <nav class="sidebar flex-column">
+            <h4 class="navbar-brand text-light mb-4">Ziber Admin</h4>
+            <ul class="nav flex-column">
+                <li class="nav-item">
+                    <a class="nav-link {% if request.resolver_match.view_name == 'admin_panel:admin_dashboard' %}active{% endif %}" href="{% url 'admin_panel:admin_dashboard' %}">
+                        <i class="fas fa-tachometer-alt me-2"></i> Dashboard
+                    </a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link {% if request.resolver_match.view_name == 'admin_panel:car_list' or request.resolver_match.view_name == 'admin_panel:add_car' %}active{% endif %}" href="{% url 'admin_panel:car_list' %}">
+                        <i class="fas fa-car me-2"></i> Cars
+                    </a>
+                    <ul class="nav flex-column ps-3">
+                        <li class="nav-item">
+                            <a class="nav-link text-small {% if request.resolver_match.view_name == 'admin_panel:car_list' %}active{% endif %}" href="{% url 'admin_panel:car_list' %}">View All Cars</a>
+                        </li>
+                        <li class="nav-item">
+                            <a class="nav-link text-small {% if request.resolver_match.view_name == 'admin_panel:add_car' %}active{% endif %}" href="{% url 'admin_panel:add_car' %}">Add New Car</a>
+                        </li>
+                    </ul>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link {% if request.resolver_match.view_name == 'admin_panel:job_list' or request.resolver_match.view_name == 'admin_panel:add_job' %}active{% endif %}" href="{% url 'admin_panel:job_list' %}">
+                        <i class="fas fa-briefcase me-2"></i> Jobs
+                    </a>
+                    <ul class="nav flex-column ps-3">
+                        <li class="nav-item">
+                            <a class="nav-link text-small {% if request.resolver_match.view_name == 'admin_panel:job_list' %}active{% endif %}" href="{% url 'admin_panel:job_list' %}">View Job Listings</a>
+                        </li>
+                        <li class="nav-item">
+                            <a class="nav-link text-small {% if request.resolver_match.view_name == 'admin_panel:add_job' %}active{% endif %}" href="{% url 'admin_panel:add_job' %}">Post Job Vacancy</a>
+                        </li>
+                    </ul>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link {% if request.resolver_match.view_name == 'admin_panel:view_prebookings' %}active{% endif %}" href="{% url 'admin_panel:view_prebookings' %}">
+                        <i class="fas fa-calendar-check me-2"></i> Pre-Bookings
+                    </a>
+                </li>
+                <li class="nav-item mt-auto"> {# Push logout to the bottom #}
+                    <a class="nav-link" href="{% url 'hub:logout' %}">
+                        <i class="fas fa-sign-out-alt me-2"></i> Logout
+                    </a>
+                </li>
+            </ul>
+        </nav>
+
+        {# Main Content Area #}
+        <div class="content flex-grow-1">
+            {# Django Messages #}
+            {% if messages %}
+                <div class="container-fluid mb-3">
+                    {% for message in messages %}
+                        <div class="alert alert-{{ message.tags }} alert-dismissible fade show" role="alert">
+                            {{ message }}
+                            <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+                        </div>
+                    {% endfor %}
+                </div>
+            {% endif %}
+
+            {% block content %}
+            {# Page-specific content will go here #}
+            {% endblock %}
+        </div>
+    </div>
+
+    {# Bootstrap JS #}
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js" integrity="sha384-YvpcrYf0tY3lHB60NNkmXc5s9fDVZLESaAA55NDzOxhy9GkcIdslK1eN7N6jIeHz" crossorigin="anonymous"></script>
+    {# Custom Admin JS (create this file if you need further customization) #}
+    <script src="{% static 'admin_panel/js/admin_custom.js' %}"></script>
+</body>
+</html>

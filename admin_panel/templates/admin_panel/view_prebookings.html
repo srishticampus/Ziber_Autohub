@@ -1,16 +1,80 @@
-<h2>All Pre-Bookings</h2>
-<table>
-    <tr>
-        <th>User</th><th>Car</th><th>Status</th><th>Delivery Date</th>
-    </tr>
-    {% for b in bookings %}
-    <tr>
-        <td>{{ b.user.username }}</td>
-        <td>{{ b.car.name }}</td>
-        <td>{{ b.status }}</td>
-        <td>{{ b.delivery_date }}</td>
-    </tr>
-    {% endfor %}
-</table>
-<a href="{% url 'admin_panel:admin_dashboard' %}">Back to Dashboard</a>
+{% extends "admin_panel/admin_base.html" %}
 
+{% block title %}All Pre-Bookings{% endblock %}
+
+{% block content %}
+<div class="container-fluid">
+    <h2 class="mb-4">All Pre-Bookings</h2>
+    {% if bookings %}
+        <div class="table-responsive shadow-sm rounded">
+            <table class="table table-hover table-striped align-middle mb-0">
+                <thead class="table-dark">
+                    <tr>
+                        <th>User</th>
+                        <th>Car</th>
+                        <th>Booking Date</th>
+                        <th>Delivery Date</th>
+                        <th>Payment Status</th>
+                        <th>Status</th>
+                        <th>Address</th> {# Added address field #}
+                        {# Add actions if you want update/view detail buttons #}
+                        {# <th>Actions</th> #}
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for booking in bookings %}
+                    <tr>
+                        <td>{{ booking.user.username }}</td>
+                        <td>{{ booking.car.brand }} {{ booking.car.model }}</td> {# Display car brand/model #}
+                        <td>{{ booking.booking_date|date:"M d, Y" }}</td>
+                        <td>
+                            {% if booking.delivery_date %}
+                                {{ booking.delivery_date|date:"M d, Y" }}
+                            {% else %}
+                                <em>N/A</em>
+                            {% endif %}
+                        </td>
+                        <td>
+                            {% if booking.payment_status == 'Paid' %}
+                                <span class="badge bg-success">{{ booking.payment_status }}</span>
+                            {% elif booking.payment_status == 'Pending' %}
+                                <span class="badge bg-warning text-dark">{{ booking.payment_status }}</span>
+                            {% else %}
+                                <span class="badge bg-secondary">{{ booking.payment_status }}</span>
+                            {% endif %}
+                        </td>
+                        <td>
+                            {% if booking.status == 'Booked' %}
+                                <span class="badge bg-primary">{{ booking.status }}</span>
+                            {% elif booking.status == 'Pending' %}
+                                <span class="badge bg-info text-dark">{{ booking.status }}</span>
+                            {% elif booking.status == 'Delivered' %}
+                                <span class="badge bg-success">{{ booking.status }}</span>
+                            {% else %}
+                                <span class="badge bg-secondary">{{ booking.status }}</span>
+                            {% endif %}
+                        </td>
+                        <td>{{ booking.address }}</td>
+                        {# <td> #}
+                        {#     <a href="{% url 'admin_panel:edit_prebooking' booking.pk %}" class="btn btn-sm btn-outline-primary">Manage</a> #}
+                        {# </td> #}
+                    </tr>
+                    {% empty %}
+                    <tr>
+                        <td colspan="7" class="text-center py-4">No pre-bookings found.</td>
+                    </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+    {% else %}
+        <div class="alert alert-info text-center" role="alert">
+            No pre-bookings found.
+        </div>
+    {% endif %}
+
+    <div class="mt-4">
+        <a href="{% url 'admin_panel:admin_dashboard' %}" class="btn btn-outline-secondary"><i class="fas fa-arrow-left me-2"></i> Back to Dashboard</a>
+    </div>
+</div>
+{% endblock %}

@@ -73,7 +73,8 @@
                   <li><a href="{% url 'hub:new_car_list' %}">New Releases</a></li>
                   <li><a href="{% url 'hub:car_list' %}">All Vehicles</a></li>
                   <li><a href="{% url 'hub:used_car_list' %}">Used Cars</a></li> 
-                  <li><a href="{% url 'hub:book_service' %}">Service Booking</a></li>
+                  <li><a href="{% url 'hub:book_service' %}">Service Booking</a></li> 
+                  <li><a href="{% url 'hub:my_service_bookings' %}">My Service</a></li>
                   <li><a href="{% url 'hub:predict_price' %}">Price Predictor</a></li>
                   <li><a href="{% url 'hub:job_list' %}">Careers</a></li>
                   <li><a href="{% url 'hub:news' %}">News</a></li>
@@ -113,7 +114,7 @@
                 <a href="{% url 'hub:order_history' %}">My Orders</a>
                 <a href="{% url 'hub:my_bookings' %}">My Bookings</a>
                 <a href="{% url 'hub:my_prebookings' %}">My Pre-Bookings</a> {% if user.is_staff %}
-                  <a href="{% url 'hub:reate_job_vacancy' %}">Post Job</a>
+                  <a href="{% url 'hub:create_job_vacancy' %}">Post Job</a>
                 {% endif %}
               {% endif %}
             </div>
@@ -210,6 +211,7 @@
             <li><a href="{% url 'hub:new_car_list' %}">New Releases</a></li>
             <li><a href="{% url 'hub:car_list' %}">All Vehicles</a></li>
             <li><a href="{% url 'hub:used_car_list' %}">Used Cars</a></li> <li><a href="{% url 'hub:book_service' %}">Service Booking</a></li>
+            <li><a href="{% url 'hub:used_car_list' %}">Used Cars</a></li> <li><a href="{% url 'hub:my_service_bookings' %}">My Service</a></li>
             <li><a href="{% url 'hub:predict_price' %}">Price Predictor</a></li>
             <li><a href="{% url 'hub:job_list' %}">Careers</a></li>
             <li><a href="{% url 'hub:news' %}">News</a></li>
