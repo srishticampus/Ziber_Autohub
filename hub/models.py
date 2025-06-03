@@ -138,33 +138,33 @@ class OrderItem(models.Model):
     def __str__(self):
         return f"{self.quantity}x {self.car} in Order #{self.order.id}"
 
-class ServiceBooking(models.Model):
-    STATUS_CHOICES = [
-        ('Pending', 'Pending'),
-        ('Approved', 'Approved'),
-        ('Rejected', 'Rejected'),
-        ('Completed', 'Completed'),
-    ]
+# class ServiceBooking(models.Model):
+#     STATUS_CHOICES = [
+#         ('Pending', 'Pending'),
+#         ('Approved', 'Approved'),
+#         ('Rejected', 'Rejected'),
+#         ('Completed', 'Completed'),
+#     ]
     
-    user = models.ForeignKey(User, on_delete=models.CASCADE, related_name='service_bookings')
-    car_model = models.CharField(max_length=100)
-    service_date = models.DateField()
-    description = models.TextField()
-    car_image = models.ImageField(upload_to='service_images/', blank=True, null=True)
-    status = models.CharField(max_length=10, choices=STATUS_CHOICES, default='Pending')
-    created_at = models.DateTimeField(auto_now_add=True)
-    updated_at = models.DateTimeField(auto_now=True)
+#     user = models.ForeignKey(User, on_delete=models.CASCADE, related_name='service_bookings')
+#     car_model = models.CharField(max_length=100)
+#     service_date = models.DateField()
+#     description = models.TextField()
+#     car_image = models.ImageField(upload_to='service_images/', blank=True, null=True)
+#     status = models.CharField(max_length=10, choices=STATUS_CHOICES, default='Pending')
+#     created_at = models.DateTimeField(auto_now_add=True)
+#     updated_at = models.DateTimeField(auto_now=True)
 
-    class Meta:
-        ordering = ['-service_date']
-        verbose_name_plural = 'Service Bookings'
+#     class Meta:
+#         ordering = ['-service_date']
+#         verbose_name_plural = 'Service Bookings'
 
-    def clean(self):
-        if self.service_date < timezone.now().date():
-            raise ValidationError({'service_date': 'Service date cannot be in the past.'})
+#     def clean(self):
+#         if self.service_date < timezone.now().date():
+#             raise ValidationError({'service_date': 'Service date cannot be in the past.'})
 
-    def __str__(self):
-        return f"Service for {self.car_model} on {self.service_date}"
+#     def __str__(self):
+#         return f"Service for {self.car_model} on {self.service_date}"
 
 class JobVacancy(models.Model):
     title = models.CharField(max_length=200)
@@ -245,3 +245,28 @@ class PreBooking(models.Model):
 
     def __str__(self):
         return f"Pre-Booking for {self.car.brand} {self.car.model} by {self.user.username}"
+    
+
+class ServiceBooking(models.Model):
+    SERVICE_CHOICES = [
+        ('1st', '1st Service'),
+        ('2nd', '2nd Service'),
+        ('3rd', '3rd Service'),
+        ('4th', '4th Service'),
+    ]
+
+    STATUS_CHOICES = [
+        ('Booked', 'Service Booked'),
+        ('Ongoing', 'Service Ongoing'),
+        ('Completed', 'Completed'),
+    ]
+
+    user = models.ForeignKey(User, on_delete=models.CASCADE)
+    car = models.ForeignKey(Car, on_delete=models.CASCADE, null=True)
+    service_type = models.CharField(max_length=10, choices=SERVICE_CHOICES, null=True)
+    description = models.TextField(null=True)
+    status = models.CharField(max_length=20, choices=STATUS_CHOICES, default='Booked')
+    booked_at = models.DateTimeField(auto_now_add=True, blank=True, null=True)
+
+    def __str__(self):
+        return f"{self.car} - {self.service_type} ({self.status})"
