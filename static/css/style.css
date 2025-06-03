@@ -868,6 +868,12 @@ a:hover {
  color: white;
  border-radius: 0;
 }
+.dark-input:focus {
+    outline: none;
+    box-shadow: none;
+    border: 1px solid #e50914;
+    border-color: #e50914;
+}
 
 .footer_section {
     width: 100%;
