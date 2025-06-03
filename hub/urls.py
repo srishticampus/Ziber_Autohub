@@ -39,6 +39,11 @@ urlpatterns = [
     path('jobs/create/', views.create_job_vacancy, name='create_job_vacancy'),
 
     path('buy_now/<int:pk>/', views.buy_now, name='buy_now'),
+
+    # pre-booking
+    # path('pre_book/<int:car_id>/', views.pre_book_car, name='pre_book_car'),
+    path('pre-book/<int:car_id>/', views.pre_book_car, name='pre_book_car'),
+    path('my-prebookings/', views.my_prebookings, name='my_prebookings'),
     
     # Other pages
     path('news/', views.news, name='news'),

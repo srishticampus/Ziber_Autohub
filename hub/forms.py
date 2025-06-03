@@ -4,7 +4,7 @@ from django import forms
 from django.core.exceptions import ValidationError
 from django.contrib.auth.models import User
 from django.contrib.auth.forms import UserCreationForm
-from .models import UserProfile, ServiceBooking, JobApplication, JobVacancy
+from .models import UserProfile, ServiceBooking, JobApplication, JobVacancy, PreBooking
 
 class UserRegistrationForm(UserCreationForm):
     age = forms.IntegerField(min_value=0)
@@ -112,3 +112,9 @@ class CarDetailsForm(forms.Form):
     fuel_type = forms.ChoiceField(choices=[('Petrol', 'Petrol'), ('Diesel', 'Diesel'), ('CNG', 'CNG')])
     seller_type = forms.ChoiceField(choices=[('Dealer', 'Dealer'), ('Individual', 'Individual')])
     transmission = forms.ChoiceField(choices=[('Manual', 'Manual'), ('Automatic', 'Automatic')])
+
+
+class PreBookingForm(forms.ModelForm):
+    class Meta:
+        model = PreBooking
+        fields = ['address']
