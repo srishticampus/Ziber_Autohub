@@ -19,7 +19,7 @@ def add_car(request):
         form = AddCarForm(request.POST, request.FILES)
         if form.is_valid():
             form.save()
-            return redirect('admin_dashboard')
+            return redirect('admin_panel:admin_dashboard')
     else:
         form = AddCarForm()
     return render(request, 'admin_panel/add_car.html', {'form': form})
@@ -32,7 +32,7 @@ def add_job(request):
         form = AddJobForm(request.POST)
         if form.is_valid():
             form.save()
-            return redirect('admin_dashboard')
+            return redirect('admin_panel:admin_dashboard')
     else:
         form = AddJobForm()
     return render(request, 'admin_panel/add_job.html', {'form': form})
