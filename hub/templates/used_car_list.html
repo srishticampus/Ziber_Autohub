@@ -75,7 +75,10 @@
         height: calc(1.5em + .75rem + 2px); /* Default Bootstrap height for inputs */
         padding: .375rem .75rem;
     }
-
+    .filter-form{
+        display: flex;
+        justify-content: space-around;
+    }
 </style>
 {% endblock %}
 
@@ -87,7 +90,7 @@
             <div class="row">
                 <div class="col-12">
                     <div class="filter-section">
-                        <form method="get" action="{% url 'used_car_list' %}" class="needs-validation" novalidate>
+                        <form method="get" action="{% url 'used_car_list' %}" class="filter-form needs-validation" novalidate>
                             <div class="row g-3 align-items-end"> {# Use g-3 for gutter and align-items-end to align bottom of inputs #}
                                 <div class="col-md-3">
                                     <label for="{{ form.q.id_for_label }}" class="form-label">Search</label>
@@ -125,6 +128,7 @@
                                     <a href="{% url 'used_car_list' %}" class="btn btn-secondary mx-5">Clear All</a>
                                 </div>
                             </div>
+                            <a class="text-white" href="{% url 'add_used_car' %}">Add Car</a>
                         </form>
                     </div>
                 </div>

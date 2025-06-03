@@ -17,6 +17,7 @@ urlpatterns = [
     path('new-cars/', views.new_car_list, name='new_car_list'),
     path('used-cars/', views.used_car_list, name='used_car_list'), # New URL for used cars
     path('cars/<int:pk>/', views.car_detail, name='car_detail'),
+    path('add-used-car/', views.add_used_car, name='add_used_car'),
     
     # Cart
     path('cart/', views.view_cart, name='view_cart'),

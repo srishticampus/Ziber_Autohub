@@ -141,3 +141,14 @@ class UsedCarFilterForm(forms.Form):
         for field_name, field in self.fields.items():
             field.widget.attrs.update({'class': 'form-control'})
 
+class UsedCarForm(forms.ModelForm):
+    class Meta:
+        model = Car
+        exclude = ['is_new','stock']
+
+    def save(self, commit=True):
+        car = super().save(commit=False)
+        car.is_new = False
+        if commit:
+            car.save()
+        return car

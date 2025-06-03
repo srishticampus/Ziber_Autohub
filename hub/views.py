@@ -17,7 +17,7 @@ from .models import (
     ServiceBooking, JobVacancy, JobApplication, PreBooking
 )
 from .forms import ( ServiceBookingForm,
-    JobApplicationForm, JobVacancyForm, CheckoutForm,CarDetailsForm, PreBookingForm, UsedCarFilterForm
+    JobApplicationForm, JobVacancyForm, CheckoutForm,CarDetailsForm, PreBookingForm, UsedCarFilterForm, UsedCarForm
 )
 from datetime import timedelta, date
 
@@ -671,3 +671,14 @@ def pre_book_car(request, car_id):
 def my_prebookings(request):
     bookings = PreBooking.objects.filter(user=request.user).order_by('-booking_date')
     return render(request, 'my_prebookings.html', {'bookings': bookings})
+
+@login_required
+def add_used_car(request):
+    if request.method == 'POST':
+        form = UsedCarForm(request.POST, request.FILES)
+        if form.is_valid():
+            car = form.save()
+            return redirect('used_car_list')
+    else:
+        form = UsedCarForm()
+    return render(request, 'add_used_car.html', {'form': form})
