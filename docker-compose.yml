@@ -5,7 +5,7 @@ services:
     volumes:
       - ./:/app 
       #- ./static:/app/staticfiles
-      - ./collected_static_files:/app/staticfiles
+      - ./staticfiles:/app/staticfiles
     ports:
       - "8014:8000"
     restart: always
