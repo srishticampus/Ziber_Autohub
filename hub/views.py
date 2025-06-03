@@ -136,16 +136,26 @@ def login_view(request):
     if request.method == "POST":
         username = request.POST.get('username')
         password = request.POST.get('password')
+
+        # Basic validations for login fields
+        if not username:
+            messages.error(request, "Username is required.")
+            return render(request, 'login.html', {'username_value': username})
+        if not password:
+            messages.error(request, "Password is required.")
+            return render(request, 'login.html', {'username_value': username})
+
         user = authenticate(request, username=username, password=password)
-        
+
         if user is not None:
             auth_login(request, user)
             messages.success(request, "You have been successfully logged in.")
             return redirect('home')
         else:
             messages.error(request, "Invalid username or password.")
-    
-    return render(request, 'login.html')
+
+    return render(request, 'login.html', {'username_value': request.POST.get('username', '')})
+
 
 def logout_user(request):
     auth_logout(request)

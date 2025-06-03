@@ -236,6 +236,32 @@
     <script src="{% static 'js/jquery.mCustomScrollbar.concat.min.js' %}"></script>
     <script src="{% static 'js/custom.js' %}"></script>
     <script src="{% static 'js/custom_base.js' %}"></script>
+    <script>
+      document.addEventListener('DOMContentLoaded', function() {
+            // Select all message alerts
+            const messageAlerts = document.querySelectorAll('.alert');
+
+            // Iterate over each alert and set a timeout
+            messageAlerts.forEach(function(alert) {
+                // Check if the alert has a dismissible class (optional, but good practice)
+                // or if it's a success/info/warning message that should disappear
+                if (alert.classList.contains('alert-success') ||
+                    alert.classList.contains('alert-info') ||
+                    alert.classList.contains('alert-warning')) { // You can customize which types disappear
+                    setTimeout(function() {
+                        // Add a fade-out effect (optional)
+                        alert.style.transition = 'opacity 1s ease-out';
+                        alert.style.opacity = '0';
+
+                        // Remove the element after the transition
+                        setTimeout(function() {
+                            alert.remove();
+                        }, 1000); // Wait for the 1-second fade-out transition
+                    }, 5000); // 5000 milliseconds = 5 seconds
+                }
+            });
+        });
+    </script>
     {% endblock %}
   </body>
 </html>
