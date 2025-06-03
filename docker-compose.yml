@@ -4,7 +4,8 @@ services:
     container_name: ziber_autohub_django
     volumes:
       - ./:/app 
-      - ./static:/app/staticfiles
+      #- ./static:/app/staticfiles
+      - ./collected_static_files:/app/staticfiles
     ports:
       - "8014:8000"
     restart: always
