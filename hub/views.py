@@ -685,25 +685,25 @@ def add_used_car(request):
         form = UsedCarForm()
     return render(request, 'add_used_car.html', {'form': form})
 
-@login_required
-def my_chats(request):
-    # Get all unique conversations where the user is either sender or receiver
-    messages = Message.objects.filter(Q(sender=request.user) | Q(receiver=request.user))
+# @login_required
+# def my_chats(request):
+#     # Get all unique conversations where the user is either sender or receiver
+#     messages = Message.objects.filter(Q(sender=request.user) | Q(receiver=request.user))
 
-    # Get distinct (car, other_user) combinations
-    threads = {}
-    for msg in messages:
-        car = msg.car
-        other_user = msg.receiver if msg.sender == request.user else msg.sender
-        key = (car.id, other_user.id)
-        if key not in threads:
-            threads[key] = {
-                'car': car,
-                'other_user': other_user,
-                'last_message': msg
-            }
+#     # Get distinct (car, other_user) combinations
+#     threads = {}
+#     for msg in messages:
+#         car = msg.car
+#         other_user = msg.receiver if msg.sender == request.user else msg.sender
+#         key = (car.id, other_user.id)
+#         if key not in threads:
+#             threads[key] = {
+#                 'car': car,
+#                 'other_user': other_user,
+#                 'last_message': msg
+#             }
 
-    return render(request, 'my_chats.html', {'threads': threads.values()})
+#     return render(request, 'my_chats.html', {'threads': threads.values()})
 
 @login_required
 def book_service(request):
