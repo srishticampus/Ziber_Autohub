@@ -6,6 +6,8 @@ from hub.models import Car, JobVacancy, PreBooking # Ensure all models are impor
 from django.contrib.auth.decorators import login_required
 from django.views.decorators.cache import never_cache
 from django.contrib import messages # Import Django's messages framework
+from django.db import transaction # Import transaction for atomic operations
+from django.utils import timezone
 
 @login_required
 @never_cache # Ensures the view is never cached by browsers
@@ -18,7 +20,7 @@ def admin_dashboard(request):
     total_cars_count = Car.objects.count()
     active_jobs_count = JobVacancy.objects.filter(is_active=True).count()
     # You might want to filter pre-bookings based on specific statuses for a dashboard overview
-    pending_prebookings_count = PreBooking.objects.filter(status='Pending').count() 
+    pending_prebookings_count = PreBooking.objects.filter(status='Booked').count() # Changed to 'Booked' for initial state
     
     context = {
         'total_cars_count': total_cars_count,
@@ -104,6 +106,41 @@ def view_prebookings(request):
     """
     bookings = PreBooking.objects.all().order_by('-booking_date') # Order by booking date, newest first
     return render(request, 'admin_panel/view_prebookings.html', {'bookings': bookings})
+
+@login_required
+@never_cache
+@staff_member_required
+def mark_prebooking_delivered(request, pk): # NEW VIEW FUNCTION
+    """
+    Marks a pre-booking as 'Delivered' and decrements the car's stock.
+    """
+    booking = get_object_or_404(PreBooking, pk=pk)
+
+    if request.method == 'POST':
+        if booking.status != 'Delivered': # Prevent re-marking if already delivered
+            try:
+                with transaction.atomic(): # Ensure both updates succeed or fail together
+                    booking.status = 'Delivered'
+                    booking.delivery_date = timezone.now().date() # Set delivery date to today
+                    booking.save()
+
+                    car = booking.car
+                    if car.stock > 0:
+                        car.stock -= 1
+                        car.save()
+                        messages.success(request, f"Pre-booking for {car.brand} {car.model} marked as Delivered. Stock updated.")
+                    else:
+                        messages.warning(request, f"Pre-booking for {car.brand} {car.model} marked as Delivered, but car stock was already 0.")
+
+            except Exception as e:
+                messages.error(request, f"Error marking pre-booking as delivered: {e}")
+        else:
+            messages.info(request, "Pre-booking is already marked as Delivered.")
+    else:
+        messages.error(request, "Invalid request method for this action.")
+    
+    return redirect('admin_panel:view_prebookings')
+
 
 # You might add views for editing/deleting cars, jobs, or managing pre-bookings here later.
 @login_required
