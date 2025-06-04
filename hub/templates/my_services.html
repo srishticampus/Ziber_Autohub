@@ -4,41 +4,102 @@
 {% block title %}
 My Services - Ziber Autohub
 {% endblock %}
+
 {% block extra_styles %}
 <style>
-    .service-history{
-        margin-top: 14rem;
+    .service-history {
+        margin-top: 10rem; /* Adjusted for consistent top margin */
+        padding: 2rem;
+    }
+    .service-history h2 {
+        text-align: center;
+        margin-bottom: 2rem;
+        color: #333;
+    }
+    .table-responsive {
+        overflow-x: auto; /* Ensures table is responsive on small screens */
+    }
+    .table {
+        width: 100%;
+        margin-bottom: 1rem;
+        background-color: #fff;
+        border-collapse: collapse;
+        border-radius: 8px;
+        overflow: hidden; /* For rounded corners on table */
+        box-shadow: 0 4px 8px rgba(0,0,0,0.1);
+    }
+    .table th, .table td {
+        padding: 1rem;
+        vertical-align: top;
+        border-top: 1px solid #dee2e6;
+        text-align: center; /* Center align table content */
+    }
+    .table thead th {
+        vertical-align: bottom;
+        border-bottom: 2px solid #dee2e6;
+        background-color: #e9ecef; /* Light grey background for header */
+        color: #495057; /* Darker text for header */
+    }
+    .table tbody tr:nth-of-type(odd) {
+        background-color: rgba(0,0,0,.05); /* Zebra stripping */
+    }
+    .table tbody tr:hover {
+        background-color: rgba(0,0,0,.075); /* Hover effect */
+    }
+    .alert-info {
+        background-color: #d1ecf1;
+        border-color: #bee5eb;
+        color: #0c5460;
+        padding: 1rem;
+        margin-bottom: 1.5rem;
+        border-radius: 0.25rem;
+        text-align: center;
     }
 </style>
 {% endblock %}
+
 {% block content %}
-<div class="service-history">
+<div class="container service-history"> {# Added container for better centering/margins #}
     <h2>My Service Bookings</h2>
     
-    <table class="table">
-        <thead>
-            <tr>
-                <th>Car</th>
-                <th>Service Type</th>
-                <th>Description</th>
-                <th>Status</th>
-                <th>Booked At</th>
-            </tr>
-        </thead>
-        <tbody>
-            {% for service in services %}
-                <tr>
-                    <td>{{ service.car.name }}</td>
-                    <td>{{ service.service_type }}</td>
-                    <td>{{ service.description }}</td>
-                    <td>{{ service.status }}</td>
-                    <td>{{ service.booked_at|date:"Y-m-d H:i" }}</td>
-                </tr>
-            {% empty %}
-                <tr><td colspan="5">No service bookings yet.</td></tr>
-            {% endfor %}
-        </tbody>
-    </table>
+    {% if services %}
+        <div class="table-responsive">
+            <table class="table table-bordered table-hover"> {# Added Bootstrap table classes #}
+                <thead>
+                    <tr>
+                        <th>Car</th>
+                        <th>Service Type</th>
+                        <th>Description</th>
+                        <th>Status</th>
+                        <th>Booked At</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for service in services %}
+                        <tr>
+                            <td>{{ service.car.name }} ({{ service.car.model }})</td>
+                            <td>{{ service.service_type }} Service</td> {# Added "Service" for clarity #}
+                            <td>{{ service.description }}</td>
+                            <td>
+                                {% if service.status == 'Pending' %}
+                                    <span class="badge bg-warning text-dark">{{ service.status }}</span>
+                                {% elif service.status == 'Confirmed' %}
+                                    <span class="badge bg-info text-dark">{{ service.status }}</span>
+                                {% elif service.status == 'Completed' %}
+                                    <span class="badge bg-success">{{ service.status }}</span>
+                                {% else %}
+                                    <span class="badge bg-secondary text-white">{{ service.status }}</span>
+                                {% endif %}
+                            </td>
+                            <td>{{ service.booked_at|date:"d M Y H:i" }}</td> {# Nicer date format #}
+                        </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+    {% else %}
+        <div class="alert alert-info">No service bookings yet.</div>
+    {% endif %}
 </div>
 
 {% endblock %}

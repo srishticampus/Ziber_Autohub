@@ -1,42 +1,241 @@
 {% extends 'base.html' %}
 {% load static %}
 
-{% block tittle %}Service booking{% endblock %} {# Added title block #}
+{% block title %}Service Booking - Ziber Autohub{% endblock %}
 
 {% block extra_styles %}
 <style>
-    .service-booking{
-        margin-top: 14rem;
+    .service-booking {
+        margin-top: 10rem; /* Adjusted for better spacing from header */
+        padding: 2rem;
+        background-color: #f9f9f9;
+        border-radius: 8px;
+        box-shadow: 0 4px 8px rgba(0,0,0,0.1);
+        max-width: 600px; /* Constrain width for better readability */
+        margin-left: auto; /* Center the form horizontally */
+        margin-right: auto; /* Center the form horizontally */
+    }
+    .service-booking h2 {
+        text-align: center;
+        margin-bottom: 2rem;
+        color: #333;
+    }
+    .form-group {
+        margin-bottom: 1.5rem;
+    }
+    .form-control {
+        width: 100%;
+        padding: 0.75rem 1rem;
+        border: 1px solid #ced4da;
+        border-radius: 0.25rem;
+        box-sizing: border-box; /* Include padding and border in the element's total width and height */
+        color: #333; /* Explicitly set text color to a dark, readable shade */
+        background-color: #fff; /* Ensure a white background for select/input fields */
+        
+        /* Styles for better readability in dropdowns - these are generally good */
+        overflow: hidden; /* Hide overflow content */
+        white-space: nowrap; /* Prevent text from wrapping */
+        text-overflow: ellipsis; /* Add ellipsis for overflowed text */
+    }
+    
+    /* --- NEW/UPDATED STYLE TO OVERRIDE FIXED HEIGHT FOR SELECTS --- */
+    /* Target specific select IDs with the form-control class for higher specificity */
+    select#carSelect.form-control,
+    select#serviceTypeSelect.form-control {
+        height: auto; /* Allow height to be determined by content and padding */
+        min-height: calc(2.25rem + 2px); /* Ensure it's at least the default Bootstrap height */
+        line-height: 1.5; /* Standard line-height for better vertical alignment */
+        /* You might also add padding-top and padding-bottom here if needed,
+           but `padding: 0.75rem 1rem;` on `.form-control` should handle it. */
+    }
+
+    /* Specific styling for options within the select to ensure visibility */
+    select.form-control option {
+        color: #333; /* Ensure option text is dark */
+        background-color: #fff; /* Ensure option background is white */
+        padding: 0.5rem 1rem; /* Add some padding for better spacing within dropdown */
+    }
+    /* --- END NEW/UPDATED STYLE --- */
+
+
+    .form-control:focus {
+        border-color: #80bdff;
+        outline: 0;
+        box-shadow: 0 0 0 0.2rem rgba(0,123,255,.25);
+    }
+    textarea.form-control {
+        resize: vertical; /* Allow vertical resizing */
+    }
+    .btn-primary {
+        background-color: #007bff;
+        border-color: #007bff;
+        color: white;
+        padding: 0.75rem 1.5rem;
+        font-size: 1.1rem;
+        border-radius: 0.25rem;
+        cursor: pointer;
+        transition: background-color 0.2s ease;
+        width: 100%; /* Make button full width */
+    }
+    .btn-primary:hover {
+        background-color: #0056b3;
+        border-color: #0056b3;
+    }
+    /* Styles for Django messages */
+    .alert-info {
+        background-color: #d1ecf1;
+        border-color: #bee5eb;
+        color: #0c5460;
+        padding: 1rem;
+        margin-bottom: 1.5rem;
+        border-radius: 0.25rem;
+    }
+    .alert-danger {
+        background-color: #f8d7da;
+        border-color: #f5c6cb;
+        color: #721c24;
+        padding: 1rem;
+        margin-bottom: 1.5rem;
+        border-radius: 0.25rem;
+    }
+    .alert-success {
+        background-color: #d4edda;
+        border-color: #c3e6cb;
+        color: #155724;
+        padding: 1rem;
+        margin-bottom: 1.5rem;
+        border-radius: 0.25rem;
+    }
+    .alert-warning {
+        background-color: #fff3cd;
+        border-color: #ffeeba;
+        color: #664d03;
+        padding: 1rem;
+        margin-bottom: 1.5rem;
+        border-radius: 0.25rem;
     }
 </style>
 {% endblock %}
 
 {% block content %}
-<div class="service-booking">
-    <h2>Book a Service</h2>
+<div class="container service-booking my-5 py-5"> {# Added container for better centering/margins #}
+    <h2 class="mt-5">Book a Service</h2>
     
-    <form method="post">
-        {% csrf_token %}
-        <label>Select Car:</label>
-        <select name="car" required>
-            {% for car in eligible_cars %}
-                <option value="{{ car.id }}">{{ car.name }} - {{ car.model }}</option>
+    {% if messages %}
+        <div class="messages mb-3">
+            {% for message in messages %}
+                <div class="alert {% if message.tags %}alert-{{ message.tags }}{% endif %}">{{ message }}</div>
             {% endfor %}
-        </select><br><br>
-    
-        <label>Service Type:</label>
-        <select name="service_type" required>
-            <option value="1st">1st Service</option>
-            <option value="2nd">2nd Service</option>
-            <option value="3rd">3rd Service</option>
-            <option value="4th">4th Service</option>
-        </select><br><br>
-    
-        <label>Description:</label><br>
-        <textarea name="description" rows="4" cols="40" required></textarea><br><br>
-    
-        <button type="submit" class="btn btn-primary">Book Service</button>
-    </form>
+        </div>
+    {% endif %}
+
+    {% if not eligible_cars %}
+        <div class="alert alert-info text-center">
+            You don't have any new cars delivered from Ziber Autohub for service. Please purchase a new car to book service.
+        </div>
+    {% else %}
+        <form method="post" id="serviceBookingForm">
+            {% csrf_token %}
+            
+            <div class="form-group">
+                <label for="carSelect">Select Car:</label>
+                <select name="car" id="carSelect" class="form-control" required>
+                    {% for car in eligible_cars %}
+                        <option value="{{ car.id }}" 
+                                {% if selected_car_id and selected_car_id|stringformat:"i" == car.id|stringformat:"i" %}selected{% endif %}>
+                            {{ car.name }} - {{ car.model }}
+                        </option>
+                    {% endfor %}
+                </select>
+            </div>
+            
+            <div class="form-group">
+                <label for="serviceTypeSelect">Service Type:</label>
+                <select name="service_type" id="serviceTypeSelect" class="form-control" required>
+                    {# Options will be populated by JavaScript #}
+                </select>
+                <div id="noMoreServicesMessage" class="alert alert-info mt-2" style="display: none;">
+                    No more services available for this car.
+                </div>
+            </div>
+            
+            <div class="form-group">
+                <label for="description">Description:</label>
+                {# Using 'value' attribute for textarea to retain previous input on form error #}
+                <textarea name="description" id="description" class="form-control" rows="4" required>{% if selected_description %}{{ selected_description }}{% endif %}</textarea>
+            </div>
+            
+            <button type="submit" class="btn btn-primary">Book Service</button>
+        </form>
+    {% endif %}
 </div>
 
+{% endblock %}
+
+{% block scripts %}
+    {{ block.super }} {# Include base.html scripts #}
+
+    {# This script tag passes the car_service_options dictionary from Django to JavaScript #}
+    {# It's crucial for the dynamic dropdown functionality. #}
+    <script id="car_service_options_data" type="application/json">
+        {{ car_service_options|safe }}
+    </script>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            const carSelect = document.getElementById('carSelect');
+            const serviceTypeSelect = document.getElementById('serviceTypeSelect');
+            const noMoreServicesMessage = document.getElementById('noMoreServicesMessage');
+            
+            // Parse the JSON data passed from Django context using json_script
+            const carServiceOptionsData = JSON.parse(document.getElementById('car_service_options_data').textContent);
+
+            // Function to update the service type options based on the selected car
+            function updateServiceTypeOptions() {
+                const selectedCarId = carSelect.value;
+                // Retrieve available services for the selected car from the parsed data
+                const availableServices = carServiceOptionsData[selectedCarId]; 
+                
+                serviceTypeSelect.innerHTML = ''; // Clear existing options
+                noMoreServicesMessage.style.display = 'none'; // Hide "No more services" message initially
+
+                if (availableServices && availableServices.length > 0) {
+                    // Populate the service type dropdown with available services
+                    availableServices.forEach(service => {
+                        const option = document.createElement('option');
+                        option.value = service;
+                        option.textContent = service + ' Service'; // Display "1st Service", "2nd Service", etc.
+                        // Pre-select if there was a previously selected service type (e.g., after form error)
+                        {% if selected_service_type %}
+                            if (service === "{{ selected_service_type }}") {
+                                option.selected = true;
+                            }
+                        {% endif %}
+                        serviceTypeSelect.appendChild(option);
+                    });
+                    serviceTypeSelect.disabled = false; // Enable the dropdown
+                    serviceTypeSelect.required = true; // Make it required if options are available
+                } else {
+                    // If no services are available for the selected car
+                    const option = document.createElement('option');
+                    option.value = ""; // Empty value
+                    option.textContent = "No services available";
+                    serviceTypeSelect.appendChild(option);
+                    serviceTypeSelect.disabled = true; // Disable the dropdown
+                    serviceTypeSelect.required = false; // Not required if disabled
+                    noMoreServicesMessage.style.display = 'block'; // Show "No more services" message
+                }
+            }
+
+            // Initial population of the service type dropdown when the page loads
+            updateServiceTypeOptions();
+
+            // Add event listener to update options whenever the car selection changes
+            carSelect.addEventListener('change', updateServiceTypeOptions);
+
+            // If there's an initial selected car (e.g., after a form submission error),
+            // ensure the service types are correctly populated for it.
+            // This is handled by `updateServiceTypeOptions()` on `DOMContentLoaded`.
+        });
+    </script>
 {% endblock %}

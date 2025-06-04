@@ -138,34 +138,6 @@ class OrderItem(models.Model):
     def __str__(self):
         return f"{self.quantity}x {self.car} in Order #{self.order.id}"
 
-# class ServiceBooking(models.Model):
-#     STATUS_CHOICES = [
-#         ('Pending', 'Pending'),
-#         ('Approved', 'Approved'),
-#         ('Rejected', 'Rejected'),
-#         ('Completed', 'Completed'),
-#     ]
-    
-#     user = models.ForeignKey(User, on_delete=models.CASCADE, related_name='service_bookings')
-#     car_model = models.CharField(max_length=100)
-#     service_date = models.DateField()
-#     description = models.TextField()
-#     car_image = models.ImageField(upload_to='service_images/', blank=True, null=True)
-#     status = models.CharField(max_length=10, choices=STATUS_CHOICES, default='Pending')
-#     created_at = models.DateTimeField(auto_now_add=True)
-#     updated_at = models.DateTimeField(auto_now=True)
-
-#     class Meta:
-#         ordering = ['-service_date']
-#         verbose_name_plural = 'Service Bookings'
-
-#     def clean(self):
-#         if self.service_date < timezone.now().date():
-#             raise ValidationError({'service_date': 'Service date cannot be in the past.'})
-
-#     def __str__(self):
-#         return f"Service for {self.car_model} on {self.service_date}"
-
 class JobVacancy(models.Model):
     title = models.CharField(max_length=200)
     description = models.TextField()
@@ -208,38 +180,24 @@ class PreBooking(models.Model):
     user = models.ForeignKey(User, on_delete=models.CASCADE)
     car = models.ForeignKey(Car, on_delete=models.CASCADE)
     booking_date = models.DateField(auto_now_add=True)
-    # Make delivery_date nullable in the database
-    delivery_date = models.DateField(null=True, blank=True) # <--- ADDED null=True, blank=True
+    delivery_date = models.DateField(null=True, blank=True)
     address = models.TextField()
     payment_status = models.CharField(max_length=20, default="Pending")
     status = models.CharField(max_length=20, default="Booked")
 
     def save(self, *args, **kwargs):
         # Set booking_date if it's a new instance and not already set
-        # (auto_now_add handles this usually, but good for robustness if you manipulate objects)
         if not self.booking_date:
-            self.booking_date = date.today() # Or timezone.now().date()
+            self.booking_date = date.today()
 
         # Calculate delivery_date ONLY if it's a new instance AND it hasn't been set yet
-        # or if you specifically want to recalculate it if it's None.
-        # The 'if not self.pk' ensures it's only set on creation.
-        if not self.pk and self.delivery_date is None: # Use self.pk for new instance check
+        if not self.pk and self.delivery_date is None:
             self.delivery_date = self.booking_date + timedelta(days=60)
 
-        # Ensure that if booking_date is already set by auto_now_add or manually,
-        # it's used for the delivery_date calculation.
-        # The error was primarily because `delivery_date` was `None` initially.
-        # By setting `null=True, blank=True`, we allow it to be None in the database.
-        # The `if not self.pk` block handles the initial calculation.
-        # For existing objects, if delivery_date needs recalculation,
-        # you'd need additional logic.
-
-        # Update status based on delivery_date
-        # This check should happen *after* delivery_date is guaranteed to have a value
-        # and it should apply to both new and existing objects when they are saved.
-        # Ensure self.delivery_date is not None before comparison.
-        if self.delivery_date and date.today() >= self.delivery_date:
-            self.status = "Delivered"
+        # REMOVED: The problematic line that automatically changed status based on date.
+        # This logic is now handled explicitly in the admin view (mark_prebooking_delivered).
+        # if self.delivery_date and date.today() >= self.delivery_date:
+        #     self.status = "Delivered"
 
         super().save(*args, **kwargs)
 
