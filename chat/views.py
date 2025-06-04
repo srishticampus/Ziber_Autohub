@@ -40,30 +40,30 @@ from django.contrib.auth.models import User
 #     return render(request, 'chat/sent.html', {'messages': messages})
 
 
-@login_required
-def chat_view(request, car_id, user_id):
-    car = get_object_or_404(Car, id=car_id)
-    other_user = get_object_or_404(User, id=user_id)
+# @login_required
+# def chat_view(request, car_id, user_id):
+#     car = get_object_or_404(Car, id=car_id)
+#     other_user = get_object_or_404(User, id=user_id)
 
-    messages = Message.objects.filter(
-        car=car,
-        sender__in=[request.user, other_user],
-        receiver__in=[request.user, other_user]
-    ).order_by('timestamp')
+#     messages = Message.objects.filter(
+#         car=car,
+#         sender__in=[request.user, other_user],
+#         receiver__in=[request.user, other_user]
+#     ).order_by('timestamp')
 
-    if request.method == 'POST':
-        content = request.POST.get('content')
-        if content:
-            Message.objects.create(
-                sender=request.user,
-                receiver=other_user,
-                car=car,
-                content=content
-            )
-            return redirect('chat:chat_view', car_id=car.id, user_id=other_user.id)
+#     if request.method == 'POST':
+#         content = request.POST.get('content')
+#         if content:
+#             Message.objects.create(
+#                 sender=request.user,
+#                 receiver=other_user,
+#                 car=car,
+#                 content=content
+#             )
+#             return redirect('chat:chat_view', car_id=car.id, user_id=other_user.id)
 
-    return render(request, 'chat/chat_room.html', {
-        'car': car,
-        'other_user': other_user,
-        'messages': messages
-    })
+#     return render(request, 'chat/chat_room.html', {
+#         'car': car,
+#         'other_user': other_user,
+#         'messages': messages
+#     })

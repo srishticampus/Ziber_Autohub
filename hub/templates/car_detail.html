@@ -131,9 +131,7 @@
                                     {% csrf_token %}
                                     <button type="submit" class="btn btn-primary">Add to Cart</button>
                                 </form> 
-                                {% if request.user != car.seller %}
-                                    <a href="{% url 'chat:chat_view' car.id car.seller.id %}" class="btn btn-success">Chat with Seller</a>
-                                {% endif %}
+                                
                             {% endif %}
                         </div>
                     </div>
