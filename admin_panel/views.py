@@ -88,6 +88,16 @@ def job_list(request):
 @login_required
 @never_cache
 @staff_member_required
+def job_detail(request, pk): # NEW VIEW FUNCTION
+    """
+    Displays the detailed view of a single job vacancy.
+    """
+    job = get_object_or_404(JobVacancy, pk=pk)
+    return render(request, 'admin_panel/job_detail.html', {'job': job})
+
+@login_required
+@never_cache
+@staff_member_required
 def view_prebookings(request):
     """
     Displays a list of all pre-bookings.
