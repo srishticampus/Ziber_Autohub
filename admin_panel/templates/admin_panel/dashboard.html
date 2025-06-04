@@ -11,7 +11,7 @@
             <div class="card text-white bg-primary">
                 <div class="card-body">
                     <h5 class="card-title">Total Cars</h5>
-                    <p class="card-text fs-3">{{ cars.count }}</p> {# Assuming 'cars' context is passed, or fetch it here #}
+                    <p class="card-text fs-3">{{ total_cars_count }}</p> {# Assuming 'cars' context is passed, or fetch it here #}
                 </div>
             </div>
         </div>
@@ -19,7 +19,7 @@
             <div class="card text-white bg-success">
                 <div class="card-body">
                     <h5 class="card-title">Active Jobs</h5>
-                    <p class="card-text fs-3">{{ jobs.count }}</p> {# Assuming 'jobs' context is passed #}
+                    <p class="card-text fs-3">{{ active_jobs_count }}</p> {# Assuming 'jobs' context is passed #}
                 </div>
             </div>
         </div>
@@ -27,7 +27,7 @@
             <div class="card text-white bg-info">
                 <div class="card-body">
                     <h5 class="card-title">New Pre-Bookings</h5>
-                    <p class="card-text fs-3">{{ new_prebookings_count }}</p> {# You'd need to pass this from view #}
+                    <p class="card-text fs-3">{{ pending_prebookings_count }}</p> {# You'd need to pass this from view #}
                 </div>
             </div>
         </div>
