@@ -26,15 +26,15 @@
         <div class="row"> {# Bootstrap class is fine #}
             {% for job in jobs %} {# Loop is fine #}
                 {# Bootstrap classes are fine #}
-                <div class="col-md-6 col-lg-4 mb-4">
+                <div class="col-md-6 col-lg-4 mb-4 text-white">
                     {# Bootstrap classes are fine #}
                     <div class="card shadow-sm h-100 border-0">
                         {# Bootstrap classes are fine #}
                         <div class="card-body d-flex flex-column">
                             {# Bootstrap classes are fine #}
-                            <h5 class="card-title fw-bold">{{ job.title }}</h5>
+                            <h5 class="card-title fw-bold text-white">{{ job.title }}</h5>
                             {# Bootstrap classes and template filter are fine #}
-                            <p class="card-text text-muted small mb-3">{{ job.description|truncatewords:25 }}</p>
+                            <p class="card-text  small mb-3 text-white">{{ job.description|truncatewords:25 }}</p>
                             {# Bootstrap class and icon are fine #}
                             <p class="card-text"><i class="fa fa-map-marker"></i> {{ job.location }}</p>
                             {# Bootstrap class is fine #}
