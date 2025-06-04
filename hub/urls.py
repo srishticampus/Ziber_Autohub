@@ -47,7 +47,7 @@ urlpatterns = [
     path('buy_now/<int:pk>/', views.buy_now, name='buy_now'),
 
     #chat
-    path('my-chats/', views.my_chats, name='my_chats'),
+    # path('my-chats/', views.my_chats, name='my_chats'),
 
     # pre-booking
     path('pre-book/<int:car_id>/', views.pre_book_car, name='pre_book_car'),
