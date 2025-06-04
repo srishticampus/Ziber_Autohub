@@ -286,6 +286,22 @@
         } else {
             console.error('Bootstrap Modal component is NOT available. Check JS loading.');
         }
+
+        // --- New: Click outside to close Sidenav ---
+        const mySidenav = document.getElementById("mySidenav");
+        const toggleIcon = document.querySelector(".toggle_icon"); // Assuming this is the button that opens it
+
+        document.addEventListener('click', function(event) {
+            // Check if the sidenav is open
+            if (mySidenav.style.width === "250px" || mySidenav.style.width === "100%") { // Adjust based on your openNav width
+                // Check if the click was outside the sidenav AND not on the toggle button
+                if (!mySidenav.contains(event.target) && !toggleIcon.contains(event.target)) {
+                    closeNav(); // Call your existing close function
+                }
+            }
+        });
+        // --- End New: Click outside to close Sidenav ---
+
       });
     </script>
     {% endblock %}
