@@ -5,43 +5,72 @@
 
 {% block extra_styles %}
     {# Add any car_detail-specific styles here if needed, but aim to put most in style.css #}
+    <style>
+        /* Add specific styles for this page's background if needed,
+           or ensure your base.html/style.css handles .banner_bg_main correctly */
+        .car-detail-banner-background {
+            /* Example: if you want a specific background for this page's banner area */
+            /* background-image: url('{% static "images/your_car_detail_banner.jpg" %}'); */
+            /* background-size: cover; */
+            /* background-position: center; */
+            /* min-height: 300px; */ /* Adjust height as needed */
+        }
+
+        /* Ensure forms within action-buttons are displayed correctly */
+        .action-buttons form {
+            display: inline-block; /* Makes forms sit next to each other */
+            margin-right: 10px; /* Adds spacing between buttons */
+            margin-bottom: 10px; /* For responsiveness on smaller screens */
+        }
+
+        /* Basic styling for the car detail card */
+        .car-detail-card {
+            background-color: #fff;
+            border-radius: 10px;
+            box-shadow: 0 4px 8px rgba(0,0,0,0.1);
+            overflow: hidden; /* Ensures rounded corners apply to image */
+        }
+
+        .car-image {
+            width: 100%;
+            height: auto;
+            display: block; /* Removes extra space below image */
+            border-radius: 10px 0 0 10px; /* Rounded top-left, bottom-left */
+            object-fit: cover; /* Ensures image covers the area without distortion */
+        }
+
+        /* Adjust for smaller screens where image might stack */
+        @media (max-width: 767.98px) {
+            .car-image {
+                border-radius: 10px 10px 0 0; /* Rounded top corners on small screens */
+            }
+        }
+    </style>
 {% endblock %}
 
 {% block content %}
-    {# The outer banner_bg_main div contains content that is in base.html, remove it here #}
-    {# The inner banner_bg_main div had inline styles, use a class instead #}
     <div class="banner_bg_main car-detail-banner-background">
-
-    {# The header, logo, header section are in base.html, remove them here #}
-
-    {# The banner section had inline styles and comments, use a class and keep only relevant content #}
         <div class="banner_section layout_padding">
             <div class="container">
                 <div id="my_slider" class="carousel slide" data-ride="carousel">
                     <div class="carousel-inner">
                         <div class="carousel-item active">
                             <div class="row">
-                                {# The content div had inline style, use a class instead #}
                                 <div class="col-sm-12 d-flex flex-column align-items-center justify-content-center banner-carousel-content">
-                                    <!-- Text removed -->
                                     <div class="buynow_bt"><a href="#">Buy Now</a></div>
                                 </div>
                             </div>
                         </div>
                         <div class="carousel-item">
                             <div class="row">
-                                {# The content div had inline style, use a class instead #}
                                 <div class="col-sm-12 d-flex flex-column align-items-center justify-content-center banner-carousel-content">
-                                    <!-- Text removed -->
                                     <div class="buynow_bt"><a href="#">Buy Now</a></div>
                                 </div>
                             </div>
                         </div>
                         <div class="carousel-item">
                             <div class="row">
-                                {# The content div had inline style, use a class instead #}
                                 <div class="col-sm-12 d-flex flex-column align-items-center justify-content-center banner-carousel-content">
-                                    <!-- Text removed -->
                                     <div class="buynow_bt"><a href="#">Buy Now</a></div>
                                 </div>
                             </div>
@@ -56,25 +85,27 @@
                 </div>
             </div>
         </div>
+    </div> 
 
-    </div> {# Close the car-detail-banner-background div #}
-    {# Removed the incorrect <class="bg-light"> tag #}
-    <div class="container mt-5 mb-5">
+    <div class="container mt-5 mb-5" id="car-details-section"> {# Target ID for scrolling #}
         <a href="{% url 'hub:car_list' %}" class="btn btn-outline-secondary my-4">← Back to Cars</a>
 
         <div class="row justify-content-center">
             <div class="col-md-10">
-                {# The car-detail-card class styles are moved to style.css #}
                 <div class="car-detail-card row">
                     <div class="col-md-6">
-                        {# The car-image class styles are moved to style.css #}
                         <img src="{{ car.image.url }}" class="car-image" alt="{{ car.model }}">
                     </div>
-                    <div class="col-md-6">
+                    <div class="col-md-6 p-4">
                         <h2 class="mb-3">{{ car.brand }} {{ car.model }}</h2>
                         <p><strong>Price:</strong> ₹{{ car.price }} Lakhs</p>
                         <p><strong>Fuel Type:</strong> {{ car.fuel_type }}</p>
                         <p><strong>Year:</strong> {{ car.year }}</p>
+                        {% if not car.is_new %}
+                            <p><strong>KMs Driven:</strong> {{ car.kms_driven }}</p>
+                            <p><strong>Previous Owners:</strong> {{ car.owner }}</p>
+                        {% endif %}
+                        <p><strong>Stock Available:</strong> {{ car.stock }}</p>
                         <p><strong>Status:</strong>
                             {% if car.is_new %}
                                 <span class="badge bg-success px-5 text-white ">New</span>
@@ -85,7 +116,6 @@
                         <p><strong>Description:</strong></p>
                         <p>{{ car.description }}</p>
 
-                        {# The action-buttons class styles are moved to style.css #}
                         <div class="action-buttons mt-4">
                             {% if car.is_new %}
                                 <form method="post" action="{% url 'hub:pre_book_car' car.id %}">
@@ -110,12 +140,41 @@
         </div>
     </div>
 
-    {# The footer and copyright sections are in base.html, remove them here #}
-
 {% endblock %}
 
 {% block scripts %}
-{% comment %} Add any specific scripts for car_detail.html here if needed, otherwise leave empty {% endcomment %}
-{% endblock %}
-{# Removed extra closing body and html tags #}
+{{ block.super }} {# Include base.html scripts #}
+<script>
+    document.addEventListener('DOMContentLoaded', function() {
+        const carDetailsSection = document.getElementById('car-details-section');
+        if (carDetailsSection) {
+            // Get the height of any fixed header or top section that might obscure content.
+            // Adjust this selector if your fixed header has a different class or ID.
+            // Common classes for fixed headers: .fixed-top, .navbar-fixed-top, or a specific ID.
+            const header = document.querySelector('.header_section_top, .header_section'); 
+            const headerHeight = header ? header.offsetHeight : 0;
 
+            // Get the element's position and dimensions relative to the viewport
+            const elementRect = carDetailsSection.getBoundingClientRect();
+            const viewportHeight = window.innerHeight;
+
+            // Calculate the target scroll position to center the element
+            // current scroll position + element's top relative to viewport - (viewport height - element height) / 2
+            let targetScrollY = window.scrollY + elementRect.top - (viewportHeight - elementRect.height) / 2;
+
+            // Adjust for fixed header if it exists
+            // Subtract header height to push content up, so it's not hidden by the header
+            targetScrollY = targetScrollY - headerHeight; 
+
+            // Ensure we don't scroll past the top (0) or bottom of the page
+            targetScrollY = Math.max(0, targetScrollY);
+            targetScrollY = Math.min(targetScrollY, document.documentElement.scrollHeight - viewportHeight);
+
+            window.scrollTo({
+                top: targetScrollY,
+                behavior: 'smooth'
+            });
+        }
+    });
+</script>
+{% endblock %}

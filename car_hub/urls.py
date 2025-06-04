@@ -26,6 +26,7 @@ urlpatterns = [
     path('', include('hub.urls',namespace='hub')),
     path('admin_panel/', include('admin_panel.urls', namespace="admin_panel")),
     path('chat/', include('chat.urls', namespace='chat')),
+    path('accounts/', include('django.contrib.auth.urls')),
 
 ]
 

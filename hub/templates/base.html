@@ -32,18 +32,12 @@
       rel="stylesheet"
       href="{% static 'css/jquery.mCustomScrollbar.min.css' %}"
     />
-    <link
-      rel="stylesheet"
-      href="https://netdna.bootstrapcdn.com/font-awesome/4.0.3/css/font-awesome.css"
-    />
+    {# Using Font Awesome 6 for more modern icons and better compatibility #}
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css" integrity="sha512-SnH5WK+bZxgPHs44uWIX+LLJAJ9/2PkPKZ5QiAj6Ta86w+fsb2TkcmfRyVX3pBnMFcV7oQPJkl9QevSCWr3W6A==" crossorigin="anonymous" referrerpolicy="no-referrer" />
+    
     <link
       href="https://fonts.googleapis.com/css?family=Poppins:400,700&display=swap"
       rel="stylesheet"
-    />
-    <link
-      rel="stylesheet"
-      type="text/css"
-      href="https://stackpath.bootstrapcdn.com/font-awesome/4.7.0/css/font-awesome.min.css"
     />
     <link
       href="https://fonts.googleapis.com/css?family=Great+Vibes|Poppins:400,700&display=swap&subset=latin-ext"
@@ -126,7 +120,7 @@
                 class="btn btn-secondary dropdown-toggle"
                 type="button"
                 id="dropdownMenuButton"
-                data-toggle="dropdown"
+                data-bs-toggle="dropdown" {# Changed from data-toggle to data-bs-toggle #}
                 aria-haspopup="true"
                 aria-expanded="false"
               >
@@ -168,9 +162,12 @@
                                 <i class="fa fa-shopping-cart" aria-hidden="true"></i>
                                 <span class="padding_10">Cart</span></a>
                             </li>
-                            <li class="mx-1"><a href="{% url 'hub:logout' %}">
-                                <i class="fa fa-user" aria-hidden="true"></i>
-                                <span class="padding_10">Logout</span></a>
+                            <li class="mx-1">
+                                {# Changed logout link to trigger modal #}
+                                <a href="#" data-bs-toggle="modal" data-bs-target="#logoutConfirmModal">
+                                    <i class="fa fa-user" aria-hidden="true"></i>
+                                    <span class="padding_10">Logout</span>
+                                </a>
                             </li>
                         </ul>
                       </div>
@@ -211,7 +208,7 @@
             <li><a href="{% url 'hub:new_car_list' %}">New Releases</a></li>
             <li><a href="{% url 'hub:car_list' %}">All Vehicles</a></li>
             <li><a href="{% url 'hub:used_car_list' %}">Used Cars</a></li> <li><a href="{% url 'hub:book_service' %}">Service Booking</a></li>
-            <li><a href="{% url 'hub:used_car_list' %}">Used Cars</a></li> <li><a href="{% url 'hub:my_service_bookings' %}">My Service</a></li>
+            <li><a href="{% url 'hub:my_service_bookings' %}">My Service</a></li>
             <li><a href="{% url 'hub:predict_price' %}">Price Predictor</a></li>
             <li><a href="{% url 'hub:job_list' %}">Careers</a></li>
             <li><a href="{% url 'hub:news' %}">News</a></li>
@@ -230,40 +227,82 @@
         </p>
       </div>
     </div>
+
+    {# Logout Confirmation Modal #}
+    <div class="modal fade" id="logoutConfirmModal" tabindex="-1" aria-labelledby="logoutConfirmModalLabel" aria-hidden="true">
+        <div class="modal-dialog modal-dialog-centered">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="logoutConfirmModalLabel">Confirm Logout</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body">
+                    Are you sure you want to log out?
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
+                    <a href="{% url 'hub:logout' %}" id="confirmLogoutButton" class="btn btn-danger">Logout</a>
+                </div>
+            </div>
+        </div>
+    </div>
+
     {% block scripts %}
-    <script src="{% static 'js/jquery.min.js' %}"></script>
-    <script src="{% static 'js/popper.min.js' %}"></script>
-    <script src="{% static 'js/bootstrap.bundle.min.js' %}"></script>
-    <script src="{% static 'js/jquery-3.0.0.min.js' %}"></script>
+    {# Bootstrap 5 Bundle JS (includes Popper.js) - this is essential for modals and dropdowns #}
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js" integrity="sha384-YvpcrYf0tY3lHB60NNkmXc5s9fDVZLESaAA55NDzOxhy9GkcIdslK1eN7N6jIeHz" crossorigin="anonymous"></script>
+
+    {# Your custom scripts - load them AFTER Bootstrap #}
+    {# Only include jQuery if absolutely necessary for these files. If not, remove it. #}
+    <script src="{% static 'js/jquery.min.js' %}"></script> {# Keep this only if plugin.js, custom.js, custom_base.js require it #}
     <script src="{% static 'js/plugin.js' %}"></script>
     <script src="{% static 'js/jquery.mCustomScrollbar.concat.min.js' %}"></script>
     <script src="{% static 'js/custom.js' %}"></script>
     <script src="{% static 'js/custom_base.js' %}"></script>
+    
     <script>
       document.addEventListener('DOMContentLoaded', function() {
-            // Select all message alerts
-            const messageAlerts = document.querySelectorAll('.alert');
+        // Select all message alerts
+        const messageAlerts = document.querySelectorAll('.alert');
 
-            // Iterate over each alert and set a timeout
-            messageAlerts.forEach(function(alert) {
-                // Check if the alert has a dismissible class (optional, but good practice)
-                // or if it's a success/info/warning message that should disappear
-                if (alert.classList.contains('alert-success') ||
-                    alert.classList.contains('alert-info') ||
-                    alert.classList.contains('alert-warning')) { // You can customize which types disappear
-                    setTimeout(function() {
-                        // Add a fade-out effect (optional)
-                        alert.style.transition = 'opacity 1s ease-out';
-                        alert.style.opacity = '0';
-
-                        // Remove the element after the transition
-                        setTimeout(function() {
-                            alert.remove();
-                        }, 1000); // Wait for the 1-second fade-out transition
-                    }, 5000); // 5000 milliseconds = 5 seconds
-                }
-            });
+        // Iterate over each alert and set a timeout
+        messageAlerts.forEach(function(alert) {
+          // Check if the alert has a dismissible class (optional, but good practice)
+          // or if it's a success/info/warning message that should disappear
+          if (alert.classList.contains('alert-success') ||
+              alert.classList.contains('alert-info') ||
+              alert.classList.contains('alert-warning')) { // You can customize which types disappear
+            setTimeout(function() {
+              // Use Bootstrap's built-in dismiss functionality
+              const bsAlert = bootstrap.Alert.getInstance(alert) || new bootstrap.Alert(alert);
+              bsAlert.close();
+            }, 5000); // 5000 milliseconds = 5 seconds
+          }
         });
+
+        // Optional: Add logging to confirm Bootstrap is available
+        console.log('Bootstrap object:', typeof bootstrap !== 'undefined' ? bootstrap : 'Not loaded');
+        if (typeof bootstrap !== 'undefined' && bootstrap.Modal) {
+            console.log('Bootstrap Modal component is available.');
+        } else {
+            console.error('Bootstrap Modal component is NOT available. Check JS loading.');
+        }
+
+        // --- New: Click outside to close Sidenav ---
+        const mySidenav = document.getElementById("mySidenav");
+        const toggleIcon = document.querySelector(".toggle_icon"); // Assuming this is the button that opens it
+
+        document.addEventListener('click', function(event) {
+            // Check if the sidenav is open
+            if (mySidenav.style.width === "250px" || mySidenav.style.width === "100%") { // Adjust based on your openNav width
+                // Check if the click was outside the sidenav AND not on the toggle button
+                if (!mySidenav.contains(event.target) && !toggleIcon.contains(event.target)) {
+                    closeNav(); // Call your existing close function
+                }
+            }
+        });
+        // --- End New: Click outside to close Sidenav ---
+
+      });
     </script>
     {% endblock %}
   </body>
