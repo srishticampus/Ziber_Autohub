@@ -729,7 +729,7 @@ def book_service(request):
             description=description
         )
         messages.success(request, "Service booked successfully!")
-        return redirect('my_service_bookings')
+        return redirect('hub:my_service_bookings')
 
     return render(request, 'book_service.html', {
         'eligible_cars': eligible_cars,
