@@ -131,5 +131,35 @@
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js" integrity="sha384-YvpcrYf0tY3lHB60NNkmXc5s9fDVZLESaAA55NDzOxhy9GkcIdslK1eN7N6jIeHz" crossorigin="anonymous"></script>
     {# Custom Admin JS (create this file if you need further customization) #}
     <script src="{% static 'admin_panel/js/admin_custom.js' %}"></script>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            // Select all message alerts
+            const messageAlerts = document.querySelectorAll('.alert');
+
+            // Iterate over each alert and set a timeout
+            messageAlerts.forEach(function(alert) {
+                // Only auto-dismiss success, info, and warning messages
+                // Error messages might need to stay until dismissed manually
+                if (alert.classList.contains('alert-success') ||
+                    alert.classList.contains('alert-info') ||
+                    alert.classList.contains('alert-warning')) {
+                    
+                    setTimeout(function() {
+                        // Use Bootstrap's built-in dismiss functionality if available
+                        const bsAlert = bootstrap.Alert.getInstance(alert) || new bootstrap.Alert(alert);
+                        bsAlert.close();
+                        
+                        // Fallback for older Bootstrap versions or if dismiss doesn't work
+                        // alert.style.transition = 'opacity 1s ease-out';
+                        // alert.style.opacity = '0';
+                        // setTimeout(function() {
+                        //     alert.remove();
+                        // }, 1000);
+                    }, 5000); // 5000 milliseconds = 5 seconds
+                }
+            });
+        });
+    </script>
 </body>
 </html>
