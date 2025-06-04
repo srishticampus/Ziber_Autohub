@@ -1,7 +1,8 @@
 # admin_panel/forms.py
 from django import forms
 from hub.models import Car, JobVacancy
-from django.contrib.auth.models import User # Keep User import, as it might be used elsewhere (e.g., Car.seller)
+from django.contrib.auth.models import User
+import re # Import regex module
 
 class AddCarForm(forms.ModelForm):
     class Meta:
@@ -78,3 +79,11 @@ class AddJobForm(forms.ModelForm):
                 field.widget.attrs.update({'class': 'form-check-input'})
             elif not isinstance(field.widget, forms.CheckboxInput):
                 field.widget.attrs.update({'class': 'form-control'})
+
+    # Custom validation for the 'title' field
+    def clean_title(self):
+        title = self.cleaned_data['title']
+        # Allow letters, spaces, and hyphens (if needed for titles like "Software-Engineer")
+        if not re.fullmatch(r'^[a-zA-Z\s\-]+$', title):
+            raise forms.ValidationError("Job title can only contain alphabetic characters, spaces, and hyphens.")
+        return title
