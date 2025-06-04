@@ -16,16 +16,15 @@
                         <th>Delivery Date</th>
                         <th>Payment Status</th>
                         <th>Status</th>
-                        <th>Address</th> {# Added address field #}
-                        {# Add actions if you want update/view detail buttons #}
-                        {# <th>Actions</th> #}
+                        <th>Address</th>
+                        <th>Actions</th> {# ADDED ACTIONS COLUMN #}
                     </tr>
                 </thead>
                 <tbody>
                     {% for booking in bookings %}
                     <tr>
                         <td>{{ booking.user.username }}</td>
-                        <td>{{ booking.car.brand }} {{ booking.car.model }}</td> {# Display car brand/model #}
+                        <td>{{ booking.car.brand }} {{ booking.car.model }}</td>
                         <td>{{ booking.booking_date|date:"M d, Y" }}</td>
                         <td>
                             {% if booking.delivery_date %}
@@ -55,13 +54,23 @@
                             {% endif %}
                         </td>
                         <td>{{ booking.address }}</td>
-                        {# <td> #}
-                        {#     <a href="{% url 'admin_panel:edit_prebooking' booking.pk %}" class="btn btn-sm btn-outline-primary">Manage</a> #}
-                        {# </td> #}
+                        <td>
+                            {% if booking.status != 'Delivered' %} {# Only show button if not already delivered #}
+                                <form method="post" action="{% url 'admin_panel:mark_prebooking_delivered' booking.pk %}" style="display:inline;">
+                                    {% csrf_token %}
+                                    <button type="submit" class="btn btn-sm btn-success" 
+                                            onclick="return confirm('Are you sure you want to mark this pre-booking as Delivered? This will also decrement car stock.');">
+                                        Mark as Delivered
+                                    </button>
+                                </form>
+                            {% else %}
+                                <button class="btn btn-sm btn-secondary" disabled>Delivered</button>
+                            {% endif %}
+                        </td>
                     </tr>
                     {% empty %}
                     <tr>
-                        <td colspan="7" class="text-center py-4">No pre-bookings found.</td>
+                        <td colspan="8" class="text-center py-4">No pre-bookings found.</td> {# Updated colspan #}
                     </tr>
                     {% endfor %}
                 </tbody>
