@@ -30,7 +30,7 @@
     />
     <link
       rel="stylesheet"
-      href="{% static 'css/jquery.mCustomScrollbar.min.css' %}"
+      href="{% static 'css/jquery.mCustomScrollbar.min.css' }"
     />
     {# Using Font Awesome 6 for more modern icons and better compatibility #}
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css" integrity="sha512-SnH5WK+bZxgPHs44uWIX+LLJAJ9/2PkPKZ5QiAj6Ta86w+fsb2TkcmfRyVX3pBnMFcV7oQPJkl9QevSCWr3W6A==" crossorigin="anonymous" referrerpolicy="no-referrer" />
@@ -157,7 +157,7 @@
                     {% if user.is_authenticated %}
                       <div class="login_menu">
                         <ul>
-                        
+                          {% comment %} <a href="{% url 'hub:my_chats' %}">My Chats</a> {% endcomment %}
                             <li class="mx-1"><a href="{% url 'hub:view_cart' %}">
                                 <i class="fa fa-shopping-cart" aria-hidden="true"></i>
                                 <span class="padding_10">Cart</span></a>
@@ -194,14 +194,15 @@
         </div>
         <div class="input_bt">
           <input
-            type="text"
+            type="email" {# Changed type to email for basic browser validation #}
             class="mail_bt"
             placeholder="Your Email"
             name="Your Email"
+            id="subscribeEmailInput" {# ADDED ID #}
           />
-          <span class="subscribe_bt" id="basic-addon2"
-            ><a href="#">Subscribe</a></span
-          >
+          <span class="subscribe_bt" id="subscribeButton"> {# ADDED ID #}
+            <a href="#">Subscribe</a>
+          </span>
         </div>
         <div class="footer_menu">
           <ul>
@@ -247,6 +248,24 @@
         </div>
     </div>
 
+    {# Subscription Confirmation Modal - NEW #}
+    <div class="modal fade" id="subscriptionConfirmModal" tabindex="-1" aria-labelledby="subscriptionConfirmModalLabel" aria-hidden="true">
+        <div class="modal-dialog modal-dialog-centered">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="subscriptionConfirmModalLabel">Subscription Status</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body" id="subscriptionModalBody">
+                    {# Content will be inserted by JavaScript #}
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-primary" data-bs-dismiss="modal">OK</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
     {% block scripts %}
     {# Bootstrap 5 Bundle JS (includes Popper.js) - this is essential for modals and dropdowns #}
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js" integrity="sha384-YvpcrYf0tY3lHB60NNkmXc5s9fDVZLESaAA55NDzOxhy9GkcIdslK1eN7N6jIeHz" crossorigin="anonymous"></script>
@@ -287,7 +306,7 @@
             console.error('Bootstrap Modal component is NOT available. Check JS loading.');
         }
 
-        // --- New: Click outside to close Sidenav ---
+        // --- Sidenav: Click outside to close ---
         const mySidenav = document.getElementById("mySidenav");
         const toggleIcon = document.querySelector(".toggle_icon"); // Assuming this is the button that opens it
 
@@ -300,7 +319,32 @@
                 }
             }
         });
-        // --- End New: Click outside to close Sidenav ---
+        // --- End Sidenav: Click outside to close ---
+
+        // --- New: Subscription functionality ---
+        const subscribeEmailInput = document.getElementById('subscribeEmailInput');
+        const subscribeButton = document.getElementById('subscribeButton');
+        const subscriptionModal = new bootstrap.Modal(document.getElementById('subscriptionConfirmModal'));
+        const subscriptionModalBody = document.getElementById('subscriptionModalBody');
+
+        subscribeButton.addEventListener('click', function(event) {
+            event.preventDefault(); // Prevent default link behavior
+
+            const email = subscribeEmailInput.value;
+            const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/; // Simple email regex
+
+            if (emailRegex.test(email)) {
+                // Valid email
+                subscriptionModalBody.innerHTML = `<p class="text-success">You have successfully subscribed!</p><p>Email: <strong>${email}</strong></p>`;
+                subscriptionModal.show();
+                subscribeEmailInput.value = ''; // Clear the input field
+            } else {
+                // Invalid email
+                subscriptionModalBody.innerHTML = `<p class="text-danger">Please enter a valid email address to subscribe.</p>`;
+                subscriptionModal.show();
+            }
+        });
+        // --- End New: Subscription functionality ---
 
       });
     </script>
