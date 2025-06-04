@@ -351,10 +351,20 @@ def add_to_cart(request, pk):
 
 @login_required
 def view_cart(request):
-    cart = get_object_or_404(Cart, user=request.user)
+    """
+    Displays the user's cart. If no cart exists for the user, one is created.
+    """
+    # Use get_or_create to ensure a cart exists for the user
+    cart, created = Cart.objects.get_or_create(user=request.user)
+    
     cart_items = cart.items.all()
     total_price = cart.total_price
-    return render(request, 'cart.html', {'cart_items': cart_items,'total_price': total_price})
+    
+    # You might want to add a message if the cart was just created and is empty
+    if created:
+        messages.info(request, "Your cart is currently empty. Start adding some cars!")
+    
+    return render(request, 'cart.html', {'cart_items': cart_items, 'total_price': total_price})
 
 @login_required
 def update_cart_item(request, pk):
@@ -729,7 +739,7 @@ def book_service(request):
             description=description
         )
         messages.success(request, "Service booked successfully!")
-        return redirect('my_service_bookings')
+        return redirect('hub:my_service_bookings')
 
     return render(request, 'book_service.html', {
         'eligible_cars': eligible_cars,

@@ -1340,7 +1340,6 @@ input.mail_bt::placeholder {
     background-color: transparent;
     border: 1px solid red;
     color: white;
-    text-align: center;
 }
 
 /* Style from login.html inline style on the login button */

@@ -33,10 +33,9 @@
                     <td>{{ item.car.name }}</td>
                     <td>{{ item.quantity }}</td>
                     <td>₹{{ item.car.price }}</td>
-                    {% comment %} <td>
+                   <td>
                         <a href="{% url 'hub:remove_from_cart' car_id=item.car.id %}" class="btn btn-remove">Remove</a>
-                    </td> {% endcomment %}
-                </tr>
+                    </td> 
                 {% endfor %}
             </tbody>
         </table>
@@ -45,7 +44,7 @@
                 <strong>Total Price:</strong> ₹{{ total_price }}
             </div>
 
-            <form method="post" action="{% url 'checkout' %}">
+            <form method="post" action="{% url 'hub:checkout' %}">
                 {% csrf_token %}
                 <button type="submit" class="btn btn-buy">Buy Now</button> {# The btn-buy class styles are moved to style.css #}
             </form>
