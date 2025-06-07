@@ -3,6 +3,8 @@ import os
 import joblib
 import re
 import json
+from django.views.decorators.csrf import csrf_exempt
+from django.http import JsonResponse
 from django.shortcuts import render, redirect, get_object_or_404
 from django.contrib import messages
 from django.contrib.auth.decorators import login_required
@@ -832,3 +834,59 @@ def book_service(request):
 def my_service_bookings(request):
     services = ServiceBooking.objects.filter(user=request.user).order_by('-booked_at') # Order by newest first
     return render(request, 'my_services.html', {'services': services})
+
+
+@csrf_exempt
+def book_service_api(request):
+    if request.method == "POST":
+        data = json.loads(request.body)
+        car_id = data.get('car_id')
+        service_type = data.get('service_type')
+        description = data.get('description')
+
+        try:
+            car = Car.objects.get(id=car_id)
+            ServiceBooking.objects.create(
+                user=request.user,
+                car=car,
+                service_type=service_type,
+                description=description
+            )
+            return JsonResponse({"success": True})
+        except Exception as e:
+            return JsonResponse({"success": False, "message": str(e)})
+    return JsonResponse({"success": False, "message": "Invalid request"})
+
+def service_chatbot(request):
+    delivered_cars_ids = PreBooking.objects.filter(
+        user=request.user,
+        car__is_new=True,
+        status="Delivered"
+    ).values_list('car_id', flat=True)
+    eligible_cars = list(Car.objects.filter(id__in=delivered_cars_ids).values('id', 'name', 'model'))
+
+    car_service_options = {}
+    for car in eligible_cars:
+        service_order = {'1st': 1, '2nd': 2, '3rd': 3, '4th': 4}
+        booked_services = ServiceBooking.objects.filter(user=request.user, car_id=car['id']).order_by('booked_at')
+        latest_service_type_str = None
+        for service in booked_services:
+            latest_service_type_str = service.service_type
+        next_service_type = None
+        if latest_service_type_str is None:
+            next_service_type = '1st'
+        elif latest_service_type_str == '1st':
+            next_service_type = '2nd'
+        elif latest_service_type_str == '2nd':
+            next_service_type = '3rd'
+        elif latest_service_type_str == '3rd':
+            next_service_type = '4th'
+        if next_service_type:
+            car_service_options[car['id']] = [next_service_type]
+        else:
+            car_service_options[car['id']] = []
+
+    return render(request, 'service_chatbot.html', {
+        'eligible_cars': json.dumps(eligible_cars),
+        'car_service_options': json.dumps(car_service_options)
+    })
