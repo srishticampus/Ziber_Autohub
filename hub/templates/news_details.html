@@ -1,51 +1,281 @@
 {% extends 'base.html' %}
 {% load static %}
 
-{% block tittle %}News Details{% endblock %} {# Added title block #}
+{% block title %}News & Updates - Ziber Autohub{% endblock %}
 
+{% block extra_styles %}
+<style>
+    /* General section styling */
+    .news_detail_section {
+        background-color: #f5f5f5;
+        padding-top: 5rem; /* Adjusted padding from header */
+        padding-bottom: 4rem; /* Padding before footer */
+    }
+
+    /* Styling for each individual news item card */
+    .news_item {
+        background-color: #fff;
+        border-radius: 12px; /* Soft rounded corners */
+        box-shadow: 0 4px 15px rgba(0, 0, 0, 0.08); /* Subtle shadow */
+        padding: 1.5rem;
+        transition: transform 0.3s ease, box-shadow 0.3s ease; /* Smooth hover effect */
+        height: 100%; /* Ensure all cards have same height */
+        display: flex;
+        flex-direction: column;
+        cursor: pointer; /* Indicate clickability */
+    }
+
+    .news_item:hover {
+        transform: translateY(-5px); /* Lift effect on hover */
+        box-shadow: 0 8px 25px rgba(0, 0, 0, 0.15); /* Enhanced shadow on hover */
+    }
+
+    .news_image img {
+        border-radius: 8px; /* Rounded corners for images */
+        object-fit: cover; /* Ensures images cover their area well */
+        max-height: 200px; /* Limit image height to keep cards consistent */
+        width: 100%; /* Ensure image fills its container */
+    }
+
+    .news_title {
+        font-size: 1.5rem; /* Larger title font */
+        font-weight: bold;
+        color: #333;
+        margin-top: 1rem;
+        margin-bottom: 0.75rem;
+        text-align: center;
+    }
+
+    .news_content {
+        font-size: 1rem; /* Standard paragraph font size */
+        color: #555;
+        line-height: 1.6; /* Improved line spacing */
+        text-align: justify;
+        flex-grow: 1; /* Allows content to push footer to bottom if content varies */
+    }
+
+    /* Modal specific styling */
+    .modal-content {
+        border-radius: 12px;
+        box-shadow: 0 10px 30px rgba(0,0,0,0.2);
+    }
+    .modal-header {
+        border-bottom: none; /* Remove default border */
+        padding-bottom: 0;
+    }
+    .modal-title {
+        font-size: 1.8rem;
+        font-weight: bold;
+        color: #333;
+        text-align: center;
+        width: 100%; /* Center title */
+    }
+    .modal-body {
+        padding-top: 1rem;
+        padding-bottom: 2rem;
+    }
+    .modal-body img {
+        border-radius: 8px;
+        margin-bottom: 1.5rem;
+        max-height: 350px; /* Limit modal image height */
+        object-fit: contain; /* Ensure full image is visible, no cropping */
+    }
+    .modal-body p {
+        font-size: 1.1rem;
+        line-height: 1.7;
+        color: #444;
+        text-align: justify;
+    }
+    .modal-footer {
+        border-top: none; /* Remove default border */
+        padding-top: 0;
+    }
+
+    /* Responsive adjustments */
+    @media (max-width: 768px) {
+        .news_detail_section {
+            padding-top: 3rem;
+            padding-bottom: 2rem;
+        }
+        .news_item {
+            margin-bottom: 1.5rem; /* Space between cards on smaller screens */
+        }
+        .news_title {
+            font-size: 1.3rem;
+        }
+        .news_content {
+            font-size: 0.95rem;
+        }
+    }
+</style>
+{% endblock %}
 
 {% block content %}
-{% load static %}
-<div class="news_detail_section layout_padding" style="background-color: #f5f5f5; padding-top: 30px; padding-bottom: 30px;">
+<div class="news_detail_section">
     <div class="container">
+        <h2 class="text-center mb-5" style="font-size: 2.5rem; font-weight: bold; color: #333;">Latest News from Ziber Autohub</h2>
         <div class="row">
             <!-- First News Item -->
             <div class="col-lg-4 col-md-6 mb-4">
-                <div class="news_item">
+                <div class="news_item" 
+                     data-bs-toggle="modal" 
+                     data-bs-target="#newsDetailModal"
+                     data-title="The Future of Electric Vehicles: Ziber's New Lineup"
+                     data-image="{% static 'images/news1.jpg' %}"
+                     data-content="Ziber Autohub is proud to announce its groundbreaking new line of electric vehicles, setting new standards for sustainability and performance. These innovative models feature extended battery life, rapid charging capabilities, and luxurious interiors crafted from recycled materials. With a focus on reducing carbon footprint while maintaining exhilarating driving dynamics, Ziber's EVs are poised to revolutionize the automotive industry. Pre-orders are now open, offering exclusive early bird benefits for enthusiasts eager to embrace the electric revolution. Dive into a new era of driving with Ziber's commitment to eco-friendly mobility and cutting-edge technology.">
                     <div class="news_image text-center mb-3">
-                        <img src="{% static 'images/news1.jpg' %}" alt="News 1" class="img-fluid" style="max-width: 100%; height: auto;">
+                        <img src="{% static 'images/news1.jpg' %}" alt="News 1" class="img-fluid">
                     </div>
-                    <h3 class="news_title text-center" style="font-size: 24px; font-weight: bold; color: #333;">Latest Car Release</h3>
-                    <p class="news_content" style="font-size: 16px; color: #555; line-height: 1.8; text-align: justify;">
-                        The new model of the car has been launched! It features advanced safety features, better fuel efficiency, and a sleek design. It's available for purchase now!
+                    <h3 class="news_title">The Future of Electric Vehicles</h3>
+                    <p class="news_content">
+                        Ziber Autohub is proud to announce its groundbreaking new line of electric vehicles, setting new standards for sustainability and performance...
                     </p>
                 </div>
             </div>
+
             <!-- Second News Item -->
             <div class="col-lg-4 col-md-6 mb-4">
-                <div class="news_item">
+                <div class="news_item"
+                     data-bs-toggle="modal" 
+                     data-bs-target="#newsDetailModal"
+                     data-title="Exclusive Used Car Offers: Find Your Dream Ride"
+                     data-image="{% static 'images/news2.jpg' %}"
+                     data-content="Don't miss out on Ziber Autohub's limited-time exclusive offers on pre-owned vehicles. Our certified used cars undergo rigorous inspections to ensure top-notch quality and reliability. From sedans to SUVs, discover a wide range of models at unbeatable prices. Flexible financing options are available to make your dream car a reality. Visit our showroom or browse online to explore the best deals on the market. Our team of experts is ready to assist you in finding the perfect vehicle that fits your budget and lifestyle.">
                     <div class="news_image text-center mb-3">
-                        <img src="{% static 'images/news2.jpg' %}" alt="News 2" class="img-fluid" style="max-width: 100%; height: auto;">
+                        <img src="{% static 'images/news2.jpg' %}" alt="News 2" class="img-fluid">
                     </div>
-                    <h3 class="news_title text-center" style="font-size: 24px; font-weight: bold; color: #333;">Exclusive Used Car Offers</h3>
-                    <p class="news_content" style="font-size: 16px; color: #555; line-height: 1.8; text-align: justify;">
-                        Take advantage of our exclusive offers on used cars. Get amazing discounts and flexible financing options. Visit us for more details.
+                    <h3 class="news_title">Exclusive Used Car Offers</h3>
+                    <p class="news_content">
+                        Take advantage of our exclusive offers on used cars. Get amazing discounts and flexible financing options...
                     </p>
                 </div>
             </div>
+
             <!-- Third News Item -->
             <div class="col-lg-4 col-md-6 mb-4">
-                <div class="news_item">
+                <div class="news_item"
+                     data-bs-toggle="modal" 
+                     data-bs-target="#newsDetailModal"
+                     data-title="Enhance Your Ride: New Car Accessories Now Available"
+                     data-image="{% static 'images/news3.jpg' %}"
+                     data-content="Upgrade your driving experience with Ziber Autohub's latest collection of premium car accessories. From stylish interior enhancements like custom floor mats and ambient lighting to advanced exterior additions such as roof racks and performance spoilers, we have everything you need to personalize your vehicle. Explore our smart tech gadgets, including cutting-edge navigation systems and immersive audio setups. Each accessory is designed for seamless integration and durability, ensuring maximum comfort, convenience, and a touch of individuality for your car.">
                     <div class="news_image text-center mb-3">
-                        <img src="{% static 'images/news3.jpg' %}" alt="News 3" class="img-fluid" style="max-width: 100%; height: auto;">
+                        <img src="{% static 'images/news3.jpg' %}" alt="News 3" class="img-fluid">
                     </div>
-                    <h3 class="news_title text-center" style="font-size: 24px; font-weight: bold; color: #333;">New Car Accessories Now Available</h3>
-                    <p class="news_content" style="font-size: 16px; color: #555; line-height: 1.8; text-align: justify;">
-                        Discover the latest car accessories that will enhance your driving experience. From floor mats to advanced GPS systems, we’ve got it all!
+                    <h3 class="news_title">New Car Accessories Now Available</h3>
+                    <p class="news_content">
+                        Discover the latest car accessories that will enhance your driving experience. From floor mats to advanced GPS systems...
+                    </p>
+                </div>
+            </div>
+
+            <!-- Fourth News Item (New) -->
+            <div class="col-lg-4 col-md-6 mb-4">
+                <div class="news_item"
+                     data-bs-toggle="modal" 
+                     data-bs-target="#newsDetailModal"
+                     data-title="Ziber Autohub Expands Service Network Across the Region"
+                     data-image="{% static 'images/news4.jpg' %}"
+                     data-content="In an exciting development, Ziber Autohub has significantly expanded its service network, opening five new state-of-the-art service centers across key regions. This expansion aims to provide unparalleled convenience and accessibility for our valued customers, ensuring faster service times and a wider reach for our expert technicians. Each new center is equipped with the latest diagnostic tools and staffed by certified professionals, upholding Ziber's commitment to exceptional after-sales support. We are dedicated to making car ownership a hassle-free and enjoyable experience for everyone in the community.">
+                    <div class="news_image text-center mb-3">
+                        <img src="{% static 'images/news4.jpg' %}" alt="News 4" class="img-fluid">
+                    </div>
+                    <h3 class="news_title">Ziber Expands Service Network</h3>
+                    <p class="news_content">
+                        Ziber Autohub has significantly expanded its service network, opening five new state-of-the-art service centers...
+                    </p>
+                </div>
+            </div>
+
+            <!-- Fifth News Item (New) -->
+            <div class="col-lg-4 col-md-6 mb-4">
+                <div class="news_item"
+                     data-bs-toggle="modal" 
+                     data-bs-target="#newsDetailModal"
+                     data-title="Innovations in Autonomous Driving: What's Next for Ziber?"
+                     data-image="{% static 'images/news5.webp' %}" {# CORRECTED DATA-IMAGE TO .WEBP #}
+                     data-content="Ziber Autohub is at the forefront of autonomous driving technology, continuously pushing the boundaries of what's possible. Our research and development teams are making significant strides in AI-powered navigation, advanced sensor fusion, and vehicle-to-everything (V2X) communication. Future Ziber models are anticipated to feature Level 4 autonomous capabilities, offering a truly hands-free driving experience in designated areas. We are committed to ensuring safety and reliability as we pave the way for a revolutionary shift in how we travel. Stay tuned for more updates on our journey towards a fully autonomous future.">
+                    <div class="news_image text-center mb-3">
+                        <img src="{% static 'images/news5.webp' %}" alt="News 5" class="img-fluid">
+                    </div>
+                    <h3 class="news_title">Innovations in Autonomous Driving</h3>
+                    <p class="news_content">
+                        Ziber Autohub is at the forefront of autonomous driving technology, continuously pushing the boundaries...
+                    </p>
+                </div>
+            </div>
+
+            <!-- Sixth News Item (New) -->
+            <div class="col-lg-4 col-md-6 mb-4">
+                <div class="news_item"
+                     data-bs-toggle="modal" 
+                     data-bs-target="#newsDetailModal"
+                     data-title="Community Drive: Ziber Autohub's Initiative for Road Safety"
+                     data-image="{% static 'images/news6.webp' %}" {# CORRECTED DATA-IMAGE TO .WEBP #}
+                     data-content="As part of its ongoing commitment to social responsibility, Ziber Autohub has launched a comprehensive 'Community Drive' initiative focused on promoting road safety. This program includes free defensive driving workshops, awareness campaigns on distracted driving, and distribution of safety kits to local communities. We believe that safe roads are a shared responsibility, and through education and engagement, we can significantly reduce accidents and create a safer environment for everyone. Join us in making a positive impact on our roads.">
+                    <div class="news_image text-center mb-3">
+                        <img src="{% static 'images/news6.webp' %}" alt="News 6" class="img-fluid">
+                    </div>
+                    <h3 class="news_title">Community Drive: Road Safety</h3>
+                    <p class="news_content">
+                        Ziber Autohub has launched a comprehensive 'Community Drive' initiative focused on promoting road safety...
                     </p>
                 </div>
             </div>
         </div>
     </div>
 </div>
+
+{# News Detail Modal #}
+<div class="modal fade" id="newsDetailModal" tabindex="-1" aria-labelledby="newsDetailModalLabel" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered modal-lg">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title w-100 text-center" id="newsModalTitle"></h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body text-center">
+                <img id="newsModalImage" src="" alt="News Image" class="img-fluid mb-3">
+                <p id="newsModalContent" class="px-3"></p>
+            </div>
+            <div class="modal-footer justify-content-center">
+                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+            </div>
+        </div>
+    </div>
+</div>
+
+{% endblock %}
+
+{% block scripts %}
+    {{ block.super }} {# Inherit scripts from base.html (e.g., Bootstrap JS) #}
+
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            // Get a reference to the news detail modal and its dynamic content elements
+            const newsDetailModal = document.getElementById('newsDetailModal');
+            const newsModalTitle = document.getElementById('newsModalTitle');
+            const newsModalImage = document.getElementById('newsModalImage');
+            const newsModalContent = document.getElementById('newsModalContent');
+
+            // Find all elements that act as news item triggers (i.e., the news_item divs)
+            const newsItems = document.querySelectorAll('.news_item');
+
+            // Loop through each news item and attach a click event listener
+            newsItems.forEach(item => {
+                item.addEventListener('click', function() {
+                    // Retrieve data from the data- attributes of the clicked news item
+                    const title = this.dataset.title;
+                    const image = this.dataset.image; // This will now correctly get the .webp path
+                    const content = this.dataset.content;
+
+                    // Populate the modal with the retrieved data
+                    newsModalTitle.textContent = title;
+                    newsModalImage.src = image;
+                    newsModalImage.alt = title; // Set alt text for accessibility
+                    newsModalContent.textContent = content;
+                });
+            });
+        });
+    </script>
 {% endblock %}
