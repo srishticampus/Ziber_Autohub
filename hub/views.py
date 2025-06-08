@@ -3,6 +3,8 @@ import os
 import joblib
 import re
 import json
+from django.views.decorators.csrf import csrf_exempt
+from django.http import JsonResponse
 from django.shortcuts import render, redirect, get_object_or_404
 from django.contrib import messages
 from django.contrib.auth.decorators import login_required
@@ -13,7 +15,8 @@ from django.contrib.auth.models import User
 from django.core.validators import validate_email
 from django.core.exceptions import ValidationError
 from .models import UserProfile
-from chat.models import Message
+# Assuming chat.models.Message exists, if not, remove this import or define Message model
+from chat.models import Message 
 from django.db.models import Q, Max
 from .models import (
     Car, Cart, CartItem, Order, OrderItem, 
@@ -23,6 +26,7 @@ from .forms import (
     JobApplicationForm, JobVacancyForm, CheckoutForm,CarDetailsForm, PreBookingForm, UsedCarFilterForm, UsedCarForm
 )
 from datetime import timedelta, date
+from django.utils import timezone # Make sure timezone is imported for any date operations
 
 @login_required
 def index(request):
@@ -488,33 +492,11 @@ def payment(request):
 def payment_success(request):
     return render(request, 'payment_success.html')
 
-# @login_required
-# def book_service(request):
-#     if request.method == 'POST':
-#         form = ServiceBookingForm(request.POST, request.FILES)
-#         if form.is_valid():
-#             booking = form.save(commit=False)
-#             booking.user = request.user
-            
-#             existing = ServiceBooking.objects.filter(
-#                 service_date=booking.service_date,
-#                 status__in=['Pending', 'Approved']
-#             ).count()
-            
-#             if existing >= 6:
-#                 messages.error(request, 'All slots are booked for this date.')
-#             else:
-#                 booking.save()
-#                 messages.success(request, 'Service booked successfully!')
-#                 return redirect('hub:my_bookings')
-#     else:
-#         form = ServiceBookingForm()
-    
-#     return render(request, 'service-booking.html', {'form': form})
-
 @login_required
 def my_bookings(request):
-    bookings = ServiceBooking.objects.filter(user=request.user).order_by('-service_date')
+    # This view seems to be for old service booking form. The `book_service` is the new one.
+    # It seems to be showing ServiceBooking instances, so it should be fine as a historical view.
+    bookings = ServiceBooking.objects.filter(user=request.user).order_by('-booked_at')
     return render(request, 'my_bookings.html', {'bookings': bookings})
 
 @login_required
@@ -669,7 +651,6 @@ def pre_book_car(request, car_id):
         if form.is_valid():
             booking = form.save(commit=False)
             booking.user = request.user
-            booking.car = car
             # delivery_date is now handled in the model's save method, but can be explicitly set here if needed
             # booking.delivery_date = date.today() + timedelta(days=60) 
             booking.save()
@@ -733,37 +714,33 @@ def book_service(request):
     for car in eligible_cars:
         # Get the latest service type booked for this car by the current user
         # We need to consider the order of services to determine the 'latest'
-        # Define a mapping for service order
-        service_order = {'1st': 1, '2nd': 2, '3rd': 3, '4th': 4}
+        service_order_map = {'1st': 1, '2nd': 2, '3rd': 3, '4th': 4}
         
-        # Get all services booked for this car by this user, ordered by their numeric value
-        booked_services = ServiceBooking.objects.filter(
+        # Get all service bookings for this car and user, ordered by their numeric value
+        booked_services_for_car = ServiceBooking.objects.filter(
             user=request.user, 
             car=car
-        ).order_by('booked_at') # Order by booked_at to find the sequence
+        ).order_by('booked_at') 
 
-        latest_service_type_str = None
-        if booked_services.exists():
-            # Find the highest ordered service type that has been booked
-            # Iterate through the services in order and find the last one
-            for service in booked_services:
-                latest_service_type_str = service.service_type
+        # Find the highest ordered service type that has been booked
+        latest_service_order_num = 0
+        for service_booking in booked_services_for_car:
+            if service_booking.service_type in service_order_map:
+                current_service_num = service_order_map[service_booking.service_type]
+                if current_service_num > latest_service_order_num:
+                    latest_service_order_num = current_service_num
 
         next_service_type = None
-        if latest_service_type_str is None:
-            next_service_type = '1st'
-        elif latest_service_type_str == '1st':
-            next_service_type = '2nd'
-        elif latest_service_type_str == '2nd':
-            next_service_type = '3rd'
-        elif latest_service_type_str == '3rd':
-            next_service_type = '4th'
-        # If latest is '4th', then next_service_type remains None (no more services)
-
+        # Determine the next service type based on the last booked service's order number
+        for service_type_key, order_num in service_order_map.items():
+            if order_num == latest_service_order_num + 1:
+                next_service_type = service_type_key
+                break
+        
         if next_service_type:
             car_service_options[car.id] = [next_service_type] # Only the next service is available
         else:
-            car_service_options[car.id] = [] # No services available
+            car_service_options[car.id] = [] # No services available if all are done or no next one found
 
 
     # Initialize selected values for form re-population on error
@@ -795,7 +772,7 @@ def book_service(request):
             # Re-validate service type based on actual available services for this car
             # Convert car_id to int for dictionary lookup
             if service_type not in car_service_options.get(int(car_id), []):
-                messages.error(request, f"'{service_type}' service is not the next available service for {car.name} {car.model}.")
+                messages.error(request, f"'{service_type}' service is not the next available service for {car.name} {car.model}. Please check your bookings.")
                 return render(request, 'book_service.html', {
                     'eligible_cars': eligible_cars,
                     'car_service_options': json.dumps(car_service_options), # Pass as JSON string
@@ -832,3 +809,102 @@ def book_service(request):
 def my_service_bookings(request):
     services = ServiceBooking.objects.filter(user=request.user).order_by('-booked_at') # Order by newest first
     return render(request, 'my_services.html', {'services': services})
+
+
+@csrf_exempt
+def book_service_api(request):
+    if request.method == "POST":
+        data = json.loads(request.body)
+        car_id = data.get('car_id')
+        service_type = data.get('service_type')
+        description = data.get('description')
+
+        try:
+            car = Car.objects.get(id=car_id)
+
+            # --- API-specific Validation for sequential services ---
+            service_order_map = {'1st': 1, '2nd': 2, '3rd': 3, '4th': 4}
+            booked_services_for_car = ServiceBooking.objects.filter(
+                user=request.user, 
+                car=car
+            ).order_by('booked_at')
+
+            latest_service_order_num = 0
+            for service_booking in booked_services_for_car:
+                if service_booking.service_type in service_order_map:
+                    current_service_num = service_order_map[service_booking.service_type]
+                    if current_service_num > latest_service_order_num:
+                        latest_service_order_num = current_service_num
+            
+            # Determine expected next service based on current bookings
+            expected_next_service = None
+            for s_type, s_num in service_order_map.items():
+                if s_num == latest_service_order_num + 1:
+                    expected_next_service = s_type
+                    break
+
+            if service_type != expected_next_service:
+                return JsonResponse({"success": False, "message": f"'{service_type}' service is not the next expected service. Expected: '{expected_next_service}'."})
+            # --- End API-specific Validation ---
+
+            ServiceBooking.objects.create(
+                user=request.user,
+                car=car,
+                service_type=service_type,
+                description=description
+            )
+            return JsonResponse({"success": True, "message": "Service booked successfully!"}) # Added message
+
+        except Car.DoesNotExist:
+            return JsonResponse({"success": False, "message": "Selected car does not exist."})
+        except Exception as e:
+            return JsonResponse({"success": False, "message": f"An error occurred: {str(e)}"})
+    return JsonResponse({"success": False, "message": "Invalid request method"})
+
+# NEW: service_chatbot view
+@login_required
+def service_chatbot(request):
+    # This logic is similar to book_service to provide data for the chatbot
+    delivered_cars_ids = PreBooking.objects.filter(
+        user=request.user,
+        car__is_new=True,
+        status="Delivered"
+    ).values_list('car_id', flat=True)
+
+    eligible_cars_queryset = Car.objects.filter(id__in=delivered_cars_ids)
+    
+    # Convert queryset to list of dictionaries for JSON serialization
+    eligible_cars = list(eligible_cars_queryset.values('id', 'name', 'model'))
+
+    car_service_options = {}
+    service_order_map = {'1st': 1, '2nd': 2, '3rd': 3, '4th': 4}
+
+    for car in eligible_cars_queryset: # Use queryset here to get full object for filtering
+        booked_services_for_car = ServiceBooking.objects.filter(
+            user=request.user, 
+            car=car
+        ).order_by('booked_at') 
+
+        latest_service_order_num = 0
+        for service_booking in booked_services_for_car:
+            if service_booking.service_type in service_order_map:
+                current_service_num = service_order_map[service_booking.service_type]
+                if current_service_num > latest_service_order_num:
+                    latest_service_order_num = current_service_num
+
+        next_service_type = None
+        for service_type_key, order_num in service_order_map.items():
+            if order_num == latest_service_order_num + 1:
+                next_service_type = service_type_key
+                break
+        
+        if next_service_type:
+            car_service_options[car.id] = [next_service_type]
+        else:
+            car_service_options[car.id] = []
+
+    context = {
+        'eligible_cars': json.dumps(eligible_cars), # Pass as JSON string
+        'car_service_options': json.dumps(car_service_options), # Pass as JSON string
+    }
+    return render(request, 'service_chatbot.html', context) # Assuming your chatbot template is named service_chatbot.html
