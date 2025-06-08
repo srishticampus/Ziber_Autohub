@@ -35,7 +35,20 @@ def index(request):
     return render(request, 'index.html',{'new_cars': new_cars, 'old_cars': old_cars})
 
 def demo(request):
-    return render(request, 'demo.html')
+    # Fetch a few new cars for the main banner and new launches section
+    featured_new_cars = Car.objects.filter(is_new=True).order_by('-created_at')[:3] 
+    
+    # You might also want to fetch some general cars for the 'news' images,
+    # or you can just use the same `featured_new_cars` if they are relevant.
+    # For now, let's use the same to keep it simple and avoid needing more images.
+    latest_news_cars = Car.objects.order_by('-created_at')[:3]
+
+    context = {
+        'featured_new_cars': featured_new_cars,
+        'latest_news_cars': latest_news_cars,
+    }
+    return render(request, 'demo.html', context)
+
 
 def register_user(request):
     if request.method == 'POST':
@@ -171,7 +184,7 @@ def logout_user(request):
     messages.success(request, "You have been logged out.")
     return redirect('hub:demo')
 
-@login_required
+
 def car_list(request):
     query = request.GET.get('q', '')
     year_filter = request.GET.get('year', '')
@@ -268,7 +281,7 @@ def new_car_list(request):
     }
     return render(request, 'new_car_list.html', context)
 
-@login_required
+
 def used_car_list(request):
     query = request.GET.get('q', '')
     year_filter = request.GET.get('year', '')
