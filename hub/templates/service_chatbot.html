@@ -1,94 +1,242 @@
 {% extends "base.html" %}
+{% load static %}
 
-{% block title %}Prediction Result - Ziber Autohub{% endblock %}
+{% block title %}ChatBot - Ziber Autohub{% endblock %}
+
+{% block extra_styles %}
+<style>
+    /* Main container for the chatbot interface */
+    .chatbot-container {
+        margin-top: 8rem; /* Space from the header */
+        margin-bottom: 4rem; /* Space before the footer */
+        max-width: 600px; /* Constrain width for readability */
+        margin-left: auto; /* Center horizontally */
+        margin-right: auto; /* Center horizontally */
+        background-color: #ffffff; /* White background for the chat card */
+        border-radius: 12px; /* Slightly more rounded corners */
+        box-shadow: 0 10px 25px rgba(0, 0, 0, 0.1); /* Soft shadow */
+        padding: 1.5rem; /* Internal padding */
+    }
+
+    /* Chat history display area */
+    #chat-box {
+        height: 400px; /* Fixed height for the chat scroll area */
+        overflow-y: auto; /* Enable vertical scrolling */
+        border: 1px solid #e0e0e0; /* Light border */
+        border-radius: 8px; /* Rounded corners */
+        padding: 1rem; /* Internal padding */
+        background-color: #f8f9fa; /* Light gray background */
+        margin-bottom: 1rem; /* Space below chat box */
+        display: flex; /* Use flexbox for message alignment */
+        flex-direction: column; /* Stack messages vertically */
+        gap: 0.5rem; /* Space between messages */
+    }
+
+    /* Individual message styling */
+    .chat-message {
+        display: flex; /* Flex container for alignment */
+        align-items: flex-end; /* Align messages to the bottom */
+    }
+
+    .chat-message.bot {
+        justify-content: flex-start; /* Bot messages align left */
+    }
+
+    .chat-message.user {
+        justify-content: flex-end; /* User messages align right */
+    }
+
+    .chat-bubble {
+        max-width: 75%; /* Limit bubble width */
+        padding: 0.75rem 1rem; /* Padding inside the bubble */
+        border-radius: 18px; /* More rounded bubble corners */
+        line-height: 1.4; /* Improve readability */
+        word-wrap: break-word; /* Ensure long words break */
+    }
+
+    .chat-bubble.bot {
+        background-color: #e2e6ea; /* Light gray for bot */
+        color: #343a40; /* Dark text for bot */
+        border-bottom-left-radius: 4px; /* Pointed corner for bot bubble */
+    }
+
+    .chat-bubble.user {
+        background-color: #007bff; /* Primary blue for user */
+        color: #ffffff; /* White text for user */
+        border-bottom-right-radius: 4px; /* Pointed corner for user bubble */
+    }
+
+    /* Chat input form */
+    #chat-form {
+        display: flex; /* Use flexbox for input and button */
+        gap: 0.5rem; /* Space between input and button */
+    }
+
+    #user-input {
+        flex-grow: 1; /* Input takes available space */
+        border: 1px solid #ced4da; /* Bootstrap default border */
+        border-radius: 0.5rem; /* Slightly more rounded input */
+        padding: 0.75rem 1rem; /* Padding inside input */
+        font-size: 1rem; /* Standard font size */
+    }
+
+    #user-input:focus {
+        border-color: #80bdff;
+        outline: 0;
+        box-shadow: 0 0 0 0.25rem rgba(0, 123, 255, 0.25); /* Focus shadow */
+    }
+
+    .send-button {
+        background-color: #007bff; /* Primary blue */
+        color: white;
+        padding: 0.75rem 1.25rem; /* Padding for button */
+        border-radius: 0.5rem; /* Rounded corners */
+        border: none; /* No border */
+        cursor: pointer;
+        transition: background-color 0.2s ease; /* Smooth hover effect */
+        font-size: 1rem;
+    }
+
+    .send-button:hover {
+        background-color: #0056b3; /* Darker blue on hover */
+    }
+
+    /* Responsive adjustments */
+    @media (max-width: 768px) {
+        .chatbot-container {
+            margin-top: 5rem;
+            margin-bottom: 2rem;
+            padding: 1rem;
+            border-radius: 0; /* Remove rounded corners on small screens for full width */
+            box-shadow: none; /* Remove shadow on small screens */
+        }
+        #chat-box {
+            height: 300px; /* Shorter chat box on small screens */
+        }
+        .chat-bubble {
+            max-width: 90%; /* Allow bubbles to be wider on small screens */
+        }
+    }
+</style>
+{% endblock %}
 
 {% block content %}
-<div class="max-w-xl mx-auto mt-10">
-  <div id="chat-box" class="border rounded p-4 h-96 overflow-y-auto bg-gray-100">
-  </div>
-  <form id="chat-form" class="mt-4 flex">
-    <input type="text" id="user-input" class="flex-1 border rounded-l p-2" placeholder="Type something..." autocomplete="off">
-    <button type="submit" class="bg-blue-500 text-white px-4 py-2 rounded-r">Send</button>
-  </form>
+<div class="chatbot-container">
+    <h2 class="text-center mb-4">Ziber Autohub Chatbot</h2>
+    <div id="chat-box">
+    </div>
+    <form id="chat-form">
+        <input type="text" id="user-input" placeholder="Type your message..." autocomplete="off">
+        <button type="submit" class="send-button">Send</button>
+    </form>
 </div>
 
 <script>
-  let step = 0;
-  let selectedCar = null;
-  let serviceOptions = JSON.parse('{{ car_service_options|safe }}');
-  let eligibleCars = {{ eligible_cars|safe }};
+    let step = 0;
+    let selectedCar = null;
+    let serviceOptions = JSON.parse('{{ car_service_options|safe }}');
+    let eligibleCars = JSON.parse('{{ eligible_cars|safe }}'); 
 
-  const chatBox = document.getElementById("chat-box");
-  const chatForm = document.getElementById("chat-form");
-  const userInput = document.getElementById("user-input");
+    const chatBox = document.getElementById("chat-box");
+    const chatForm = document.getElementById("chat-form");
+    const userInput = document.getElementById("user-input");
 
-  function addMessage(sender, text) {
-    const msg = document.createElement("div");
-    msg.className = sender === "bot" ? "text-left mb-2" : "text-right mb-2";
-    msg.innerHTML = `<span class="inline-block px-3 py-2 rounded ${sender === "bot" ? "bg-white" : "bg-blue-500 text-white"}">${text}</span>`;
-    chatBox.appendChild(msg);
-    chatBox.scrollTop = chatBox.scrollHeight;
-  }
+    function addMessage(sender, text) {
+        const msgWrapper = document.createElement("div");
+        msgWrapper.className = `chat-message ${sender}`;
 
-  function botAsk(text) {
-    setTimeout(() => addMessage("bot", text), 500);
-  }
+        const msgBubble = document.createElement("span");
+        msgBubble.className = `chat-bubble ${sender}`;
+        msgBubble.textContent = text; 
 
-  chatForm.onsubmit = function (e) {
-    e.preventDefault();
-    const input = userInput.value.trim();
-    if (!input) return;
-
-    addMessage("user", input);
-
-    if (step === 0) {
-      const car = eligibleCars.find(c => c.name.toLowerCase() === input.toLowerCase());
-      if (car) {
-        selectedCar = car;
-        step = 1;
-        botAsk(`Available service for ${car.name} is: ${serviceOptions[car.id].join(', ')}`);
-        botAsk("Please type the service type (e.g., 1st, 2nd):");
-      } else {
-        botAsk("Car not found. Please enter a valid car name.");
-      }
-    } else if (step === 1) {
-      const allowed = serviceOptions[selectedCar.id];
-      if (allowed.includes(input)) {
-        step = 2;
-        chatForm.dataset.serviceType = input;
-        botAsk("Got it! Please briefly describe the issue or your request:");
-      } else {
-        botAsk("Invalid service type. Please type a valid next service (e.g., 1st, 2nd).");
-      }
-    } else if (step === 2) {
-      const description = input;
-      fetch("{% url 'hub:book_service_api' %}", {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-          "X-CSRFToken": "{{ csrf_token }}"
-        },
-        body: JSON.stringify({
-          car_id: selectedCar.id,
-          service_type: chatForm.dataset.serviceType,
-          description: description
-        })
-      }).then(res => res.json())
-        .then(data => {
-          if (data.success) {
-            botAsk("✅ Service booked successfully!");
-          } else {
-            botAsk("❌ " + data.message);
-          }
-        });
-      step = 0;
-      selectedCar = null;
+        msgWrapper.appendChild(msgBubble);
+        chatBox.appendChild(msgWrapper);
+        chatBox.scrollTop = chatBox.scrollHeight;
     }
 
-    userInput.value = "";
-  };
+    function botAsk(text) {
+        setTimeout(() => addMessage("bot", text), 500);
+    }
 
-  botAsk("👋 Hi! Please enter your car name to book a service.");
+    chatForm.onsubmit = function (e) {
+        e.preventDefault();
+        const input = userInput.value.trim();
+        if (!input) return;
+
+        addMessage("user", input);
+
+        if (step === 0) {
+            const car = eligibleCars.find(c => c.name.toLowerCase() === input.toLowerCase());
+            if (car) {
+                selectedCar = car;
+                step = 1;
+                const availableServices = serviceOptions[selectedCar.id];
+                if (availableServices && availableServices.length > 0) {
+                    const serviceList = availableServices.map(s => `${s} Service`).join(', ');
+                    botAsk(`Available service for ${car.name} ${car.model} is: ${serviceList}.`);
+                    botAsk("Please type the service type (e.g., 1st, 2nd, 3rd, 4th):");
+                } else {
+                    botAsk(`No more services available for ${car.name} ${car.model}. You have completed all free services.`);
+                    step = 0; 
+                    selectedCar = null;
+                }
+            } else {
+                botAsk("Car not found. Please enter a valid car name from your delivered new cars.");
+            }
+        } else if (step === 1) {
+            const allowed = serviceOptions[selectedCar.id] || []; 
+            // --- FIX APPLIED HERE ---
+            // Only convert input to lowercase for comparison.
+            // Do NOT remove 'st', 'nd', 'rd', 'th' as backend expects them.
+            const inputLower = input.toLowerCase();
+            const actualAllowedService = allowed.find(s => s.toLowerCase() === inputLower);
+            // --- END FIX ---
+
+            if (actualAllowedService) {
+                step = 2;
+                chatForm.dataset.serviceType = actualAllowedService; 
+                botAsk("Got it! Please briefly describe the issue or your request:");
+            } else {
+                const serviceList = allowed.length > 0 ? allowed.map(s => `${s} Service`).join(', ') : "No services currently available";
+                botAsk(`Invalid service type or not the next service. Available service(s) for ${selectedCar.name}: ${serviceList}. Please type the correct next service (e.g., 1st, 2nd, 3rd, 4th).`);
+            }
+        } else if (step === 2) {
+            const description = input;
+            addMessage("bot", "Booking your service, please wait...");
+
+            fetch("{% url 'hub:book_service_api' %}", {
+                method: "POST",
+                headers: {
+                    "Content-Type": "application/json",
+                    "X-CSRFToken": "{{ csrf_token }}"
+                },
+                body: JSON.stringify({
+                    car_id: selectedCar.id,
+                    service_type: chatForm.dataset.serviceType,
+                    description: description
+                })
+            }).then(res => res.json())
+              .then(data => {
+                  if (data.success) {
+                      botAsk("✅ Service booked successfully!");
+                  } else {
+                      botAsk("❌ " + data.message);
+                  }
+                  step = 0; 
+                  selectedCar = null;
+              })
+              .catch(error => {
+                  console.error('Error:', error);
+                  botAsk("An error occurred while booking service. Please try again.");
+                  step = 0; 
+                  selectedCar = null;
+              });
+        }
+
+        userInput.value = "";
+    };
+
+    botAsk("👋 Hi! Please enter your car name (e.g., 'Swift') to book a service.");
 </script>
 
 {% endblock %}
