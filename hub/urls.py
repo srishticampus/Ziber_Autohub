@@ -45,6 +45,9 @@ urlpatterns = [
     path('jobs/create/', views.create_job_vacancy, name='create_job_vacancy'),
 
     path('buy_now/<int:pk>/', views.buy_now, name='buy_now'),
+    path('book-service-api/', views.book_service_api, name='book_service_api'),
+    path('service-chatbot/', views.service_chatbot, name='service_chatbot'),
+
 
     #chat
     # path('my-chats/', views.my_chats, name='my_chats'),
