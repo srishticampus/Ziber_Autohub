@@ -146,42 +146,41 @@
     {# The banner_section div uses original styling; the `layout_padding` might provide base spacing. #}
     <div class="banner_section_demo layout_padding">
         <div class="container h-100 d-flex align-items-center justify-content-center">
-            <div id="my_slider" class="carousel slide w-100" data-ride="carousel" data-interval="5000"> {# Added data-interval for auto-sliding #}
+            {# Changed data-ride to data-bs-ride and added data-bs-interval #}
+            <div id="my_slider" class="carousel slide w-100" data-bs-ride="carousel" data-bs-interval="5000"> 
                 <div class="carousel-inner">
-                    {% for car in featured_new_cars %}
-                    <div class="carousel-item {% if forloop.first %}active{% endif %}">
-                        <div class="row justify-content-center">
-                            <div class="col-sm-12 text-center">
-                                <h1 class="text-white mb-4">{{ car.name }} {{ car.model }}</h1>
-                                <p class="text-white mb-4">Price: ₹{{ car.price|floatformat:2 }}</p>
-                                <div class="buynow_bt">
-                                    <a href="{% url 'hub:buy_now' pk=car.pk %}">Buy Now</a>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-                    {% empty %}
+                    {# Static content restored for the banner carousel #}
                     <div class="carousel-item active">
                         <div class="row justify-content-center">
                             <div class="col-sm-12 text-center">
-                                <h1 class="text-white mb-4">No New Cars Available Yet!</h1>
-                                <p class="text-white mb-4">Check back soon for exciting releases.</p>
-                                <div class="buynow_bt"><a href="{% url 'hub:new_car_list' %}">View All Cars</a></div>
+                                <div class="buynow_bt"><a href="{% url 'hub:car_list' %}">Buy Now</a></div>
                             </div>
                         </div>
                     </div>
-                    {% endfor %}
+                    <div class="carousel-item">
+                        <div class="row justify-content-center">
+                            <div class="col-sm-12 text-center">
+                                <div class="buynow_bt"><a href="{% url 'hub:used_car_list' %}">Used Cars</a></div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="carousel-item">
+                        <div class="row justify-content-center">
+                            <div class="col-sm-12 text-center">
+                                <div class="buynow_bt"><a href="{% url 'hub:job_list' %}">Jobs</a></div>
+                            </div>
+                        </div>
+                    </div>
                 </div>
-                {% if featured_new_cars|length > 1 %}
-                <a class="carousel-control-prev" href="#my_slider" role="button" data-slide="prev"> {# Original data-slide syntax #}
+                {# Updated controls to Bootstrap 5 button syntax for consistent styling #}
+                <button class="carousel-control-prev" type="button" data-bs-target="#my_slider" data-bs-slide="prev">
                     <i class="fa fa-angle-left"></i>
                     <span class="visually-hidden">Previous</span>
-                </a>
-                <a class="carousel-control-next" href="#my_slider" role="button" data-slide="next"> {# Original data-slide syntax #}
+                </button>
+                <button class="carousel-control-next" type="button" data-bs-target="#my_slider" data-bs-slide="next">
                     <i class="fa fa-angle-right"></i>
                     <span class="visually-hidden">Next</span>
-                </a>
-                {% endif %}
+                </button>
             </div>
         </div>
     </div>
