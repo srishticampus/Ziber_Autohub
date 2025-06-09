@@ -35,13 +35,11 @@ def index(request):
     return render(request, 'index.html',{'new_cars': new_cars, 'old_cars': old_cars})
 
 def demo(request):
-    # Fetch a few new cars for the main banner and new launches section
-    featured_new_cars = Car.objects.filter(is_new=True).order_by('-created_at')[:3] 
+    # Fetch more new cars for the main banner and new launches section (e.g., 6 items)
+    featured_new_cars = Car.objects.filter(is_new=True).order_by('-created_at')[:6] 
     
-    # You might also want to fetch some general cars for the 'news' images,
-    # or you can just use the same `featured_new_cars` if they are relevant.
-    # For now, let's use the same to keep it simple and avoid needing more images.
-    latest_news_cars = Car.objects.order_by('-created_at')[:3]
+    # Fetch general cars for the 'news' images to provide diverse content
+    latest_news_cars = Car.objects.order_by('-created_at')[:6]
 
     context = {
         'featured_new_cars': featured_new_cars,
@@ -512,7 +510,6 @@ def my_bookings(request):
     bookings = ServiceBooking.objects.filter(user=request.user).order_by('-booked_at')
     return render(request, 'my_bookings.html', {'bookings': bookings})
 
-@login_required
 def job_list(request):
     jobs = JobVacancy.objects.filter(is_active=True).order_by('-posted_at')
     return render(request, 'job_list.html', {'jobs': jobs})

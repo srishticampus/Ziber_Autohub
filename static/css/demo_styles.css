@@ -1,0 +1,146 @@
+/* Ensure visually-hidden works as expected if other CSS interferes */
+.visually-hidden {
+    position: absolute !important;
+    width: 1px !important;
+    height: 1px !important;
+    padding: 0 !important;
+    margin: -1px !important;
+    overflow: hidden !important;
+    clip: rect(0, 0, 0, 0) !important;
+    white-space: nowrap !important;
+    border: 0 !important;
+}
+
+/* Styles for the News Section */
+.news_section_demo {
+    padding: 80px 0;
+    background-color: #ffffff;
+    text-align: center;
+}
+
+.latest_news_heading {
+    margin-bottom: 50px;
+}
+
+.latest_news_heading h2 {
+    font-size: 3rem;
+    font-weight: bold;
+    color: #333;
+    text-transform: uppercase;
+}
+
+.news-item {
+    max-width: 100%;
+    height: auto;
+    border-radius: 12px;
+    box-shadow: 0 5px 15px rgba(0, 0, 0, 0.1);
+    transition: transform 0.3s ease;
+    max-height: 300px; /* Limit height for consistency */
+    object-fit: cover; /* Ensure images fill the area */
+}
+
+.news-item:hover {
+    transform: scale(1.03); /* Slight zoom on hover */
+}
+
+/* Styles for New Launch Products Section */
+.new_launch_section_demo {
+    padding: 80px 0;
+    background-color: #f5f5f5;
+    text-align: center;
+}
+
+.new-launch-heading {
+    font-size: 3rem;
+    font-weight: bold;
+    color: #333;
+    margin-bottom: 50px;
+}
+
+.product_item {
+    background-color: #fff;
+    border-radius: 12px;
+    box-shadow: 0 4px 15px rgba(0, 0, 0, 0.08);
+    padding: 25px;
+    height: 100%; /* Ensure consistent height */
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+}
+
+.product-img {
+    max-width: 100%;
+    height: 200px; /* Fixed height for product images */
+    object-fit: cover; /* Cover, but maintain aspect ratio */
+    border-radius: 8px;
+    margin-bottom: 15px;
+}
+
+.product-title-style {
+    font-size: 1.6rem;
+    font-weight: bold;
+    color: #333;
+    margin-bottom: 10px;
+    min-height: 48px; /* Ensure consistent height for titles */
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    text-align: center;
+}
+
+.product-description-style {
+    font-size: 0.95rem;
+    color: #555;
+    line-height: 1.5;
+    text-align: center;
+    flex-grow: 1;
+}
+
+/* Carousel controls styling for all carousels */
+.carousel-control-prev,
+.carousel-control-next {
+    width: 5%;
+    opacity: 0.7;
+    transition: opacity 0.3s ease;
+}
+
+.carousel-control-prev:hover,
+.carousel-control-next:hover {
+    opacity: 1;
+}
+
+.carousel-control-prev-icon,
+.carousel-control-next-icon {
+    background-image: none; /* Hide default Bootstrap icons */
+}
+
+.carousel-control-prev i,
+.carousel-control-next i {
+    font-size: 3rem; /* Larger icons */
+    color: #333; /* Darker icons */
+}
+
+/* Responsive adjustments */
+@media (max-width: 768px) {
+    .latest_news_heading h2,
+    .new-launch-heading {
+        font-size: 2rem;
+    }
+
+    .product-img {
+        height: 150px;
+    }
+
+    .product-title-style {
+        font-size: 1.3rem;
+        min-height: auto;
+    }
+    .product-description-style {
+        font-size: 0.85rem;
+    }
+
+    .carousel-control-prev i,
+    .carousel-control-next i {
+        font-size: 2rem;
+    }
+}
