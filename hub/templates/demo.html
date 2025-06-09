@@ -4,165 +4,15 @@
 {% block title %}Home{% endblock %}
 
 {% block extra_styles %}
-<style>
-    /* Ensure visually-hidden works as expected if other CSS interferes */
-    .visually-hidden {
-        position: absolute !important;
-        width: 1px !important;
-        height: 1px !important;
-        padding: 0 !important;
-        margin: -1px !important;
-        overflow: hidden !important;
-        clip: rect(0, 0, 0, 0) !important;
-        white-space: nowrap !important;
-        border: 0 !important;
-    }
-
-    /* Styles for the News Section */
-    .news_section_demo {
-        padding: 80px 0;
-        background-color: #ffffff;
-        text-align: center;
-    }
-
-    .latest_news_heading {
-        margin-bottom: 50px;
-    }
-
-    .latest_news_heading h2 {
-        font-size: 3rem;
-        font-weight: bold;
-        color: #333;
-        text-transform: uppercase;
-    }
-
-    .news-item {
-        max-width: 100%;
-        height: auto;
-        border-radius: 12px;
-        box-shadow: 0 5px 15px rgba(0, 0, 0, 0.1);
-        transition: transform 0.3s ease;
-        max-height: 300px; /* Limit height for consistency */
-        object-fit: cover; /* Ensure images fill the area */
-    }
-
-    .news-item:hover {
-        transform: scale(1.03); /* Slight zoom on hover */
-    }
-
-    /* Styles for New Launch Products Section */
-    .new_launch_section_demo {
-        padding: 80px 0;
-        background-color: #f5f5f5;
-        text-align: center;
-    }
-
-    .new-launch-heading {
-        font-size: 3rem;
-        font-weight: bold;
-        color: #333;
-        margin-bottom: 50px;
-    }
-
-    .product_item {
-        background-color: #fff;
-        border-radius: 12px;
-        box-shadow: 0 4px 15px rgba(0, 0, 0, 0.08);
-        padding: 25px;
-        height: 100%; /* Ensure consistent height */
-        display: flex;
-        flex-direction: column;
-        justify-content: space-between;
-    }
-
-    .product-img {
-        max-width: 100%;
-        height: 200px; /* Fixed height for product images */
-        object-fit: cover; /* Cover, but maintain aspect ratio */
-        border-radius: 8px;
-        margin-bottom: 15px;
-    }
-
-    .product-title-style {
-        font-size: 1.6rem;
-        font-weight: bold;
-        color: #333;
-        margin-bottom: 10px;
-        min-height: 48px; /* Ensure consistent height for titles */
-        display: flex;
-        align-items: center;
-        justify-content: center;
-        text-align: center;
-    }
-
-    .product-description-style {
-        font-size: 0.95rem;
-        color: #555;
-        line-height: 1.5;
-        text-align: center;
-        flex-grow: 1;
-    }
-
-    /* Carousel controls styling for all carousels */
-    .carousel-control-prev,
-    .carousel-control-next {
-        width: 5%;
-        opacity: 0.7;
-        transition: opacity 0.3s ease;
-    }
-
-    .carousel-control-prev:hover,
-    .carousel-control-next:hover {
-        opacity: 1;
-    }
-
-    .carousel-control-prev-icon,
-    .carousel-control-next-icon {
-        background-image: none; /* Hide default Bootstrap icons */
-    }
-
-    .carousel-control-prev i,
-    .carousel-control-next i {
-        font-size: 3rem; /* Larger icons */
-        color: #333; /* Darker icons */
-    }
-
-    /* Responsive adjustments */
-    @media (max-width: 768px) {
-        .latest_news_heading h2,
-        .new-launch-heading {
-            font-size: 2rem;
-        }
-
-        .product-img {
-            height: 150px;
-        }
-
-        .product-title-style {
-            font-size: 1.3rem;
-            min-height: auto;
-        }
-        .product-description-style {
-            font-size: 0.85rem;
-        }
-
-        .carousel-control-prev i,
-        .carousel-control-next i {
-            font-size: 2rem;
-        }
-    }
-</style>
+    {# Link to your new demo-specific stylesheet #}
+    <link rel="stylesheet" href="{% static 'css/demo_styles.css' %}">
 {% endblock %}
 
 {% block content %}
-    <!-- banner section start - Content within the banner_bg_main div -->
-    {# The banner_section div uses original styling; the `layout_padding` might provide base spacing. #}
     <div class="banner_section_demo layout_padding">
         <div class="container h-100 d-flex align-items-center justify-content-center">
-            {# Changed data-ride to data-bs-ride and added data-bs-interval #}
             <div id="my_slider" class="carousel slide w-100" data-bs-ride="carousel" data-bs-interval="5000"> 
                 <div class="carousel-inner">
-                    {# Static content restored for the banner carousel #}
                     <div class="carousel-item active">
                         <div class="row justify-content-center">
                             <div class="col-sm-12 text-center">
@@ -178,14 +28,13 @@
                         </div>
                     </div>
                     <div class="carousel-item">
-                        <div class="row justify-content-center">
+                        <div class="row justify-content="center">
                             <div class="col-sm-12 text-center">
                                 <div class="buynow_bt"><a href="{% url 'hub:job_list' %}">Jobs</a></div>
                             </div>
                         </div>
                     </div>
                 </div>
-                {# Updated controls to Bootstrap 5 button syntax for consistent styling #}
                 <button class="carousel-control-prev" type="button" data-bs-target="#my_slider" data-bs-slide="prev">
                     <i class="fa fa-angle-left"></i>
                     <span class="visually-hidden">Previous</span>
@@ -197,13 +46,9 @@
             </div>
         </div>
     </div>
-    <!-- banner section end -->
-
-    <!-- news_section layout starts -->
     <div class="news_section_demo layout_padding">
         <div class="container h-100 d-flex align-items-center justify-content-center">
-            <div id="news_slider" class="carousel slide w-100" data-bs-ride="carousel" data-bs-interval="5000"> {# Added data-bs-ride and data-bs-interval #}
-                <!-- Latest News Heading -->
+            <div id="news_slider" class="carousel slide w-100" data-bs-ride="carousel" data-bs-interval="5000"> 
                 <div class="latest_news_heading">
                     <h2>Latest News</h2>
                 </div>
@@ -212,8 +57,7 @@
                     <div class="carousel-item {% if forloop.first %}active{% endif %}">
                         <div class="row justify-content-center">
                             <div class="col-sm-12 text-center">
-                                <a href="{% url 'hub:news' %}"> {# Links to the general news page #}
-                                    {# Using car.image.url for dynamic images, fallback for placeholder #}
+                                <a href="{% url 'hub:news' %}"> 
                                     {% if car.image %}
                                         <img src="{{ car.image.url }}" alt="{{ car.name }} image" class="img-fluid news-item"/>
                                     {% else %}
@@ -240,13 +84,12 @@
                     {% endfor %}
                 </div>
 
-                <!-- Carousel Controls -->
                 {% if latest_news_cars|length > 1 %}
-                <button class="carousel-control-prev news-carousel-control" type="button" data-bs-target="#news_slider" data-bs-slide="prev"> {# Updated to Bootstrap 5 syntax #}
+                <button class="carousel-control-prev news-carousel-control" type="button" data-bs-target="#news_slider" data-bs-slide="prev"> 
                     <i class="fa fa-angle-left"></i>
                     <span class="visually-hidden">Previous</span>
                 </button>
-                <button class="carousel-control-next news-carousel-control" type="button" data-bs-target="#news_slider" data-bs-slide="next"> {# Updated to Bootstrap 5 syntax #}
+                <button class="carousel-control-next news-carousel-control" type="button" data-bs-target="#news_slider" data-bs-slide="next"> 
                     <i class="fa fa-angle-right"></i>
                     <span class="visually-hidden">Next</span>
                 </button>
@@ -254,23 +97,17 @@
             </div>
         </div>
     </div>
-    <!-- news_section layout ends -->
-
-    <!-- New Launch Products Section -->
     <div class="new_launch_section_demo layout_padding">
         <div class="container">
-            <!-- New Launch Products Heading -->
             <div class="text-center mb-4">
                 <h2 class="text-uppercase new-launch-heading">New Launch Products</h2>
             </div>
 
-            <!-- Product Carousel -->
-            <div id="new_launch_slider" class="carousel slide" data-bs-ride="carousel" data-bs-interval="5000"> {# Added data-bs-ride and data-bs-interval #}
+            <div id="new_launch_slider" class="carousel slide" data-bs-ride="carousel" data-bs-interval="5000"> 
                 <div class="carousel-inner">
-                    {% for car in featured_new_cars %} {# Reusing featured_new_cars for consistency, or use a new queryset if needed #}
+                    {% for car in featured_new_cars %} 
                     <div class="carousel-item {% if forloop.first %}active{% endif %}">
                         <div class="row justify-content-center">
-                            {# Each product will take col-sm-4. If you have more than one per slide, adjust this loop and column structure #}
                             <div class="col-sm-4 text-center">
                                 <div class="product_item">
                                     {% if car.image %}
@@ -309,13 +146,12 @@
                     {% endfor %}
                 </div>
 
-                <!-- Carousel Controls -->
                 {% if featured_new_cars|length > 1 %}
-                <button class="carousel-control-prev product-carousel-control" type="button" data-bs-target="#new_launch_slider" data-bs-slide="prev"> {# Updated to Bootstrap 5 syntax #}
+                <button class="carousel-control-prev product-carousel-control" type="button" data-bs-target="#new_launch_slider" data-bs-slide="prev"> 
                     <i class="fa fa-angle-left"></i>
                     <span class="visually-hidden">Previous</span>
                 </button>
-                <button class="carousel-control-next product-carousel-control" type="button" data-bs-target="#new_launch_slider" data-bs-slide="next"> {# Updated to Bootstrap 5 syntax #}
+                <button class="carousel-control-next product-carousel-control" type="button" data-bs-target="#new_launch_slider" data-bs-slide="next"> 
                     <i class="fa fa-angle-right"></i>
                     <span class="visually-hidden">Next</span>
                 </button>
@@ -323,13 +159,8 @@
             </div>
         </div>
     </div>
-    <!-- End New Launch Products Section -->
-
-    {# The footer_logo_demo div was a duplicate and is removed from here. #}
-    {# The main footer is in base.html #}
-
-{% endblock %}
+    {% endblock %}
 
 {% block extra_scripts %}
-    {{ block.super }} {# Inherit scripts from base.html #}
+    {{ block.super }} 
 {% endblock %}
