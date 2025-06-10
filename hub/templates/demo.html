@@ -6,6 +6,59 @@
 {% block extra_styles %}
     {# Link to your new demo-specific stylesheet #}
     <link rel="stylesheet" href="{% static 'css/demo_styles.css' %}">
+    {# Include styles from news_detail.html for the integrated news section #}
+    <style>
+        /* General section styling */
+        .news_detail_section {
+            background-color: #f5f5f5;
+            padding-top: 5rem; /* Adjusted padding from header */
+            padding-bottom: 4rem; /* Padding before footer */
+        }
+
+        /* Styling for each individual news item card */
+        .news_item {
+            background-color: #fff;
+            border-radius: 12px; /* Soft rounded corners */
+            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.08); /* Subtle shadow */
+            padding: 1.5rem;
+            transition: transform 0.3s ease, box-shadow 0.3s ease; /* Smooth hover effect */
+            height: 100%; /* Ensure all cards have same height */
+            display: flex;
+            flex-direction: column;
+            /* cursor: pointer; */ /* No longer needs specific pointer as it's a link now */
+        }
+
+        .news_item:hover {
+            transform: translateY(-5px); /* Lift effect on hover */
+            box-shadow: 0 8px 25px rgba(0, 0, 0, 0.15); /* Enhanced shadow on hover */
+        }
+
+        .news_image img {
+            border-radius: 8px; /* Rounded corners for images */
+            object-fit: cover; /* Ensures images cover their area well */
+            max-height: 200px; /* Limit image height to keep cards consistent */
+            width: 100%; /* Ensure image fills its container */
+        }
+
+        .news_title {
+            font-size: 1.5rem; /* Larger title font */
+            font-weight: bold;
+            color: #333;
+            margin-top: 1rem;
+            margin-bottom: 0.75rem;
+            text-align: center;
+        }
+
+        .news_content {
+            font-size: 1rem; /* Standard paragraph font size */
+            color: #555;
+            line-height: 1.6; /* Improved line spacing */
+            text-align: justify;
+            flex-grow: 1; /* Allows content to push footer to bottom if content varies */
+        }
+
+        /* Removed modal specific styling as the modal is no longer used for news items */
+    </style>
 {% endblock %}
 
 {% block content %}
@@ -28,7 +81,7 @@
                         </div>
                     </div>
                     <div class="carousel-item">
-                        <div class="row justify-content="center">
+                        <div class="row justify-content-center">
                             <div class="col-sm-12 text-center">
                                 <div class="buynow_bt"><a href="{% url 'hub:job_list' %}">Jobs</a></div>
                             </div>
@@ -46,57 +99,108 @@
             </div>
         </div>
     </div>
-    <div class="news_section_demo layout_padding">
-        <div class="container h-100 d-flex align-items-center justify-content-center">
-            <div id="news_slider" class="carousel slide w-100" data-bs-ride="carousel" data-bs-interval="5000"> 
-                <div class="latest_news_heading">
-                    <h2>Latest News</h2>
-                </div>
-                <div class="carousel-inner">
-                    {% for car in latest_news_cars %}
-                    <div class="carousel-item {% if forloop.first %}active{% endif %}">
-                        <div class="row justify-content-center">
-                            <div class="col-sm-12 text-center">
-                                <a href="{% url 'hub:news' %}"> 
-                                    {% if car.image %}
-                                        <img src="{{ car.image.url }}" alt="{{ car.name }} image" class="img-fluid news-item"/>
-                                    {% else %}
-                                        <img src="https://placehold.co/600x350/EFEFEF/AAAAAA?text=No+Image" alt="No Image Available" class="img-fluid news-item"/>
-                                    {% endif %}
-                                    <h3 class="mt-3">{{ car.name }} {{ car.model }} Update</h3>
-                                    <p class="text-muted">{{ car.description|truncatechars:150 }}</p>
-                                </a>
+
+    {# START: Integrated news_detail.html content #}
+    <div class="news_detail_section">
+        <div class="container">
+            <h2 class="text-center mb-5" style="font-size: 2.5rem; font-weight: bold; color: #333;">Latest News from Ziber Autohub</h2>
+            <div class="row">
+                <!-- First News Item -->
+                <div class="col-lg-4 col-md-6 mb-4">
+                    <a href="{% url 'hub:news' %}" class="text-decoration-none text-dark"> {# Added <a> tag here #}
+                        <div class="news_item">
+                            <div class="news_image text-center mb-3">
+                                <img src="{% static 'images/news1.jpg' %}" alt="News 1" class="img-fluid">
                             </div>
+                            <h3 class="news_title">The Future of Electric Vehicles</h3>
+                            <p class="news_content">
+                                Ziber Autohub is proud to announce its groundbreaking new line of electric vehicles, setting new standards for sustainability and performance...
+                            </p>
                         </div>
-                    </div>
-                    {% empty %}
-                    <div class="carousel-item active">
-                        <div class="row justify-content-center">
-                            <div class="col-sm-12 text-center">
-                                <a href="{% url 'hub:news' %}">
-                                    <img src="https://placehold.co/600x350/EFEFEF/AAAAAA?text=No+News+Available" alt="No News Available" class="img-fluid news-item"/>
-                                    <h3 class="mt-3">No News Available</h3>
-                                    <p class="text-muted">Stay tuned for the latest updates from Ziber Autohub!</p>
-                                </a>
-                            </div>
-                        </div>
-                    </div>
-                    {% endfor %}
+                    </a>
                 </div>
 
-                {% if latest_news_cars|length > 1 %}
-                <button class="carousel-control-prev news-carousel-control" type="button" data-bs-target="#news_slider" data-bs-slide="prev"> 
-                    <i class="fa fa-angle-left"></i>
-                    <span class="visually-hidden">Previous</span>
-                </button>
-                <button class="carousel-control-next news-carousel-control" type="button" data-bs-target="#news_slider" data-bs-slide="next"> 
-                    <i class="fa fa-angle-right"></i>
-                    <span class="visually-hidden">Next</span>
-                </button>
-                {% endif %}
+                <!-- Second News Item -->
+                <div class="col-lg-4 col-md-6 mb-4">
+                    <a href="{% url 'hub:news' %}" class="text-decoration-none text-dark"> {# Added <a> tag here #}
+                        <div class="news_item">
+                            <div class="news_image text-center mb-3">
+                                <img src="{% static 'images/news2.jpg' %}" alt="News 2" class="img-fluid">
+                            </div>
+                            <h3 class="news_title">Exclusive Used Car Offers</h3>
+                            <p class="news_content">
+                                Take advantage of our exclusive offers on used cars. Get amazing discounts and flexible financing options...
+                            </p>
+                        </div>
+                    </a>
+                </div>
+
+                <!-- Third News Item -->
+                <div class="col-lg-4 col-md-6 mb-4">
+                    <a href="{% url 'hub:news' %}" class="text-decoration-none text-dark"> {# Added <a> tag here #}
+                        <div class="news_item">
+                            <div class="news_image text-center mb-3">
+                                <img src="{% static 'images/news3.jpg' %}" alt="News 3" class="img-fluid">
+                            </div>
+                            <h3 class="news_title">New Car Accessories Now Available</h3>
+                            <p class="news_content">
+                                Discover the latest car accessories that will enhance your driving experience. From floor mats to advanced GPS systems...
+                            </p>
+                        </div>
+                    </a>
+                </div>
+
+                <!-- Fourth News Item (New) -->
+                <div class="col-lg-4 col-md-6 mb-4">
+                    <a href="{% url 'hub:news' %}" class="text-decoration-none text-dark"> {# Added <a> tag here #}
+                        <div class="news_item">
+                            <div class="news_image text-center mb-3">
+                                <img src="{% static 'images/news4.jpg' %}" alt="News 4" class="img-fluid">
+                            </div>
+                            <h3 class="news_title">Ziber Expands Service Network</h3>
+                            <p class="news_content">
+                                Ziber Autohub has significantly expanded its service network, opening five new state-of-the-art service centers...
+                            </p>
+                        </div>
+                    </a>
+                </div>
+
+                <!-- Fifth News Item (New) -->
+                <div class="col-lg-4 col-md-6 mb-4">
+                    <a href="{% url 'hub:news' %}" class="text-decoration-none text-dark"> {# Added <a> tag here #}
+                        <div class="news_item">
+                            <div class="news_image text-center mb-3">
+                                <img src="{% static 'images/news5.webp' %}" alt="News 5" class="img-fluid">
+                            </div>
+                            <h3 class="news_title">Innovations in Autonomous Driving</h3>
+                            <p class="news_content">
+                                Ziber Autohub is at the forefront of autonomous driving technology, continuously pushing the boundaries...
+                            </p>
+                        </div>
+                    </a>
+                </div>
+
+                <!-- Sixth News Item (New) -->
+                <div class="col-lg-4 col-md-6 mb-4">
+                    <a href="{% url 'hub:news' %}" class="text-decoration-none text-dark"> {# Added <a> tag here #}
+                        <div class="news_item">
+                            <div class="news_image text-center mb-3">
+                                <img src="{% static 'images/news6.webp' %}" alt="News 6" class="img-fluid">
+                            </div>
+                            <h3 class="news_title">Community Drive: Road Safety</h3>
+                            <p class="news_content">
+                                Ziber Autohub has launched a comprehensive 'Community Drive' initiative focused on promoting road safety...
+                            </p>
+                        </div>
+                    </a>
+                </div>
             </div>
         </div>
     </div>
+
+    {# Removed the News Detail Modal as it is no longer needed #}
+    {# Removed the JavaScript for the modal as it is no longer needed #}
+
     <div class="new_launch_section_demo layout_padding">
         <div class="container">
             <div class="text-center mb-4">
@@ -159,8 +263,9 @@
             </div>
         </div>
     </div>
-    {% endblock %}
+{% endblock %}
 
 {% block extra_scripts %}
     {{ block.super }} 
+    {# Removed the JavaScript for the news detail modal as it is no longer needed #}
 {% endblock %}
