@@ -16,10 +16,10 @@ from django.core.validators import validate_email
 from django.core.exceptions import ValidationError
 from .models import UserProfile
 # Assuming chat.models.Message exists, if not, remove this import or define Message model
-from chat.models import Message 
+from chat.models import Message
 from django.db.models import Q, Max
 from .models import (
-    Car, Cart, CartItem, Order, OrderItem, 
+    Car, Cart, CartItem, Order, OrderItem,
     ServiceBooking, JobVacancy, JobApplication, PreBooking
 )
 from .forms import (
@@ -36,8 +36,8 @@ def index(request):
 
 def demo(request):
     # Fetch more new cars for the main banner and new launches section (e.g., 6 items)
-    featured_new_cars = Car.objects.filter(is_new=True).order_by('-created_at')[:6] 
-    
+    featured_new_cars = Car.objects.filter(is_new=True).order_by('-created_at')[:6]
+
     # Fetch general cars for the 'news' images to provide diverse content
     latest_news_cars = Car.objects.order_by('-created_at')[:6]
 
@@ -104,7 +104,8 @@ def register_user(request):
                 errors['age'] = "Age cannot be negative."
         except ValueError:
             errors['age'] = "Age must be a number."
-        if not age:
+        if not age: # This will catch empty strings, but also age 0, which might be valid.
+                    # Consider `if not str(age).strip():` for empty string check.
             errors['age'] = "Age is required."
 
         # Place validation
@@ -189,33 +190,33 @@ def car_list(request):
     brand_filter = request.GET.get('brand', '')
     min_price = request.GET.get('min_price', '')
     max_price = request.GET.get('max_price', '')
-    
+
     cars = Car.objects.all().order_by('-year', 'brand')
-    
+
     # Apply filters
     if query:
         cars = cars.filter(
-            Q(name__icontains=query) | 
+            Q(name__icontains=query) |
             Q(brand__icontains=query) |
             Q(model__icontains=query)
         )
-    
+
     if year_filter:
         cars = cars.filter(year=year_filter)
-    
+
     if brand_filter:
         cars = cars.filter(brand=brand_filter)
-    
+
     if min_price:
         cars = cars.filter(price__gte=min_price)
-    
+
     if max_price:
         cars = cars.filter(price__lte=max_price)
-    
+
     # Get unique years and brands for filter dropdowns
     years = Car.objects.values_list('year', flat=True).distinct().order_by('-year')
     brands = Car.objects.values_list('brand', flat=True).distinct().order_by('brand')
-    
+
     context = {
         'cars': cars,
         'query': query,
@@ -226,11 +227,11 @@ def car_list(request):
         'min_price': min_price,
         'max_price': max_price,
     }
-    
+
     return render(request, 'car_list.html', context)
 
 def new_car_list(request):
-    cars = Car.objects.filter(is_new=True) 
+    cars = Car.objects.filter(is_new=True)
     query = request.GET.get('q')
     selected_brand = request.GET.get('brand')
     selected_year = request.GET.get('year')
@@ -288,26 +289,26 @@ def used_car_list(request):
     max_price = request.GET.get('max_price', '')
     min_kms = request.GET.get('min_kms', '')
     max_kms = request.GET.get('max_kms', '')
-    
+
     cars = Car.objects.filter(is_new=False).order_by('-year', 'brand')
-    
+
     # Apply filters
     if query:
         cars = cars.filter(
-            Q(name__icontains=query) | 
+            Q(name__icontains=query) |
             Q(brand__icontains=query) |
             Q(model__icontains=query)
         )
-    
+
     if year_filter:
         cars = cars.filter(year=year_filter)
-    
+
     if brand_filter:
         cars = cars.filter(brand=brand_filter)
-    
+
     if min_price:
         cars = cars.filter(price__gte=min_price)
-    
+
     if max_price:
         cars = cars.filter(price__lte=max_price)
 
@@ -316,11 +317,11 @@ def used_car_list(request):
 
     if max_kms:
         cars = cars.filter(kms_driven__lte=max_kms)
-    
+
     # Get unique years and brands for filter dropdowns for used cars
     years = Car.objects.filter(is_new=False).values_list('year', flat=True).distinct().order_by('-year')
     brands = Car.objects.filter(is_new=False).values_list('brand', flat=True).distinct().order_by('brand')
-    
+
     context = {
         'cars': cars,
         'query': query,
@@ -334,7 +335,7 @@ def used_car_list(request):
         'max_kms': max_kms,
         'form': UsedCarFilterForm(request.GET), # Pass the form for rendering filters
     }
-    
+
     return render(request, 'used_car_list.html', context)
 
 @login_required
@@ -346,13 +347,13 @@ def car_detail(request, pk):
 def add_to_cart(request, pk):
     car = get_object_or_404(Car, pk=pk)
     cart, created = Cart.objects.get_or_create(user=request.user)
-    
+
     cart_item, created = CartItem.objects.get_or_create(
         cart=cart,
         car=car,
         defaults={'quantity': 1}
     )
-    
+
     if not created:
         if cart_item.quantity < car.stock:
             cart_item.quantity += 1
@@ -362,7 +363,7 @@ def add_to_cart(request, pk):
             messages.error(request, f"Only {car.stock} available in stock.")
     else:
         messages.success(request, f"Added {car} to your cart.")
-    
+
     return redirect('hub:view_cart')
 
 @login_required
@@ -372,23 +373,23 @@ def view_cart(request):
     """
     # Use get_or_create to ensure a cart exists for the user
     cart, created = Cart.objects.get_or_create(user=request.user)
-    
+
     cart_items = cart.items.all()
     total_price = cart.total_price
-    
+
     # You might want to add a message if the cart was just created and is empty
     if created:
         messages.info(request, "Your cart is currently empty. Start adding some cars!")
-    
+
     return render(request, 'cart.html', {'cart_items': cart_items, 'total_price': total_price})
 
 @login_required
 def update_cart_item(request, pk):
     cart_item = get_object_or_404(CartItem, pk=pk, cart__user=request.user)
-    
+
     if request.method == 'POST':
         quantity = int(request.POST.get('quantity', 1))
-        
+
         if quantity <= 0:
             cart_item.delete()
             messages.success(request, "Item removed from cart.")
@@ -398,7 +399,7 @@ def update_cart_item(request, pk):
             cart_item.quantity = quantity
             cart_item.save()
             messages.success(request, "Cart updated successfully.")
-    
+
     return redirect('hub:view_cart')
 
 @login_required
@@ -470,7 +471,7 @@ def buy_now(request, pk):
             messages.error(request, f"Only {car.stock} available in stock.")
     else:
         messages.success(request, f"Added {car} to your cart for purchase.")
-    
+
     return redirect('hub:checkout') # Redirect to checkout directly for "Buy Now"
 
 @login_required
@@ -490,7 +491,7 @@ def process_order(request):
             total_price=car.price * buy_now['quantity'],
             user=request.user
         )
-        
+
         del request.session['buy_now']
         return redirect('hub:payment_success')
     return redirect('hub:car_list')
@@ -517,11 +518,11 @@ def job_list(request):
 @login_required
 def apply_job(request, pk):
     job = get_object_or_404(JobVacancy, pk=pk, is_active=True)
-    
+
     if JobApplication.objects.filter(job=job, applicant=request.user).exists():
         messages.warning(request, 'You have already applied for this position.')
         return redirect('hub:job_list')
-    
+
     if request.method == 'POST':
         form = JobApplicationForm(request.POST, request.FILES)
         if form.is_valid():
@@ -533,7 +534,7 @@ def apply_job(request, pk):
             return redirect('hub:job_list')
     else:
         form = JobApplicationForm()
-    
+
     return render(request, 'apply_job.html', {'form': form, 'job': job})
 
 @login_required
@@ -542,7 +543,7 @@ def create_job_vacancy(request):
         # Instead of PermissionDenied, redirect with a message
         messages.error(request, "You do not have permission to access this page.")
         return redirect('hub:home')
-    
+
     if request.method == 'POST':
         form = JobVacancyForm(request.POST)
         if form.is_valid():
@@ -551,7 +552,7 @@ def create_job_vacancy(request):
             return redirect('hub:job_list')
     else:
         form = JobVacancyForm()
-    
+
     return render(request, 'create_job_vacancy.html', {'form': form}) # Point to a dedicated template
 
 def news(request):
@@ -607,7 +608,8 @@ def predict_price(request):
             data = form.cleaned_data
 
             # Preprocessing same as training data
-            car_age = 2025 - data['year']  # no_year
+            # Use current year for car age calculation
+            car_age = date.today().year - data['year']
             fuel_type = data['fuel_type']
             fuel_type_cng = 1 if fuel_type == 'CNG' else 0
             fuel_type_diesel = 1 if fuel_type == 'Diesel' else 0
@@ -654,18 +656,18 @@ def pre_book_car(request, car_id):
 
     if existing_booking:
         messages.error(request, 'You have already pre-booked this car, or a booking is pending.')
-        return redirect('hub:my_prebookings')
+        return redirect('hub:my_prebookings') # Or a more appropriate page, e.g., car_detail
 
     if request.method == 'POST':
         form = PreBookingForm(request.POST)
         if form.is_valid():
             booking = form.save(commit=False)
             booking.user = request.user
-            # delivery_date is now handled in the model's save method, but can be explicitly set here if needed
-            # booking.delivery_date = date.today() + timedelta(days=60) 
+            booking.car = car # <--- THIS LINE IS CRUCIAL TO FIX THE IntegrityError
+            # delivery_date is now handled in the model's save method, no need to set here explicitly unless overriding
             booking.save()
-            messages.success(request, f'Successfully pre-booked {car.brand} {car.model}!')
-            return redirect('hub:my_prebookings')
+            messages.success(request, f'Successfully pre-booked {car.brand} {car.model}! Proceeding to payment.')
+            return redirect('hub:payment') # Redirect to payment page as requested
     else:
         form = PreBookingForm()
 
@@ -689,23 +691,23 @@ def add_used_car(request):
 
 # @login_required
 # def my_chats(request):
-#     # Get all unique conversations where the user is either sender or receiver
-#     messages = Message.objects.filter(Q(sender=request.user) | Q(receiver=request.user))
+#    # Get all unique conversations where the user is either sender or receiver
+#    messages = Message.objects.filter(Q(sender=request.user) | Q(receiver=request.user))
 
-#     # Get distinct (car, other_user) combinations
-#     threads = {}
-#     for msg in messages:
-#         car = msg.car
-#         other_user = msg.receiver if msg.sender == request.user else msg.sender
-#         key = (car.id, other_user.id)
-#         if key not in threads:
-#             threads[key] = {
-#                 'car': car,
-#                 'other_user': other_user,
-#                 'last_message': msg
-#             }
+#    # Get distinct (car, other_user) combinations
+#    threads = {}
+#    for msg in messages:
+#        car = msg.car
+#        other_user = msg.receiver if msg.sender == request.user else msg.sender
+#        key = (car.id, other_user.id)
+#        if key not in threads:
+#            threads[key] = {
+#                'car': car,
+#                'other_user': other_user,
+#                'last_message': msg
+#            }
 
-#     return render(request, 'my_chats.html', {'threads': threads.values()})
+#    return render(request, 'my_chats.html', {'threads': threads.values()})
 
 @login_required
 def book_service(request):
@@ -725,12 +727,12 @@ def book_service(request):
         # Get the latest service type booked for this car by the current user
         # We need to consider the order of services to determine the 'latest'
         service_order_map = {'1st': 1, '2nd': 2, '3rd': 3, '4th': 4}
-        
+
         # Get all service bookings for this car and user, ordered by their numeric value
         booked_services_for_car = ServiceBooking.objects.filter(
-            user=request.user, 
+            user=request.user,
             car=car
-        ).order_by('booked_at') 
+        ).order_by('booked_at')
 
         # Find the highest ordered service type that has been booked
         latest_service_order_num = 0
@@ -746,7 +748,7 @@ def book_service(request):
             if order_num == latest_service_order_num + 1:
                 next_service_type = service_type_key
                 break
-        
+
         if next_service_type:
             car_service_options[car.id] = [next_service_type] # Only the next service is available
         else:
@@ -771,8 +773,8 @@ def book_service(request):
             return render(request, 'book_service.html', {
                 'eligible_cars': eligible_cars,
                 'car_service_options': json.dumps(car_service_options), # Pass as JSON string
-                'selected_car_id': selected_car_id, 
-                'selected_service_type': selected_service_type, 
+                'selected_car_id': selected_car_id,
+                'selected_service_type': selected_service_type,
                 'selected_description': selected_description,
             })
 
@@ -786,8 +788,8 @@ def book_service(request):
                 return render(request, 'book_service.html', {
                     'eligible_cars': eligible_cars,
                     'car_service_options': json.dumps(car_service_options), # Pass as JSON string
-                    'selected_car_id': selected_car_id, 
-                    'selected_service_type': selected_service_type, 
+                    'selected_car_id': selected_car_id,
+                    'selected_service_type': selected_service_type,
                     'selected_description': selected_description,
                 })
 
@@ -835,7 +837,7 @@ def book_service_api(request):
             # --- API-specific Validation for sequential services ---
             service_order_map = {'1st': 1, '2nd': 2, '3rd': 3, '4th': 4}
             booked_services_for_car = ServiceBooking.objects.filter(
-                user=request.user, 
+                user=request.user,
                 car=car
             ).order_by('booked_at')
 
@@ -845,7 +847,7 @@ def book_service_api(request):
                     current_service_num = service_order_map[service_booking.service_type]
                     if current_service_num > latest_service_order_num:
                         latest_service_order_num = current_service_num
-            
+
             # Determine expected next service based on current bookings
             expected_next_service = None
             for s_type, s_num in service_order_map.items():
@@ -882,7 +884,7 @@ def service_chatbot(request):
     ).values_list('car_id', flat=True)
 
     eligible_cars_queryset = Car.objects.filter(id__in=delivered_cars_ids)
-    
+
     # Convert queryset to list of dictionaries for JSON serialization
     eligible_cars = list(eligible_cars_queryset.values('id', 'name', 'model'))
 
@@ -891,9 +893,9 @@ def service_chatbot(request):
 
     for car in eligible_cars_queryset: # Use queryset here to get full object for filtering
         booked_services_for_car = ServiceBooking.objects.filter(
-            user=request.user, 
+            user=request.user,
             car=car
-        ).order_by('booked_at') 
+        ).order_by('booked_at')
 
         latest_service_order_num = 0
         for service_booking in booked_services_for_car:
@@ -907,7 +909,7 @@ def service_chatbot(request):
             if order_num == latest_service_order_num + 1:
                 next_service_type = service_type_key
                 break
-        
+
         if next_service_type:
             car_service_options[car.id] = [next_service_type]
         else:
