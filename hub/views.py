@@ -341,7 +341,16 @@ def used_car_list(request):
 @login_required
 def car_detail(request, pk):
     car = get_object_or_404(Car, pk=pk)
-    return render(request, 'car_detail.html', {'car': car})
+    
+    # Calculate pre-booking cost (5% of the car price)
+    # It's good practice to ensure car.price is a Decimal field in your model for accurate currency calculations.
+    pre_booking_cost = car.price * 0.05
+
+    context = {
+        'car': car,
+        'pre_booking_cost': pre_booking_cost, # Pass the calculated cost to the template
+    }
+    return render(request, 'car_detail.html', context)
 
 @login_required
 def add_to_cart(request, pk):

@@ -7,7 +7,7 @@
     {# Add any car_detail-specific styles here if needed, but aim to put most in style.css #}
     <style>
         /* Add specific styles for this page's background if needed,
-           or ensure your base.html/style.css handles .banner_bg_main correctly */
+            or ensure your base.html/style.css handles .banner_bg_main correctly */
         .car-detail-banner-background {
             /* Example: if you want a specific background for this page's banner area */
             /* background-image: url('{% static "images/your_car_detail_banner.jpg" %}'); */
@@ -49,44 +49,7 @@
 {% endblock %}
 
 {% block content %}
-    <div class="banner_bg_main car-detail-banner-background">
-        <div class="banner_section layout_padding">
-            <div class="container">
-                <div id="my_slider" class="carousel slide" data-ride="carousel">
-                    <div class="carousel-inner">
-                        <div class="carousel-item active">
-                            <div class="row">
-                                <div class="col-sm-12 d-flex flex-column align-items-center justify-content-center banner-carousel-content">
-                                    <div class="buynow_bt"><a href="#">Buy Now</a></div>
-                                </div>
-                            </div>
-                        </div>
-                        <div class="carousel-item">
-                            <div class="row">
-                                <div class="col-sm-12 d-flex flex-column align-items-center justify-content-center banner-carousel-content">
-                                    <div class="buynow_bt"><a href="#">Buy Now</a></div>
-                                </div>
-                            </div>
-                        </div>
-                        <div class="carousel-item">
-                            <div class="row">
-                                <div class="col-sm-12 d-flex flex-column align-items-center justify-content-center banner-carousel-content">
-                                    <div class="buynow_bt"><a href="#">Buy Now</a></div>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-                    <a class="carousel-control-prev" href="#my_slider" role="button" data-slide="prev">
-                        <i class="fa fa-angle-left"></i>
-                    </a>
-                    <a class="carousel-control-next" href="#my_slider" role="button" data-slide="next">
-                        <i class="fa fa-angle-right"></i>
-                    </a>
-                </div>
-            </div>
-        </div>
-    </div> 
-
+    
     <div class="container mt-5 mb-5" id="car-details-section"> {# Target ID for scrolling #}
         <a href="{% url 'hub:car_list' %}" class="btn btn-outline-secondary my-4">← Back to Cars</a>
 
@@ -99,6 +62,9 @@
                     <div class="col-md-6 p-4">
                         <h2 class="mb-3">{{ car.brand }} {{ car.model }}</h2>
                         <p><strong>Price:</strong> ₹{{ car.price }} Lakhs</p>
+                        {# ADD THIS LINE FOR PRE-BOOKING COST #}
+                        <p><strong>Pre-Booking Cost (5%):</strong> ₹{{ pre_booking_cost|floatformat:2 }} Lakhs</p>
+                        {# END OF ADDITION #}
                         <p><strong>Fuel Type:</strong> {{ car.fuel_type }}</p>
                         <p><strong>Year:</strong> {{ car.year }}</p>
                         {% if not car.is_new %}
@@ -135,8 +101,7 @@
                             {% endif %}
                         </div>
                     </div>
-                </div> <!-- /car-detail-card -->
-            </div>
+                </div> </div>
         </div>
     </div>
 
