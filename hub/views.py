@@ -14,6 +14,7 @@ from django.core.exceptions import PermissionDenied
 from django.contrib.auth.models import User
 from django.core.validators import validate_email
 from django.core.exceptions import ValidationError
+from decimal import Decimal
 from .models import UserProfile
 # Assuming chat.models.Message exists, if not, remove this import or define Message model
 from chat.models import Message
@@ -344,8 +345,7 @@ def car_detail(request, pk):
     
     # Calculate pre-booking cost (5% of the car price)
     # It's good practice to ensure car.price is a Decimal field in your model for accurate currency calculations.
-    pre_booking_cost = car.price * 0.05
-
+    pre_booking_cost = car.price * Decimal('0.05')
     context = {
         'car': car,
         'pre_booking_cost': pre_booking_cost, # Pass the calculated cost to the template
