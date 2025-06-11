@@ -194,11 +194,6 @@ class PreBooking(models.Model):
         if not self.pk and self.delivery_date is None:
             self.delivery_date = self.booking_date + timedelta(days=60)
 
-        # REMOVED: The problematic line that automatically changed status based on date.
-        # This logic is now handled explicitly in the admin view (mark_prebooking_delivered).
-        # if self.delivery_date and date.today() >= self.delivery_date:
-        #     self.status = "Delivered"
-
         super().save(*args, **kwargs)
 
     def __str__(self):
@@ -228,3 +223,31 @@ class ServiceBooking(models.Model):
 
     def __str__(self):
         return f"{self.car} - {self.service_type} ({self.status})"
+
+class Accessory(models.Model):
+    CATEGORY_CHOICES = [
+        ('Interior', 'Interior'),
+        ('Exterior', 'Exterior'),
+        ('Performance', 'Performance'),
+        ('Electronic', 'Electronic'),
+        ('Safety', 'Safety'),
+        ('Other', 'Other'),
+    ]
+
+    name = models.CharField(max_length=100)
+    description = models.TextField(blank=True)
+    price = models.DecimalField(max_digits=10, decimal_places=2)
+    stock = models.PositiveIntegerField(default=0)
+    image = models.ImageField(upload_to='accessory_images/', blank=True, null=True)
+    category = models.CharField(max_length=50, choices=CATEGORY_CHOICES, default='Other')
+    # Optional: If you want to link accessories to specific cars
+    # compatible_cars = models.ManyToManyField(Car, blank=True, related_name='accessories') 
+    created_at = models.DateTimeField(auto_now_add=True)
+    updated_at = models.DateTimeField(auto_now=True)
+
+    class Meta:
+        verbose_name_plural = 'Accessories'
+        ordering = ['name']
+
+    def __str__(self):
+        return self.name
