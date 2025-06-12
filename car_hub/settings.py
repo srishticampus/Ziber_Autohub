@@ -37,7 +37,7 @@ ALLOWED_HOSTS = [
     'localhost','0.0.0.0','python.sicsglobal.com','127.0.0.1'
 ]
 
-#FORCE_SCRIPT_NAME = '/ziber_autohub'
+FORCE_SCRIPT_NAME = '/ziber_autohub'
 # Add CSRF trusted origins
 CSRF_TRUSTED_ORIGINS = [
     'https://python.sicsglobal.com',
