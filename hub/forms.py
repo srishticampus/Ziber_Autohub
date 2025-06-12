@@ -4,7 +4,7 @@ from django import forms
 from django.core.exceptions import ValidationError
 from django.contrib.auth.models import User
 from django.contrib.auth.forms import UserCreationForm
-from .models import UserProfile, ServiceBooking, JobApplication, JobVacancy, PreBooking,Car
+from .models import UserProfile, ServiceBooking, JobApplication, JobVacancy, PreBooking,Car,Accessory
 
 class UserRegistrationForm(UserCreationForm):
     age = forms.IntegerField(min_value=0)
@@ -86,23 +86,70 @@ class JobVacancyForm(forms.ModelForm):
         for field in self.fields:
             self.fields[field].widget.attrs.update({'class': 'form-control'})
 
-class CheckoutForm(forms.Form):
-    shipping_address = forms.CharField(widget=forms.Textarea(attrs={'rows': 3}))
-    billing_address = forms.CharField(widget=forms.Textarea(attrs={'rows': 3}), required=False)
-    phone = forms.CharField(max_length=20)
-    email = forms.EmailField()
+# --- NEW FORMS FOR CART AND CHECKOUT ---
 
-    def __init__(self, *args, **kwargs):
-        user = kwargs.pop('user', None)
-        super().__init__(*args, **kwargs)
-        
-        if user:
-            self.fields['email'].initial = user.email
-            if hasattr(user, 'profile'):
-                self.fields['phone'].initial = user.profile.contact_number
-        
-        for field in self.fields:
-            self.fields[field].widget.attrs.update({'class': 'form-control'})
+class AddToCartForm(forms.Form):
+    """
+    Form for adding items (cars or accessories) to the cart.
+    The product ID is passed via the URL, so only quantity is needed here.
+    """
+    quantity = forms.IntegerField(
+        min_value=1,
+        initial=1,
+        widget=forms.NumberInput(attrs={
+            'class': 'form-control',
+            'min': '1', # HTML5 min attribute
+            'placeholder': 'Quantity'
+        })
+    )
+
+class CheckoutForm(forms.Form):
+    """
+    Form for users to input shipping details and select a payment method during checkout.
+    """
+    full_name = forms.CharField(
+        max_length=255,
+        widget=forms.TextInput(attrs={'class': 'form-control', 'placeholder': 'Full Name'})
+    )
+    email = forms.EmailField(
+        widget=forms.EmailInput(attrs={'class': 'form-control', 'placeholder': 'Email Address'})
+    )
+    address_line1 = forms.CharField(
+        max_length=255,
+        widget=forms.TextInput(attrs={'class': 'form-control', 'placeholder': 'Address Line 1'})
+    )
+    address_line2 = forms.CharField(
+        max_length=255,
+        required=False, # Optional field
+        widget=forms.TextInput(attrs={'class': 'form-control', 'placeholder': 'Address Line 2 (Optional)'})
+    )
+    city = forms.CharField(
+        max_length=100,
+        widget=forms.TextInput(attrs={'class': 'form-control', 'placeholder': 'City'})
+    )
+    state = forms.CharField(
+        max_length=100,
+        widget=forms.TextInput(attrs={'class': 'form-control', 'placeholder': 'State/Province'})
+    )
+    zip_code = forms.CharField(
+        max_length=20,
+        widget=forms.TextInput(attrs={'class': 'form-control', 'placeholder': 'Zip/Postal Code'})
+    )
+    country = forms.CharField(
+        max_length=100,
+        widget=forms.TextInput(attrs={'class': 'form-control', 'placeholder': 'Country'})
+    )
+    
+    PAYMENT_CHOICES = [
+        ('cash_on_delivery', 'Cash on Delivery'),
+        # You can add more payment options here later, e.g., 'credit_card'
+    ]
+    payment_method = forms.ChoiceField(
+        choices=PAYMENT_CHOICES,
+        widget=forms.Select(attrs={'class': 'form-select'})
+    )
+
+
 
 class CarDetailsForm(forms.Form):
     present_price = forms.FloatField(label="Present Price (in lakhs)")
