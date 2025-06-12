@@ -2,7 +2,7 @@
 from django.contrib import admin
 from django.contrib.auth.admin import UserAdmin
 from django.contrib.auth.models import User
-from .models import UserProfile, Car, ServiceBooking, JobVacancy, JobApplication, Cart, CartItem, Order, OrderItem, PreBooking
+from .models import UserProfile, Car, ServiceBooking, JobVacancy, JobApplication, Cart, CartItem, Order, OrderItem, PreBooking, Accessory # Import Accessory model
 
 class UserProfileInline(admin.StackedInline):
     model = UserProfile
@@ -26,16 +26,16 @@ class CustomUserAdmin(UserAdmin):
 
 @admin.register(Car)
 class CarAdmin(admin.ModelAdmin):
-    list_display = ('name', 'brand', 'model', 'year', 'price', 'stock')
-    list_filter = ('brand', 'year')
-    search_fields = ('name', 'brand', 'model')
+    list_display = ('name', 'brand', 'model', 'year', 'price', 'stock', 'is_new') # Added 'is_new'
+    list_filter = ('brand', 'year', 'is_new', 'fuel_type') # Added 'is_new', 'fuel_type'
+    search_fields = ('name', 'brand', 'model', 'description') # Added 'description'
     ordering = ('-year', 'brand')
     fieldsets = (
         (None, {
             'fields': ('seller', 'name', 'brand', 'model', 'year', 'fuel_type', 'is_new')
         }),
         ('Details', {
-            'fields': ('price', 'stock', 'description', 'image')
+            'fields': ('price', 'stock', 'description', 'image', 'kms_driven', 'owner') # Added kms_driven, owner
         }),
     )
 
@@ -51,6 +51,24 @@ class JobVacancyAdmin(admin.ModelAdmin):
         }),
         ('Status', {
             'fields': ('is_active',)
+        }),
+    )
+
+@admin.register(Accessory) # NEW: Register the Accessory model
+class AccessoryAdmin(admin.ModelAdmin):
+    list_display = ('name', 'category', 'price', 'stock', 'created_at')
+    list_filter = ('category', 'created_at', 'stock')
+    search_fields = ('name', 'description', 'category')
+    ordering = ('name',)
+    fieldsets = (
+        (None, {
+            'fields': ('name', 'description', 'category')
+        }),
+        ('Pricing & Stock', {
+            'fields': ('price', 'stock')
+        }),
+        ('Visuals', {
+            'fields': ('image',)
         }),
     )
 

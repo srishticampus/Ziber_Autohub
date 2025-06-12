@@ -1,6 +1,6 @@
 # admin_panel/forms.py
 from django import forms
-from hub.models import Car, JobVacancy
+from hub.models import Car, JobVacancy, Accessory # Ensure Accessory is imported
 from django.contrib.auth.models import User
 import re # Import regex module
 
@@ -19,11 +19,6 @@ class AddCarForm(forms.ModelForm):
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
         
-        # We no longer need to populate 'owner' queryset as it's an IntegerField.
-        # self.fields['owner'].queryset = User.objects.filter(...) # REMOVE THIS LINE
-        # self.fields['owner'].empty_label = "--- Select an owner (if used car) ---" # REMOVE THIS LINE
-
-
         # Apply Bootstrap classes to all applicable fields
         for field_name, field in self.fields.items():
             if field_name == 'is_new':
@@ -87,3 +82,22 @@ class AddJobForm(forms.ModelForm):
         if not re.fullmatch(r'^[a-zA-Z\s\-]+$', title):
             raise forms.ValidationError("Job title can only contain alphabetic characters, spaces, and hyphens.")
         return title
+
+# NEW: Form for Accessories
+class AddAccessoryForm(forms.ModelForm):
+    class Meta:
+        model = Accessory
+        fields = ['name', 'description', 'price', 'stock', 'image', 'category']
+        widgets = {
+            'description': forms.Textarea(attrs={'rows': 3, 'class': 'form-control'}),
+        }
+
+    def __init__(self, *args, **kwargs):
+        super().__init__(*args, **kwargs)
+        for field_name, field in self.fields.items():
+            if field_name == 'image':
+                field.widget.attrs.update({'class': 'form-control-file'}) # For file inputs
+            elif isinstance(field.widget, forms.Select):
+                field.widget.attrs.update({'class': 'form-select'}) # For select/dropdown
+            else:
+                field.widget.attrs.update({'class': 'form-control'}) # For other inputs
