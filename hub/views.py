@@ -15,16 +15,15 @@ from django.contrib.auth.models import User
 from django.core.validators import validate_email
 from django.core.exceptions import ValidationError
 from decimal import Decimal
-from .models import UserProfile
-# Assuming chat.models.Message exists, if not, remove this import or define Message model
-from chat.models import Message
-from django.db.models import Q, Max
-from .models import (
-    Car, Cart, CartItem, Order, OrderItem,
-    ServiceBooking, JobVacancy, JobApplication, PreBooking
-)
+from django.db import transaction # Import transaction for atomic operations
+
+from .models import UserProfile, Car, ServiceBooking, JobVacancy, JobApplication, PreBooking, Accessory # Import Accessory
+from .models import Cart, CartItem, Order, OrderItem # Explicitly import Cart and Order related models
+
 from .forms import (
-    JobApplicationForm, JobVacancyForm, CheckoutForm,CarDetailsForm, PreBookingForm, UsedCarFilterForm, UsedCarForm
+    # UserRegistrationForm, # Assuming this is handled in register_user directly
+    JobApplicationForm, JobVacancyForm, CarDetailsForm, PreBookingForm, UsedCarFilterForm, UsedCarForm,
+    AddToCartForm, CheckoutForm # Import the new forms
 )
 from datetime import timedelta, date
 from django.utils import timezone # Make sure timezone is imported for any date operations
@@ -33,7 +32,13 @@ from django.utils import timezone # Make sure timezone is imported for any date 
 def index(request):
     new_cars = Car.objects.filter(is_new=True).order_by('-created_at')[:3]
     old_cars = Car.objects.filter(is_new=False).order_by('-created_at')[:3]
-    return render(request, 'index.html',{'new_cars': new_cars, 'old_cars': old_cars})
+    # Optionally, fetch some accessories for the homepage
+    featured_accessories = Accessory.objects.order_by('-created_at')[:3] 
+    return render(request, 'index.html', {
+        'new_cars': new_cars, 
+        'old_cars': old_cars,
+        'featured_accessories': featured_accessories
+    })
 
 def demo(request):
     # Fetch more new cars for the main banner and new launches section (e.g., 6 items)
@@ -106,7 +111,7 @@ def register_user(request):
         except ValueError:
             errors['age'] = "Age must be a number."
         if not age: # This will catch empty strings, but also age 0, which might be valid.
-                    # Consider `if not str(age).strip():` for empty string check.
+                     # Consider `if not str(age).strip():` for empty string check.
             errors['age'] = "Age is required."
 
         # Place validation
@@ -209,10 +214,20 @@ def car_list(request):
         cars = cars.filter(brand=brand_filter)
 
     if min_price:
-        cars = cars.filter(price__gte=min_price)
+        try:
+            min_price_decimal = Decimal(min_price)
+            cars = cars.filter(price__gte=min_price_decimal)
+        except (ValueError, TypeError):
+            messages.error(request, "Invalid minimum price format.")
+            return redirect('hub:car_list') # Redirect to clear invalid state
 
     if max_price:
-        cars = cars.filter(price__lte=max_price)
+        try:
+            max_price_decimal = Decimal(max_price)
+            cars = cars.filter(price__lte=max_price_decimal)
+        except (ValueError, TypeError):
+            messages.error(request, "Invalid maximum price format.")
+            return redirect('hub:car_list') # Redirect to clear invalid state
 
     # Get unique years and brands for filter dropdowns
     years = Car.objects.values_list('year', flat=True).distinct().order_by('-year')
@@ -254,17 +269,19 @@ def new_car_list(request):
 
     if min_price:
         try:
-            min_price = float(min_price)
-            cars = cars.filter(price__gte=min_price)
-        except ValueError:
-            pass # Handle invalid input gracefully
+            min_price_decimal = Decimal(min_price)
+            cars = cars.filter(price__gte=min_price_decimal)
+        except (ValueError, TypeError):
+            messages.error(request, "Invalid minimum price format.")
+            return redirect('hub:new_car_list')
 
     if max_price:
         try:
-            max_price = float(max_price)
-            cars = cars.filter(price__lte=max_price)
-        except ValueError:
-            pass # Handle invalid input gracefully
+            max_price_decimal = Decimal(max_price)
+            cars = cars.filter(price__lte=max_price_decimal)
+        except (ValueError, TypeError):
+            messages.error(request, "Invalid maximum price format.")
+            return redirect('hub:new_car_list')
 
     brands = Car.objects.filter(is_new=True).values_list('brand', flat=True).distinct().order_by('brand')
     years = Car.objects.filter(is_new=True).values_list('year', flat=True).distinct().order_by('-year')
@@ -308,10 +325,20 @@ def used_car_list(request):
         cars = cars.filter(brand=brand_filter)
 
     if min_price:
-        cars = cars.filter(price__gte=min_price)
+        try:
+            min_price_decimal = Decimal(min_price)
+            cars = cars.filter(price__gte=min_price_decimal)
+        except (ValueError, TypeError):
+            messages.error(request, "Invalid minimum price format.")
+            return redirect('hub:used_car_list')
 
     if max_price:
-        cars = cars.filter(price__lte=max_price)
+        try:
+            max_price_decimal = Decimal(max_price)
+            cars = cars.filter(price__lte=max_price_decimal)
+        except (ValueError, TypeError):
+            messages.error(request, "Invalid maximum price format.")
+            return redirect('hub:used_car_list')
 
     if min_kms:
         cars = cars.filter(kms_driven__gte=min_kms)
@@ -344,51 +371,157 @@ def car_detail(request, pk):
     car = get_object_or_404(Car, pk=pk)
     
     # Calculate pre-booking cost (5% of the car price)
-    # It's good practice to ensure car.price is a Decimal field in your model for accurate currency calculations.
     pre_booking_cost = car.price * Decimal('0.05')
+    
+    # Instantiate AddToCartForm for the quantity input
+    form = AddToCartForm()
+
     context = {
         'car': car,
-        'pre_booking_cost': pre_booking_cost, # Pass the calculated cost to the template
+        'pre_booking_cost': pre_booking_cost,
+        'form': form, # Pass the form to the template
     }
     return render(request, 'car_detail.html', context)
 
+# NEW: Accessory list view
+def accessory_list(request):
+    query = request.GET.get('q', '')
+    category_filter = request.GET.get('category', '')
+    min_price = request.GET.get('min_price', '')
+    max_price = request.GET.get('max_price', '')
+
+    accessories = Accessory.objects.all().order_by('name')
+
+    if query:
+        accessories = accessories.filter(
+            Q(name__icontains=query) |
+            Q(description__icontains=query) |
+            Q(category__icontains=query)
+        )
+
+    if category_filter:
+        accessories = accessories.filter(category=category_filter)
+
+    if min_price:
+        try:
+            min_price_decimal = Decimal(min_price)
+            accessories = accessories.filter(price__gte=min_price_decimal)
+        except (ValueError, TypeError):
+            messages.error(request, "Invalid minimum price format.")
+            return redirect('hub:accessory_list')
+
+    if max_price:
+        try:
+            max_price_decimal = Decimal(max_price)
+            accessories = accessories.filter(price__lte=max_price_decimal)
+        except (ValueError, TypeError):
+            messages.error(request, "Invalid maximum price format.")
+            return redirect('hub:accessory_list')
+
+    categories = Accessory.objects.values_list('category', flat=True).distinct().order_by('category')
+
+    context = {
+        'accessories': accessories,
+        'query': query,
+        'categories': categories,
+        'selected_category': category_filter,
+        'min_price': min_price,
+        'max_price': max_price,
+    }
+    return render(request, 'accessory_list.html', context)
+
+# NEW: Accessory detail view
 @login_required
-def add_to_cart(request, pk):
-    car = get_object_or_404(Car, pk=pk)
-    cart, created = Cart.objects.get_or_create(user=request.user)
+def accessory_detail(request, pk):
+    accessory = get_object_or_404(Accessory, pk=pk)
+    form = AddToCartForm() # Form for adding to cart
+    context = {
+        'accessory': accessory,
+        'form': form,
+    }
+    return render(request, 'accessory_detail.html', context)
 
-    cart_item, created = CartItem.objects.get_or_create(
-        cart=cart,
-        car=car,
-        defaults={'quantity': 1}
-    )
 
-    if not created:
-        if cart_item.quantity < car.stock:
-            cart_item.quantity += 1
-            cart_item.save()
-            messages.success(request, f"Added another {car} to your cart.")
-        else:
-            messages.error(request, f"Only {car.stock} available in stock.")
-    else:
-        messages.success(request, f"Added {car} to your cart.")
+@login_required
+def add_to_cart(request, pk, product_type):
+    """
+    Adds a car or accessory to the user's cart.
+    `product_type` can be 'car' or 'accessory'.
+    """
+    if request.method == 'POST':
+        form = AddToCartForm(request.POST)
+        if form.is_valid():
+            quantity = form.cleaned_data['quantity']
+            user_cart, created = Cart.objects.get_or_create(user=request.user)
 
-    return redirect('hub:view_cart')
+            product = None
+            if product_type == 'car':
+                product = get_object_or_404(Car, pk=pk)
+                if quantity > 1:
+                    messages.error(request, "You can only add one car at a time to the cart.")
+                    return redirect('hub:car_detail', pk=pk)
+            elif product_type == 'accessory':
+                product = get_object_or_404(Accessory, pk=pk)
+            else:
+                messages.error(request, "Invalid product type.")
+                return redirect('hub:home') # Or a more appropriate fallback
+
+            if product:
+                # Check if item already exists in cart
+                if product_type == 'car':
+                    cart_item_query = CartItem.objects.filter(cart=user_cart, car=product)
+                else: # accessory
+                    cart_item_query = CartItem.objects.filter(cart=user_cart, accessory=product)
+
+                cart_item_exists = cart_item_query.exists()
+
+                if cart_item_exists:
+                    cart_item = cart_item_query.first()
+                    # For cars, quantity is always 1, so no increment needed
+                    if product_type == 'car':
+                        messages.warning(request, f"{product.name} is already in your cart.")
+                    else: # For accessories, increment quantity
+                        if cart_item.quantity + quantity <= product.stock:
+                            cart_item.quantity += quantity
+                            cart_item.save()
+                            messages.success(request, f"Added {quantity} more {product.name} to your cart.")
+                        else:
+                            messages.error(request, f"Only {product.stock} of {product.name} available. You have {cart_item.quantity} in cart, cannot add {quantity}.")
+                else:
+                    # New item
+                    if quantity <= product.stock:
+                        CartItem.objects.create(
+                            cart=user_cart,
+                            car=product if product_type == 'car' else None,
+                            accessory=product if product_type == 'accessory' else None,
+                            quantity=quantity
+                        )
+                        messages.success(request, f"Added {quantity} x {product.name} to your cart.")
+                    else:
+                        messages.error(request, f"Only {product.stock} of {product.name} available.")
+
+                return redirect('hub:view_cart')
+        else: # Form is not valid
+            # If the quantity is invalid, redirect back to the product detail page
+            if product_type == 'car':
+                return redirect('hub:car_detail', pk=pk)
+            elif product_type == 'accessory':
+                return redirect('hub:accessory_detail', pk=pk)
+    
+    messages.error(request, "Invalid request to add item to cart.")
+    return redirect('hub:home') # Fallback
 
 @login_required
 def view_cart(request):
     """
     Displays the user's cart. If no cart exists for the user, one is created.
     """
-    # Use get_or_create to ensure a cart exists for the user
     cart, created = Cart.objects.get_or_create(user=request.user)
-
     cart_items = cart.items.all()
-    total_price = cart.total_price
+    total_price = cart.get_total_price() # Use the method from the Cart model
 
-    # You might want to add a message if the cart was just created and is empty
-    if created:
-        messages.info(request, "Your cart is currently empty. Start adding some cars!")
+    if created or not cart_items.exists():
+        messages.info(request, "Your cart is currently empty.")
 
     return render(request, 'cart.html', {'cart_items': cart_items, 'total_price': total_price})
 
@@ -397,13 +530,28 @@ def update_cart_item(request, pk):
     cart_item = get_object_or_404(CartItem, pk=pk, cart__user=request.user)
 
     if request.method == 'POST':
-        quantity = int(request.POST.get('quantity', 1))
+        try:
+            quantity = int(request.POST.get('quantity', 1))
+        except ValueError:
+            messages.error(request, "Invalid quantity provided.")
+            return redirect('hub:view_cart')
 
+        product = cart_item.get_product()
+        if not product:
+            messages.error(request, "Product associated with this cart item no longer exists.")
+            cart_item.delete() # Clean up invalid item
+            return redirect('hub:view_cart')
+
+        # For cars, quantity should always be 1
+        if cart_item.car and quantity != 1:
+            messages.error(request, "Quantity for cars cannot be changed. Please remove and re-add if necessary.")
+            return redirect('hub:view_cart')
+        
         if quantity <= 0:
             cart_item.delete()
             messages.success(request, "Item removed from cart.")
-        elif quantity > cart_item.car.stock:
-            messages.error(request, f"Only {cart_item.car.stock} available in stock.")
+        elif quantity > product.stock:
+            messages.error(request, f"Only {product.stock} of {product.name} available in stock.")
         else:
             cart_item.quantity = quantity
             cart_item.save()
@@ -414,104 +562,176 @@ def update_cart_item(request, pk):
 @login_required
 def remove_from_cart(request, pk):
     cart_item = get_object_or_404(CartItem, pk=pk, cart__user=request.user)
+    product_name = cart_item.get_product().name if cart_item.get_product() else "item"
     cart_item.delete()
-    messages.success(request, "Item removed from cart.")
+    messages.success(request, f"{product_name} removed from cart.")
     return redirect('hub:view_cart')
 
 @login_required
 def checkout(request):
-    cart = get_object_or_404(Cart, user=request.user)
-    cart_items = cart.items.all()
+    user_cart = get_object_or_404(Cart, user=request.user)
+    cart_items = user_cart.items.all()
 
     if not cart_items.exists():
-        messages.warning(request, "Your cart is empty.")
+        messages.warning(request, "Your cart is empty. Please add items before checking out.")
         return redirect('hub:view_cart')
 
     if request.method == 'POST':
         form = CheckoutForm(request.POST)
         if form.is_valid():
-            order = Order.objects.create(
-                user=request.user,
-                total_price=cart.total_price,
-                shipping_address=form.cleaned_data['shipping_address'],
-                billing_address=form.cleaned_data.get('billing_address', ''),
-                phone=form.cleaned_data['phone'],
-                email=form.cleaned_data['email']
-            )
-
-            for item in cart_items:
-                OrderItem.objects.create(
-                    order=order,
-                    car=item.car,
-                    quantity=item.quantity,
-                    price=item.car.price
+            with transaction.atomic(): # Ensure atomicity for order creation and stock update
+                # Create the Order
+                order = Order.objects.create(
+                    user=request.user,
+                    shipping_address=f"{form.cleaned_data['address_line1']}, "
+                                     f"{form.cleaned_data.get('address_line2', '')}, "
+                                     f"{form.cleaned_data['city']}, {form.cleaned_data['state']}, "
+                                     f"{form.cleaned_data['zip_code']}, {form.cleaned_data['country']}",
+                    payment_method=form.cleaned_data['payment_method'],
+                    # total_amount will be calculated after order items are created
                 )
-                item.car.stock -= item.quantity
-                item.car.save()
 
-            cart.items.all().delete()
-            messages.success(request, "Order placed successfully!")
-            return redirect('hub:payment_success')
+                order_total = Decimal('0.00')
+
+                for item in cart_items:
+                    product = item.get_product()
+                    if not product:
+                        # This scenario should ideally be prevented by cart_item.clean(),
+                        # but as a safeguard, handle if product became None
+                        messages.error(request, f"A product in your cart could not be found. Please review your cart.")
+                        transaction.set_rollback(True) # Rollback the transaction
+                        return redirect('hub:view_cart')
+
+                    # Double-check stock before creating order item
+                    if item.quantity > product.stock:
+                        messages.error(request, f"Insufficient stock for {product.name}. Only {product.stock} available.")
+                        transaction.set_rollback(True) # Rollback the transaction
+                        return redirect('hub:view_cart')
+                    
+                    OrderItem.objects.create(
+                        order=order,
+                        car=item.car,
+                        accessory=item.accessory,
+                        quantity=item.quantity,
+                        price=item.get_item_price() # Price at the time of order
+                    )
+                    
+                    # Decrement stock
+                    product.stock -= item.quantity
+                    product.save()
+
+                    order_total += item.get_total_price()
+
+                order.total_amount = order_total
+                order.save() # Save order with calculated total_amount
+
+                user_cart.items.all().delete() # Clear the cart
+
+                messages.success(request, "Your order has been placed successfully!")
+                # Redirect to payment success page, perhaps showing order ID
+                return redirect('hub:payment_success', order_id=order.id) # Pass order_id to success page
+        else:
+            messages.error(request, "Please correct the errors in your shipping details.")
+            # Form will be re-rendered with errors below
     else:
-        form = CheckoutForm(user=request.user) # Pass user to pre-fill email/phone
+        # Pre-fill form if user has a profile with address/phone
+        initial_data = {}
+        if request.user.is_authenticated and hasattr(request.user, 'profile'):
+            user_profile = request.user.profile
+            initial_data['full_name'] = f"{request.user.first_name} {request.user.last_name}" if request.user.first_name and request.user.last_name else request.user.username
+            initial_data['email'] = request.user.email
+            # You might need to map user_profile.place to city/state/country more intelligently
+            # For simplicity, assume place is a general address here or add more fields to UserProfile
+            # initial_data['address_line1'] = user_profile.place # Example
+            # initial_data['contact_number'] = user_profile.contact_number # Not in CheckoutForm currently
+        form = CheckoutForm(initial=initial_data)
 
     return render(request, 'checkout.html', {
         'form': form,
         'cart_items': cart_items,
-        'total_price': cart.total_price
+        'total_price': user_cart.get_total_price() # Always recalculate for display
     })
 
 @login_required
-def buy_now(request, pk):
-    car = get_object_or_404(Car, pk=pk)
-    # If the car is new, redirect to pre-booking
-    if car.is_new:
-        return redirect('hub:pre_book_car', car_id=pk)
-
-    # Otherwise, add to cart for immediate purchase flow
-    cart, created = Cart.objects.get_or_create(user=request.user)
-    cart_item, created = CartItem.objects.get_or_create(cart=cart, car=car, defaults={'quantity': 1})
-    if not created:
-        if cart_item.quantity < car.stock:
-            cart_item.quantity += 1
-            cart_item.save()
-            messages.success(request, f"Added another {car} to your cart.")
-        else:
-            messages.error(request, f"Only {car.stock} available in stock.")
+def buy_now(request, pk, product_type):
+    """
+    Handles immediate purchase of a single car or accessory.
+    Adds the item to the cart and redirects directly to checkout.
+    """
+    if product_type == 'car':
+        product = get_object_or_404(Car, pk=pk)
+        if product.is_new:
+            # If it's a new car, redirect to pre-booking flow
+            return redirect('hub:pre_book_car', car_id=pk)
+        
+        # For used cars, proceed to add to cart and checkout
+        item_name = product.name
+        redirect_url_on_fail = 'hub:car_detail'
+    elif product_type == 'accessory':
+        product = get_object_or_404(Accessory, pk=pk)
+        item_name = product.name
+        redirect_url_on_fail = 'hub:accessory_detail'
     else:
-        messages.success(request, f"Added {car} to your cart for purchase.")
+        messages.error(request, "Invalid product type for Buy Now.")
+        return redirect('hub:home')
 
-    return redirect('hub:checkout') # Redirect to checkout directly for "Buy Now"
+    user_cart, created = Cart.objects.get_or_create(user=request.user)
 
-@login_required
-def process_order(request):
-    if request.method == 'POST':
-        buy_now = request.session.get('buy_now')
-        if not buy_now:
-            return redirect('hub:car_list')
+    # Check for existing item in cart
+    if product_type == 'car':
+        existing_cart_item_query = CartItem.objects.filter(cart=user_cart, car=product)
+    else: # accessory
+        existing_cart_item_query = CartItem.objects.filter(cart=user_cart, accessory=product)
+    
+    if existing_cart_item_query.exists():
+        messages.info(request, f"{item_name} is already in your cart. Redirecting to checkout.")
+        return redirect('hub:checkout')
 
-        car = get_object_or_404(Car, id=buy_now['car_id'])
-        order = Order.objects.create(
-            car=car,
-            name=request.POST.get('name'),
-            email=request.POST.get('email'),
-            address=request.POST.get('address'),
-            quantity=buy_now['quantity'],
-            total_price=car.price * buy_now['quantity'],
-            user=request.user
+    # If not in cart, add it
+    if product.stock > 0:
+        CartItem.objects.create(
+            cart=user_cart,
+            car=product if product_type == 'car' else None,
+            accessory=product if product_type == 'accessory' else None,
+            quantity=1 # Buy Now typically means 1 item initially
         )
+        messages.success(request, f"Added {item_name} to your cart. Proceeding to checkout.")
+        return redirect('hub:checkout')
+    else:
+        messages.error(request, f"Sorry, {item_name} is out of stock.")
+        # Redirect back to the detail page if out of stock
+        if product_type == 'car':
+            return redirect('hub:car_detail', pk=pk)
+        else: # accessory
+            return redirect('hub:accessory_detail', pk=pk)
 
-        del request.session['buy_now']
-        return redirect('hub:payment_success')
-    return redirect('hub:car_list')
+# The process_order view is now deprecated as checkout handles order creation directly
+# @login_required
+# def process_order(request):
+#     # This view is no longer needed as `checkout` handles order creation.
+#     # You can remove its URL pattern and the view definition if desired.
+#     messages.error(request, "This page is deprecated.")
+#     return redirect('hub:home')
+
 
 @login_required
 def payment(request):
-    return render(request, 'payment.html')
+    # This view is a placeholder. In a real app, you'd integrate a payment gateway.
+    # It might display the order summary before payment.
+    order_id = request.GET.get('order_id')
+    order = None
+    if order_id:
+        order = get_object_or_404(Order, pk=order_id, user=request.user)
+
+    return render(request, 'payment.html', {'order': order})
 
 @login_required
-def payment_success(request):
-    return render(request, 'payment_success.html')
+def payment_success(request, order_id=None):
+    # Retrieve order details if passed, or just show a generic success
+    order = None
+    if order_id:
+        order = get_object_or_404(Order, pk=order_id, user=request.user)
+    return render(request, 'payment_success.html', {'order': order})
 
 @login_required
 def my_bookings(request):
@@ -580,7 +800,7 @@ def order_detail(request, pk):
 
 @login_required
 def order_history(request):
-    orders = Order.objects.filter(user=request.user).order_by('-created_at')
+    orders = Order.objects.filter(user=request.user).order_by('-order_date') # Changed from created_at
     return render(request, 'order_history.html', {'orders': orders})
 
 @login_required
@@ -598,7 +818,7 @@ except FileNotFoundError:
     model = None # Handle case where model file is not found
     print(f"Warning: ML model not found at {model_path}. Prediction functionality will be unavailable.")
 
-# StaffRequiredMixin definition
+# StaffRequiredMixin definition (not used in views directly, but good to keep if it's imported elsewhere)
 class StaffRequiredMixin:
     """Mixin to ensure the user is a staff member."""
     def dispatch(self, request, *args, **kwargs):

@@ -1,0 +1,154 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block title %}{{ accessory.name }} - Accessory Details{% endblock %}
+
+{% block extra_styles %}
+<style>
+    .accessory-detail-container {
+        padding: 50px 0;
+    }
+    .accessory-detail-card {
+        border-radius: 15px;
+        box-shadow: 0 8px 30px rgba(0, 0, 0, 0.1);
+        overflow: hidden;
+    }
+    .accessory-image-lg {
+        width: 100%;
+        height: 450px; /* Fixed height for large image */
+        object-fit: cover;
+        border-top-left-radius: 15px;
+        border-bottom-left-radius: 15px;
+    }
+    @media (max-width: 991.98px) {
+        .accessory-image-lg {
+            height: 300px;
+            border-bottom-left-radius: 0;
+            border-top-right-radius: 15px;
+        }
+    }
+    .accessory-info {
+        padding: 30px;
+        display: flex;
+        flex-direction: column;
+        justify-content: space-between;
+    }
+    .accessory-info h1 {
+        font-size: 2.5rem;
+        font-weight: bold;
+        color: #333;
+        margin-bottom: 15px;
+    }
+    .accessory-info .price {
+        font-size: 2rem;
+        color: #007bff;
+        font-weight: 700;
+        margin-bottom: 20px;
+    }
+    .accessory-info .description {
+        font-size: 1.1rem;
+        line-height: 1.6;
+        color: #555;
+        margin-bottom: 25px;
+    }
+    .stock-info {
+        font-size: 1rem;
+        font-weight: 500;
+        margin-top: 15px;
+        color: #666;
+    }
+    .stock-info.out-of-stock {
+        color: #dc3545;
+        font-weight: bold;
+    }
+    .add-to-cart-form .form-control {
+        width: 100px;
+        border-radius: 8px;
+        margin-right: 15px;
+    }
+    .btn-add-to-cart {
+        background-color: #28a745;
+        border-color: #28a745;
+        border-radius: 8px;
+        padding: 12px 25px;
+        font-size: 1.1rem;
+        font-weight: 600;
+        transition: background-color 0.3s ease, border-color 0.3s ease;
+    }
+    .btn-add-to-cart:hover {
+        background-color: #218838;
+        border-color: #1e7e34;
+    }
+    .btn-buy-now {
+        background-color: #007bff;
+        border-color: #007bff;
+        border-radius: 8px;
+        padding: 12px 25px;
+        font-size: 1.1rem;
+        font-weight: 600;
+        transition: background-color 0.3s ease, border-color 0.3s ease;
+    }
+    .btn-buy-now:hover {
+        background-color: #0056b3;
+        border-color: #004d99;
+    }
+    .btn-disabled {
+        opacity: 0.6;
+        cursor: not-allowed;
+    }
+</style>
+{% endblock %}
+
+{% block content %}
+<div class="container accessory-detail-container">
+    <div class="card accessory-detail-card">
+        <div class="row g-0">
+            <div class="col-lg-6">
+                {% if accessory.image %}
+                    <img src="{{ accessory.image.url }}" class="accessory-image-lg" alt="{{ accessory.name }}">
+                {% else %}
+                    <img src="https://placehold.co/800x600/EFEFEF/AAAAAA?text=No+Image" class="accessory-image-lg" alt="No Image Available">
+                {% endif %}
+            </div>
+            <div class="col-lg-6">
+                <div class="accessory-info">
+                    <div>
+                        <h1 class="display-4">{{ accessory.name }}</h1>
+                        <p class="text-muted lead">{{ accessory.category }}</p>
+                        <p class="description">{{ accessory.description }}</p>
+                    </div>
+                    
+                    <div>
+                        <p class="price">₹{{ accessory.price|floatformat:2 }}</p>
+                        <p class="stock-info {% if accessory.stock == 0 %}out-of-stock{% endif %}">
+                            {% if accessory.stock > 0 %}
+                                In Stock: {{ accessory.stock }}
+                            {% else %}
+                                Out of Stock
+                            {% endif %}
+                        </p>
+
+                        {% if accessory.stock > 0 %}
+                        <form method="post" action="{% url 'hub:add_accessory_to_cart' pk=accessory.pk %}" class="add-to-cart-form d-flex align-items-center mt-4">
+                            {% csrf_token %}
+                            {{ form.quantity }}
+                            <button type="submit" class="btn btn-add-to-cart me-2">
+                                <i class="fas fa-shopping-cart me-2"></i>Add to Cart
+                            </button>
+                            <a href="{% url 'hub:buy_accessory_now' pk=accessory.pk %}" class="btn btn-buy-now">
+                                <i class="fas fa-money-bill-wave me-2"></i>Buy Now
+                            </a>
+                        </form>
+                        {% else %}
+                        <div class="mt-4">
+                            <button class="btn btn-add-to-cart btn-disabled" disabled>Out of Stock</button>
+                            <button class="btn btn-buy-now btn-disabled" disabled>Buy Now</button>
+                        </div>
+                        {% endif %}
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}
