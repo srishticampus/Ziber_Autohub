@@ -41,7 +41,7 @@
     }
     .accessory-info .price {
         font-size: 2rem;
-        color: #007bff;
+        color:rgb(255, 68, 0);
         font-weight: 700;
         margin-bottom: 20px;
     }
@@ -113,13 +113,13 @@
             <div class="col-lg-6">
                 <div class="accessory-info">
                     <div>
-                        <h1 class="display-4">{{ accessory.name }}</h1>
-                        <p class="text-muted lead">{{ accessory.category }}</p>
-                        <p class="description">{{ accessory.description }}</p>
+                        <h1 class="display-4 text-white">{{ accessory.name }}</h1>
+                        <p class="text-white lead">{{ accessory.category }}</p>
+                        <p class="description text-white">{{ accessory.description }}</p>
                     </div>
                     
                     <div>
-                        <p class="price">₹{{ accessory.price|floatformat:2 }}</p>
+                        <p class="price ">₹{{ accessory.price|floatformat:2 }}</p>
                         <p class="stock-info {% if accessory.stock == 0 %}out-of-stock{% endif %}">
                             {% if accessory.stock > 0 %}
                                 In Stock: {{ accessory.stock }}
@@ -132,11 +132,11 @@
                         <form method="post" action="{% url 'hub:add_accessory_to_cart' pk=accessory.pk %}" class="add-to-cart-form d-flex align-items-center mt-4">
                             {% csrf_token %}
                             {{ form.quantity }}
-                            <button type="submit" class="btn btn-add-to-cart me-2">
-                                <i class="fas fa-shopping-cart me-2"></i>Add to Cart
+                            <button type="submit" class="btn btn-add-to-cart mx-3 text-white">
+                                <i class="fas fa-shopping-cart mx-2 "></i>Add to Cart
                             </button>
-                            <a href="{% url 'hub:buy_accessory_now' pk=accessory.pk %}" class="btn btn-buy-now">
-                                <i class="fas fa-money-bill-wave me-2"></i>Buy Now
+                            <a href="{% url 'hub:buy_accessory_now' pk=accessory.pk %}" class="btn btn-buy-now text-white">
+                                <i class="fas fa-money-bill-wave mx-2"></i>Buy Now
                             </a>
                         </form>
                         {% else %}
