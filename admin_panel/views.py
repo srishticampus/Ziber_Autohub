@@ -1,8 +1,8 @@
 # admin_panel/views.py
 from django.shortcuts import render, redirect, get_object_or_404
 from django.contrib.admin.views.decorators import staff_member_required
-from .forms import AddCarForm, AddJobForm
-from hub.models import Car, JobVacancy, PreBooking # Ensure all models are imported
+from .forms import AddCarForm, AddJobForm, AddAccessoryForm # Import AddAccessoryForm
+from hub.models import Car, JobVacancy, PreBooking, Accessory # Import Accessory model
 from django.contrib.auth.decorators import login_required
 from django.views.decorators.cache import never_cache
 from django.contrib import messages # Import Django's messages framework
@@ -10,22 +10,22 @@ from django.db import transaction # Import transaction for atomic operations
 from django.utils import timezone
 
 @login_required
-@never_cache # Ensures the view is never cached by browsers
-@staff_member_required # Ensures only staff users can access this view
+@never_cache 
+@staff_member_required 
 def admin_dashboard(request):
     """
     Renders the admin dashboard with summary counts.
     """
-    # Fetch counts for display on the dashboard cards
     total_cars_count = Car.objects.count()
     active_jobs_count = JobVacancy.objects.filter(is_active=True).count()
-    # You might want to filter pre-bookings based on specific statuses for a dashboard overview
-    pending_prebookings_count = PreBooking.objects.filter(status='Booked').count() # Changed to 'Booked' for initial state
+    pending_prebookings_count = PreBooking.objects.filter(status='Booked').count() 
+    total_accessories_count = Accessory.objects.count() # New: Count accessories
     
     context = {
         'total_cars_count': total_cars_count,
         'active_jobs_count': active_jobs_count,
         'pending_prebookings_count': pending_prebookings_count,
+        'total_accessories_count': total_accessories_count, # Add to context
     }
     return render(request, 'admin_panel/dashboard.html', context)
 
@@ -40,12 +40,12 @@ def add_car(request):
         form = AddCarForm(request.POST, request.FILES)
         if form.is_valid():
             form.save()
-            messages.success(request, 'Car added successfully!') # Success message
-            return redirect('admin_panel:car_list') # Redirect to the car list after successful addition
+            messages.success(request, 'Car added successfully!') 
+            return redirect('admin_panel:car_list') 
         else:
-            messages.error(request, 'Please correct the errors below.') # Error message for invalid form
+            messages.error(request, 'Please correct the errors below.') 
     else:
-        form = AddCarForm() # Empty form for GET request
+        form = AddCarForm() 
     return render(request, 'admin_panel/add_car.html', {'form': form})
 
 @login_required
@@ -59,12 +59,12 @@ def add_job(request):
         form = AddJobForm(request.POST)
         if form.is_valid():
             form.save()
-            messages.success(request, 'Job vacancy posted successfully!') # Success message
-            return redirect('admin_panel:job_list') # Redirect to the job list
+            messages.success(request, 'Job vacancy posted successfully!') 
+            return redirect('admin_panel:job_list') 
         else:
-            messages.error(request, 'Please correct the errors below.') # Error message
+            messages.error(request, 'Please correct the errors below.') 
     else:
-        form = AddJobForm() # Empty form
+        form = AddJobForm() 
     return render(request, 'admin_panel/add_job.html', {'form': form})
 
 @login_required
@@ -74,7 +74,7 @@ def car_list(request):
     """
     Displays a list of all cars in the inventory.
     """
-    cars = Car.objects.all().order_by('-created_at') # Order by creation date, newest first
+    cars = Car.objects.all().order_by('-created_at') 
     return render(request, 'admin_panel/car_list.html', {'cars': cars})
 
 @login_required
@@ -84,13 +84,13 @@ def job_list(request):
     """
     Displays a list of all job vacancies.
     """
-    jobs = JobVacancy.objects.all().order_by('-posted_at') # Order by posted date, newest first
+    jobs = JobVacancy.objects.all().order_by('-posted_at') 
     return render(request, 'admin_panel/job_list.html', {'jobs': jobs})
 
 @login_required
 @never_cache
 @staff_member_required
-def job_detail(request, pk): # NEW VIEW FUNCTION
+def job_detail(request, pk): 
     """
     Displays the detailed view of a single job vacancy.
     """
@@ -104,24 +104,24 @@ def view_prebookings(request):
     """
     Displays a list of all pre-bookings.
     """
-    bookings = PreBooking.objects.all().order_by('-booking_date') # Order by booking date, newest first
+    bookings = PreBooking.objects.all().order_by('-booking_date') 
     return render(request, 'admin_panel/view_prebookings.html', {'bookings': bookings})
 
 @login_required
 @never_cache
 @staff_member_required
-def mark_prebooking_delivered(request, pk): # NEW VIEW FUNCTION
+def mark_prebooking_delivered(request, pk): 
     """
     Marks a pre-booking as 'Delivered' and decrements the car's stock.
     """
     booking = get_object_or_404(PreBooking, pk=pk)
 
     if request.method == 'POST':
-        if booking.status != 'Delivered': # Prevent re-marking if already delivered
+        if booking.status != 'Delivered': 
             try:
-                with transaction.atomic(): # Ensure both updates succeed or fail together
+                with transaction.atomic(): 
                     booking.status = 'Delivered'
-                    booking.delivery_date = timezone.now().date() # Set delivery date to today
+                    booking.delivery_date = timezone.now().date() 
                     booking.save()
 
                     car = booking.car
@@ -141,8 +141,6 @@ def mark_prebooking_delivered(request, pk): # NEW VIEW FUNCTION
     
     return redirect('admin_panel:view_prebookings')
 
-
-# You might add views for editing/deleting cars, jobs, or managing pre-bookings here later.
 @login_required
 @never_cache
 @staff_member_required
@@ -158,7 +156,7 @@ def edit_job(request, pk):
             messages.error(request, 'Please correct the errors below.')
     else:
         form = AddJobForm(instance=job)
-    return render(request, 'admin_panel/add_job.html', {'form': form, 'editing': True}) # Use add_job template, pass 'editing' context
+    return render(request, 'admin_panel/add_job.html', {'form': form, 'editing': True}) 
 
 @login_required
 @never_cache
@@ -169,5 +167,69 @@ def delete_job(request, pk):
         job.delete()
         messages.success(request, 'Job vacancy deleted successfully!')
         return redirect('admin_panel:job_list')
-    # For a confirmation page before deletion, you might render a specific template:
     return render(request, 'admin_panel/confirm_delete_job.html', {'job': job})
+
+# NEW: Accessory Management Views
+
+@login_required
+@never_cache
+@staff_member_required
+def accessory_list(request):
+    """
+    Displays a list of all accessories in the inventory.
+    """
+    accessories = Accessory.objects.all().order_by('name')
+    return render(request, 'admin_panel/accessory_list.html', {'accessories': accessories})
+
+@login_required
+@never_cache
+@staff_member_required
+def add_accessory(request):
+    """
+    Handles adding a new accessory.
+    """
+    if request.method == 'POST':
+        form = AddAccessoryForm(request.POST, request.FILES)
+        if form.is_valid():
+            form.save()
+            messages.success(request, 'Accessory added successfully!')
+            return redirect('admin_panel:accessory_list')
+        else:
+            messages.error(request, 'Please correct the errors below.')
+    else:
+        form = AddAccessoryForm()
+    return render(request, 'admin_panel/add_accessory.html', {'form': form})
+
+@login_required
+@never_cache
+@staff_member_required
+def edit_accessory(request, pk):
+    """
+    Handles editing an existing accessory.
+    """
+    accessory = get_object_or_404(Accessory, pk=pk)
+    if request.method == 'POST':
+        form = AddAccessoryForm(request.POST, request.FILES, instance=accessory)
+        if form.is_valid():
+            form.save()
+            messages.success(request, 'Accessory updated successfully!')
+            return redirect('admin_panel:accessory_list')
+        else:
+            messages.error(request, 'Please correct the errors below.')
+    else:
+        form = AddAccessoryForm(instance=accessory)
+    return render(request, 'admin_panel/add_accessory.html', {'form': form, 'editing': True})
+
+@login_required
+@never_cache
+@staff_member_required
+def delete_accessory(request, pk):
+    """
+    Handles deleting an accessory.
+    """
+    accessory = get_object_or_404(Accessory, pk=pk)
+    if request.method == 'POST':
+        accessory.delete()
+        messages.success(request, 'Accessory deleted successfully!')
+        return redirect('admin_panel:accessory_list')
+    return render(request, 'admin_panel/confirm_delete_accessory.html', {'accessory': accessory})

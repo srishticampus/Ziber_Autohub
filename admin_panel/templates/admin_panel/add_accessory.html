@@ -1,0 +1,30 @@
+{% extends 'admin_panel/admin_base.html' %}
+
+{% block title %}{% if editing %}Edit Accessory{% else %}Add New Accessory{% endif %}{% endblock %}
+
+{% block content %}
+<div class="card shadow mb-4">
+    <div class="card-header py-3">
+        <h6 class="m-0 font-weight-bold text-primary">{% if editing %}Edit Accessory{% else %}Add New Accessory{% endif %}</h6>
+    </div>
+    <div class="card-body">
+        <form method="post" enctype="multipart/form-data">
+            {% csrf_token %}
+            {% for field in form %}
+                <div class="mb-3">
+                    <label for="{{ field.id_for_label }}" class="form-label">{{ field.label }}</label>
+                    {{ field }}
+                    {% if field.help_text %}
+                        <div class="form-text">{{ field.help_text }}</div>
+                    {% endif %}
+                    {% for error in field.errors %}
+                        <div class="text-danger small">{{ error }}</div>
+                    {% endfor %}
+                </div>
+            {% endfor %}
+            <button type="submit" class="btn btn-primary">{% if editing %}Update Accessory{% else %}Add Accessory{% endif %}</button>
+            <a href="{% url 'admin_panel:accessory_list' %}" class="btn btn-secondary ms-2">Cancel</a>
+        </form>
+    </div>
+</div>
+{% endblock %}

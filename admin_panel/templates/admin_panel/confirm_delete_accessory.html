@@ -1,0 +1,18 @@
+{% extends 'admin_panel/admin_base.html' %}
+
+{% block title %}Confirm Delete Accessory{% endblock %}
+
+{% block content %}
+<div class="alert alert-warning" role="alert">
+    <h4 class="alert-heading">Confirm Deletion!</h4>
+    <p>Are you sure you want to delete the accessory: <strong>{{ accessory.name }}</strong>?</p>
+    <hr>
+    <p class="mb-0">This action cannot be undone.</p>
+</div>
+
+<form method="post">
+    {% csrf_token %}
+    <button type="submit" class="btn btn-danger"><i class="fas fa-trash"></i> Confirm Delete</button>
+    <a href="{% url 'admin_panel:accessory_list' %}" class="btn btn-secondary ms-2">Cancel</a>
+</form>
+{% endblock %}

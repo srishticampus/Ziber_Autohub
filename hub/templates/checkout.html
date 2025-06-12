@@ -1,19 +1,179 @@
 {% extends 'base.html' %}
 {% load static %}
+{% load widget_tweaks %} {# To render form fields with custom attributes #}
+
+{% block title %}Checkout{% endblock %}
+
+{% block extra_styles %}
+<style>
+    .checkout-container {
+        padding: 50px 0;
+    }
+    .checkout-form-card, .order-summary-card {
+        border-radius: 12px;
+        box-shadow: 0 4px 15px rgba(0, 0, 0, 0.05);
+        padding: 30px;
+    }
+    .checkout-form-card h2, .order-summary-card h2 {
+        font-size: 1.8rem;
+        font-weight: bold;
+        color: #333;
+        margin-bottom: 25px;
+    }
+    .form-label {
+        font-weight: 600;
+        color: #555;
+    }
+    .form-control, .form-select {
+        border-radius: 8px;
+        box-shadow: none;
+        padding: 10px 15px;
+        border: 1px solid #ced4da;
+    }
+    .form-control:focus, .form-select:focus {
+        border-color: #80bdff;
+        box-shadow: 0 0 0 0.25rem rgba(0, 123, 255, 0.25);
+    }
+    .btn-place-order {
+        background-color: #28a745;
+        border-color: #28a745;
+        border-radius: 8px;
+        padding: 12px 30px;
+        font-size: 1.1rem;
+        font-weight: 600;
+        margin-top: 20px;
+    }
+    .btn-place-order:hover {
+        background-color: #218838;
+        border-color: #1e7e34;
+    }
+    .order-summary-list .list-group-item {
+        background-color: transparent;
+        border: none;
+        padding: 8px 0;
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+    }
+    .order-summary-total {
+        font-size: 1.8rem;
+        font-weight: 700;
+        color: #007bff;
+        border-top: 1px solid #dee2e6;
+        padding-top: 15px;
+        margin-top: 15px;
+    }
+    .text-danger small {
+        font-size: 0.875rem;
+    }
+</style>
+{% endblock %}
 
 {% block content %}
-<div class="container mt-5">
-    <h2>Checkout</h2>
+<div class="container checkout-container">
+    <h1 class="text-center mb-5 fw-bold text-primary">Checkout</h1>
 
-    <form method="post">
-        {% csrf_token %}
-        {{ form.as_p }}
+    <div class="row g-4">
+        <div class="col-lg-8">
+            <div class="card checkout-form-card">
+                <h2>Shipping & Payment Details</h2>
+                <form method="post">
+                    {% csrf_token %}
+                    
+                    {# Display form errors if any #}
+                    {% if form.errors %}
+                        <div class="alert alert-danger" role="alert">
+                            Please correct the following errors:
+                            <ul>
+                                {% for field in form %}
+                                    {% for error in field.errors %}
+                                        <li>{{ field.label }}: {{ error }}</li>
+                                    {% endfor %}
+                                {% endfor %}
+                                {% for error in form.non_field_errors %}
+                                    <li>{{ error }}</li>
+                                {% endfor %}
+                            </ul>
+                        </div>
+                    {% endif %}
 
-        <div class="total-checkout-price mb-3">
-            <strong>Total Price:</strong> ₹{{ total_price }}
+                    <div class="row">
+                        <div class="col-md-6 mb-3">
+                            <label for="{{ form.full_name.id_for_label }}" class="form-label">Full Name</label>
+                            {{ form.full_name|add_class:"form-control" }}
+                            {% for error in form.full_name.errors %}<div class="text-danger small">{{ error }}</div>{% endfor %}
+                        </div>
+                        <div class="col-md-6 mb-3">
+                            <label for="{{ form.email.id_for_label }}" class="form-label">Email Address</label>
+                            {{ form.email|add_class:"form-control" }}
+                            {% for error in form.email.errors %}<div class="text-danger small">{{ error }}</div>{% endfor %}
+                        </div>
+                    </div>
+
+                    <div class="mb-3">
+                        <label for="{{ form.address_line1.id_for_label }}" class="form-label">Address Line 1</label>
+                        {{ form.address_line1|add_class:"form-control" }}
+                        {% for error in form.address_line1.errors %}<div class="text-danger small">{{ error }}</div>{% endfor %}
+                    </div>
+                    <div class="mb-3">
+                        <label for="{{ form.address_line2.id_for_label }}" class="form-label">Address Line 2 (Optional)</label>
+                        {{ form.address_line2|add_class:"form-control" }}
+                        {% for error in form.address_line2.errors %}<div class="text-danger small">{{ error }}</div>{% endfor %}
+                    </div>
+
+                    <div class="row">
+                        <div class="col-md-6 mb-3">
+                            <label for="{{ form.city.id_for_label }}" class="form-label">City</label>
+                            {{ form.city|add_class:"form-control" }}
+                            {% for error in form.city.errors %}<div class="text-danger small">{{ error }}</div>{% endfor %}
+                        </div>
+                        <div class="col-md-6 mb-3">
+                            <label for="{{ form.state.id_for_label }}" class="form-label">State/Province</label>
+                            {{ form.state|add_class:"form-control" }}
+                            {% for error in form.state.errors %}<div class="text-danger small">{{ error }}</div>{% endfor %}
+                        </div>
+                    </div>
+
+                    <div class="row">
+                        <div class="col-md-6 mb-3">
+                            <label for="{{ form.zip_code.id_for_label }}" class="form-label">Zip/Postal Code</label>
+                            {{ form.zip_code|add_class:"form-control" }}
+                            {% for error in form.zip_code.errors %}<div class="text-danger small">{{ error }}</div>{% endfor %}
+                        </div>
+                        <div class="col-md-6 mb-3">
+                            <label for="{{ form.country.id_for_label }}" class="form-label">Country</label>
+                            {{ form.country|add_class:"form-control" }}
+                            {% for error in form.country.errors %}<div class="text-danger small">{{ error }}</div>{% endfor %}
+                        </div>
+                    </div>
+
+                    <div class="mb-3">
+                        <label for="{{ form.payment_method.id_for_label }}" class="form-label">Payment Method</label>
+                        {{ form.payment_method|add_class:"form-select" }}
+                        {% for error in form.payment_method.errors %}<div class="text-danger small">{{ error }}</div>{% endfor %}
+                    </div>
+
+                    <button type="submit" class="btn btn-place-order w-100">Place Order</button>
+                </form>
+            </div>
         </div>
 
-        <button type="submit" class="btn btn-success">Place Order</button>
-    </form>
+        <div class="col-lg-4">
+            <div class="card order-summary-card">
+                <h2>Your Order</h2>
+                <ul class="list-group list-group-flush order-summary-list">
+                    {% for item in cart_items %}
+                    <li class="list-group-item">
+                        <span>{{ item.quantity }}x {{ item.get_product.name }} {% if item.car %}{{ item.car.model }}{% endif %}</span>
+                        <span>₹{{ item.get_total_price|floatformat:2 }}</span>
+                    </li>
+                    {% endfor %}
+                </ul>
+                <div class="order-summary-total text-end">
+                    Grand Total: ₹{{ total_price|floatformat:2 }}
+                </div>
+            </div>
+        </div>
+    </div>
 </div>
 {% endblock %}
