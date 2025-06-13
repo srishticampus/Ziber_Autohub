@@ -223,7 +223,7 @@ button {
     float: left;
     background-image: url(../images/car4.jpg);
     height: auto;
-    background-size: 100%;
+    background-size: cover;
     background-repeat: no-repeat;
 }
 
