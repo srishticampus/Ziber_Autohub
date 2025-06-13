@@ -57,7 +57,9 @@
     }
     .filters-section {
         background-color: #f8f9fa;
-        padding: 20px;
+        padding: 25px;
+        padding-left:40px;
+        padding-right:40px;
         border-radius: 8px;
         margin-bottom: 30px;
         box-shadow: 0 2px 10px rgba(0,0,0,0.05);
@@ -72,6 +74,7 @@
         border-color: #007bff;
         border-radius: 8px;
         padding: 10px 20px;
+        color:white;
     }
     .btn-apply-filters:hover {
         background-color: #0056b3;
@@ -96,7 +99,7 @@
 
 {% block content %}
 <div class="container py-5">
-    <h1 class="text-center mb-5 fw-bold text-primary">Explore Accessories</h1>
+    <h1 class="text-center mb-5 fw-bold text-white">Explore Accessories</h1>
 
     {# Filter Section #}
     <div class="filters-section">
@@ -122,8 +125,8 @@
                 <label for="max_price" class="form-label visually-hidden">Max Price</label>
                 <input type="number" class="form-control" id="max_price" name="max_price" placeholder="Max Price" value="{{ max_price }}">
             </div>
-            <div class="col-md-1 d-grid">
-                <button type="submit" class="btn btn-apply-filters">Apply</button>
+            <div class="col-md-1 d-flex align-items-end"> {# Changed d-grid to d-flex and added align-items-end #}
+                <button type="submit" class="btn btn-apply-filters ">Apply</button> {# Added w-100 for full width within column #}
             </div>
         </form>
     </div>
@@ -142,11 +145,11 @@
                     {% endif %}
                 </div>
                 <div class="card-body accessory-card-body">
-                    <h5 class="card-title accessory-name">{{ accessory.name }}</h5>
-                    <p class="card-text accessory-description">{{ accessory.description|truncatechars:100 }}</p>
+                    <h5 class="card-title accessory-name text-white">{{ accessory.name }}</h5>
+                    <p class="card-text accessory-description text-white">{{ accessory.description|truncatechars:100 }}</p>
                     <p class="card-text accessory-price">₹{{ accessory.price|floatformat:2 }}</p>
                     <div class="d-flex justify-content-between align-items-center mt-auto">
-                        <small class="text-muted">In Stock: {{ accessory.stock }}</small>
+                        <small class=" text-white">In Stock: {{ accessory.stock }}</small>
                         <a href="{% url 'hub:accessory_detail' pk=accessory.pk %}" class="btn btn-primary btn-sm">View Details</a>
                     </div>
                 </div>

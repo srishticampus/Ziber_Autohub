@@ -1,23 +1,76 @@
 {% extends 'base.html' %}
 {% load static %}
+{% load humanize %} {# To use intcomma for thousands separators #}
 
-{% block title %}Landing Page{% endblock %}
+{% block title %}Ziber Autohub - Your Car & Accessory Hub{% endblock %}
 
 {% block extra_styles %}
 <style>
     /* Additional styles if needed */
     .box_main {
-        transition: transform 0.3s ease;
+        transition: transform 0.3s ease, box-shadow 0.3s ease;
+        border-radius: 10px; /* Consistent rounded corners */
+        overflow: hidden; /* Ensure image corners match */
+        background-color: #fff; /* White background for product boxes */
+        display: flex;
+        flex-direction: column;
+        height: 100%; /* Ensure consistent height for boxes in carousel */
     }
     .box_main:hover {
         transform: translateY(-5px);
         box-shadow: 0 10px 20px rgba(0,0,0,0.1);
     }
-    .buy_bt a, .seemore_bt a {
-        transition: all 0.3s ease;
+    /* Removed .box_main a style, as the outer link is removed */
+    .box_main img {
+        width: 100%;
+        height: 200px; /* Fixed height for consistency */
+        object-fit: cover; /* Ensures image covers the area */
+        border-radius: 10px 10px 0 0; /* Rounded top corners */
     }
-    .buy_bt a:hover, .seemore_bt a:hover {
-        color: #f26522;
+    .box_main .content-wrapper {
+        padding: 20px;
+        flex-grow: 1; /* Allows content to push buttons to bottom */
+        display: flex;
+        flex-direction: column;
+        justify-content: space-between;
+    }
+    .shirt_text {
+        font-size: 1.4rem;
+        font-weight: bold;
+        color: #333; /* Darker text for readability */
+        margin-bottom: 5px;
+    }
+    .price_text {
+        font-size: 1.1rem;
+        color: #666;
+        margin-bottom: 15px;
+    }
+    .price-color {
+        color: #007bff; /* Primary blue for prices */
+        font-weight: bold;
+    }
+    .btn_main {
+        display: flex;
+        justify-content: space-between;
+        margin-top: auto; /* Push buttons to the bottom */
+    }
+    .buy_bt a, .seemore_bt a {
+        display: inline-block;
+        padding: 8px 15px;
+        background-color: #f26522; /* Orange */
+        color: #fff;
+        border-radius: 5px;
+        text-decoration: none;
+        transition: background-color 0.3s ease;
+    }
+    .seemore_bt a {
+        background-color: #007bff; /* Blue */
+    }
+    .buy_bt a:hover {
+        background-color: #e05e1e;
+    }
+    .seemore_bt a:hover {
+        background-color: #0056b3;
     }
     .no-items-message {
         text-align: center;
@@ -25,165 +78,205 @@
         font-size: 1.2em;
         color: #777;
     }
+
+    /* Carousel Specific Adjustments */
+    .carousel-control-prev, .carousel-control-next {
+        width: 5%; /* Make controls narrower */
+        background: none; /* Remove background */
+        opacity: 1; /* Always visible */
+    }
+    .carousel-control-prev-icon, .carousel-control-next-icon {
+        background-image: none; /* Remove default Bootstrap icons */
+    }
+    .carousel-control-prev i, .carousel-control-next i {
+        font-size: 2.5rem; /* Larger Font Awesome icons */
+        color: #007bff; /* Blue arrows */
+        border-radius: 50%;
+        background-color: rgba(255, 255, 255, 0.8);
+        padding: 10px;
+        box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+    }
+    .carousel-control-prev i:hover, .carousel-control-next i:hover {
+        color: #0056b3;
+        background-color: #fff;
+    }
+    .fashion_taital {
+        color: #fff !important; /* Force white text for titles */
+        font-size: 3rem;
+        font-weight: bold;
+        text-align: center;
+        margin-bottom: 40px;
+        text-shadow: 2px 2px 4px rgba(0,0,0,0.3);
+    }
+    .fashion_section_2 {
+        padding-bottom: 50px; /* Add some space below each section */
+    }
 </style>
 {% endblock %}
 
 {% block content %}
 <div class="fashion_section">
-    <div id="main_slider" class="carousel slide" data-ride="carousel">
+    <div id="main_slider" class="carousel slide" data-bs-ride="carousel">
         <div class="carousel-inner">
             <div class="carousel-item active">
                 <div class="container">
-                    <h1 class="fashion_taital">New Cars</h1>
+                    <h1 class="fashion_taital text-white">New Cars</h1>
                     <div class="fashion_section_2">
                         <div class="row">
                             {% if new_cars %}
                                 {% for new_car in new_cars %}
-                                <a href="{% url 'hub:car_detail' new_car.id %}">
-                                    <div class="col-lg-4 col-sm-4">
-                                        <div class="box_main">
-                                            <h4 class="shirt_text">{{new_car.name}}</h4>
-                                            <p class="price_text">Start Price <span class="price-color">$ {{new_car.price}} Lakhs</span></p>
-                                            <div class="tshirt_img"><img src="{% static 'images/carbg10.jpg' %}" alt="Skoda Kodiaq"></div>
-                                            <div class="btn_main">
-                                                <div class="buy_bt"><a href="{% url 'hub:car_list' %}">Buy Now</a></div>
-                                                <div class="seemore_bt"><a href="{% url 'hub:car_list' %}">See More</a></div>
+                                <div class="col-lg-4 col-sm-4 mb-4">
+                                    <div class="box_main">
+                                        <div class="content-wrapper">
+                                            <h4 class="shirt_text">{{ new_car.name }}</h4>
+                                            <p class="price_text">Price <span class="price-color">₹{{ new_car.price|floatformat:2 }} </span></p>
+                                            {% if new_car.image %}
+                                                <img src="{{ new_car.image.url }}" alt="{{ new_car.name }}" class="img-fluid">
+                                            {% else %}
+                                                <img src="https://placehold.co/400x200/EFEFEF/AAAAAA?text=No+Image" alt="No Image" class="img-fluid">
+                                            {% endif %}
+                                            <div class="btn_main mt-3">
+                                                <div class="seemore_bt"><a href="{% url 'hub:car_detail' pk=new_car.id %}">View Details</a></div>
                                             </div>
                                         </div>
                                     </div>
-                                </a>
+                                </div>
                                 {% endfor %}
                             {% else %}
                                 <div class="col-12">
-                                    <p class="no-items-message">No new cars available at the moment. Please check back later!</p>
+                                    <p class="no-items-message text-white">No new cars available at the moment. Please check back later!</p>
                                 </div>
                             {% endif %}
                         </div>
                     </div>
                 </div>
             </div>
+            {# Add more carousel-items for other new cars if you have more than 3 and want to paginate the carousel #}
         </div>
+        {% if new_cars.count > 3 %}
+            <a class="carousel-control-prev" href="#main_slider" role="button" data-bs-slide="prev">
+                <i class="fa fa-angle-left"></i>
+                <span class="visually-hidden">Previous</span>
+            </a>
+            <a class="carousel-control-next" href="#main_slider" role="button" data-bs-slide="next">
+                <i class="fa fa-angle-right"></i>
+                <span class="visually-hidden">Next</span>
+            </a>
+        {% endif %}
     </div>
 </div>
+
 <div class="fashion_section">
-    <div id="electronic_main_slider" class="carousel slide" data-ride="carousel">
+    <div id="electronic_main_slider" class="carousel slide" data-bs-ride="carousel">
         <div class="carousel-inner">
             <div class="carousel-item active">
                 <div class="container">
-                    <h1 class="fashion_taital">Used Cars</h1>
+                    <h1 class="fashion_taital text-white">Used Cars</h1>
                     <div class="fashion_section_2">
                         <div class="row">
                             {% if old_cars %}
                                 {% for old_car in old_cars %}
-                                <a href="{% url 'hub:car_detail' old_car.id %}">
-                                    <div class="col-lg-4 col-sm-4">
-                                        <div class="box_main">
-                                            <h4 class="shirt_text">{{old_car.name}}</h4>
-                                            <p class="price_text">Start Price <span class="price-color">$ {{old_car.price}} Lakhs</span></p>
-                                            <div class="electronic_img"><img src="{% static 'images/used1.jpg' %}" alt="Maruti Suzuki Swift"></div>
-                                            <div class="btn_main">
-                                                <div class="buy_bt"><a href="{% url 'hub:car_list' %}">Buy Now</a></div>
-                                                <div class="seemore_bt"><a href="{% url 'hub:car_list' %}">See More</a></div>
+                                <div class="col-lg-4 col-sm-4 mb-4">
+                                    <div class="box_main">
+                                        <div class="content-wrapper">
+                                            <h4 class="shirt_text">{{ old_car.name }}</h4>
+                                            <p class="price_text">Price <span class="price-color">₹{{ old_car.price|floatformat:2 }}</span></p>
+                                            {% if old_car.image %}
+                                                <img src="{{ old_car.image.url }}" alt="{{ old_car.name }}" class="img-fluid">
+                                            {% else %}
+                                                <img src="https://placehold.co/400x200/EFEFEF/AAAAAA?text=No+Image" alt="No Image" class="img-fluid">
+                                            {% endif %}
+                                            <div class="btn_main mt-3">
+                                                <div class="seemore_bt"><a href="{% url 'hub:car_detail' pk=old_car.id %}">View Details</a></div>
                                             </div>
                                         </div>
                                     </div>
-                                </a>
+                                </div>
                                 {% endfor %}
                             {% else %}
                                 <div class="col-12">
-                                    <p class="no-items-message">No used cars available at the moment. Check out our new car collection!</p>
+                                    <p class="no-items-message text-white">No used cars available at the moment. Check out our <a href="{% url 'hub:new_car_list' %}" class="text-white text-decoration-underline">new car collection</a>!</p>
                                 </div>
                             {% endif %}
                         </div>
                     </div>
                 </div>
             </div>
+            {% if old_cars.count > 3 %}
+                <a class="carousel-control-prev" href="#electronic_main_slider" role="button" data-bs-slide="prev">
+                    <i class="fa fa-angle-left"></i>
+                    <span class="visually-hidden">Previous</span>
+                </a>
+                <a class="carousel-control-next" href="#electronic_main_slider" role="button" data-bs-slide="next">
+                    <i class="fa fa-angle-right"></i>
+                    <span class="visually-hidden">Next</span>
+                </a>
+            {% endif %}
         </div>
     </div>
 </div>
+
 <div class="jewellery_section">
-    <div id="jewellery_main_slider" class="carousel slide" data-ride="carousel">
+    <div id="jewellery_main_slider" class="carousel slide" data-bs-ride="carousel">
         <div class="carousel-inner">
             <div class="carousel-item active">
                 <div class="container">
-                    <h1 class="fashion_taital">Car Accessories</h1>
+                    <h1 class="fashion_taital text-white">Car Accessories</h1>
                     <div class="fashion_section_2">
                         <div class="row">
-                            {# Since accessories are hardcoded, we can simply check if there are any, though usually you'd loop through a context variable #}
-                            {% comment %}
-                            The original code had hardcoded accessory items. If these are expected to always be present or fetched dynamically,
-                            you would use an 'if accessories_list' and 'for accessory in accessories_list' structure.
-                            For this example, assuming the hardcoded accessories represent a fixed display or you'll fetch them from a context variable later,
-                            I'm adding a conditional check. If you plan to retrieve accessories from the database, ensure your view passes an 'accessories' context variable.
-                            For now, I'll demonstrate with a simple check that assumes some content, or you can uncomment the hardcoded items.
-                            {% endcomment %}
-                            {% if True %} {# Replace 'True' with 'accessories' if you pass an accessories list from context #}
-                                <div class="col-lg-4 col-sm-4">
+                            {% if featured_accessories %}
+                                {% for accessory in featured_accessories %}
+                                <div class="col-lg-4 col-sm-4 mb-4">
                                     <div class="box_main">
-                                        <h4 class="shirt_text">All-Weather Floor Mats</h4>
-                                        <p class="price_text">Start Price <span class="price-color">$ 100</span></p>
-                                        <div class="jewellery_img"><img src="{% static 'images/a1.jpg' %}" alt="Floor Mats"></div>
-                                        <div class="btn_main">
-                                            <div class="buy_bt"><a href="{% url 'hub:car_list' %}">Buy Now</a></div>
-                                            <div class="seemore_bt"><a href="{% url 'hub:car_list' %}">See More</a></div>
+                                        <div class="content-wrapper">
+                                            <h4 class="shirt_text">{{ accessory.name }}</h4>
+                                            <p class="price_text">Price <span class="price-color">₹{{ accessory.price|floatformat:2 }}</span></p>
+                                            {% if accessory.image %}
+                                                <img src="{{ accessory.image.url }}" alt="{{ accessory.name }}" class="img-fluid">
+                                            {% else %}
+                                                <img src="https://placehold.co/400x200/EFEFEF/AAAAAA?text=No+Image" alt="No Image" class="img-fluid">
+                                            {% endif %}
+                                            <div class="btn_main mt-3">
+                                                <div class="seemore_bt"><a href="{% url 'hub:accessory_detail' pk=accessory.id %}">View Details</a></div>
+                                            </div>
                                         </div>
                                     </div>
                                 </div>
-                                <div class="col-lg-4 col-sm-4">
-                                    <div class="box_main">
-                                        <h4 class="shirt_text">Car Vacuum Cleaner</h4>
-                                        <p class="price_text">Start Price <span class="price-color">$ 100</span></p>
-                                        <div class="jewellery_img"><img src="{% static 'images/a3.jpg' %}" alt="Vacuum Cleaner"></div>
-                                        <div class="btn_main">
-                                            <div class="buy_bt"><a href="{% url 'hub:car_list' %}">Buy Now</a></div>
-                                            <div class="seemore_bt"><a href="{% url 'hub:car_list' %}">See More</a></div>
-                                        </div>
-                                    </div>
-                                </div>
-                                <div class="col-lg-4 col-sm-4">
-                                    <div class="box_main">
-                                        <h4 class="shirt_text">Seat Covers</h4>
-                                        <p class="price_text">Start Price <span class="price-color">$ 100</span></p>
-                                        <div class="jewellery_img"><img src="{% static 'images/a2.jpg' %}" alt="Seat Covers"></div>
-                                        <div class="btn_main">
-                                            <div class="buy_bt"><a href="{% url 'hub:car_list' %}">Buy Now</a></div>
-                                            <div class="seemore_bt"><a href="{% url 'hub:car_list' %}">See More</a></div>
-                                        </div>
-                                    </div>
-                                </div>
+                                {% endfor %}
                             {% else %}
                                 <div class="col-12">
-                                    <p class="no-items-message">No car accessories available at the moment.</p>
+                                    <p class="no-items-message text-white">No car accessories available at the moment. Please check back later!</p>
                                 </div>
                             {% endif %}
                         </div>
                     </div>
                 </div>
             </div>
-        </div>
-        <a class="carousel-control-prev" href="#jewellery_main_slider" role="button" data-slide="prev">
-            <i class="fa fa-angle-left"></i>
-            <span class="sr-only">Previous</span>
-        </a>
-        <a class="carousel-control-next" href="#jewellery_main_slider" role="button" data-slide="next">
-            <i class="fa fa-angle-right"></i>
-            <span class="sr-only">Next</span>
-        </a>
-        <div class="loader_main">
-            <div class="loader"></div>
+            {% if featured_accessories.count > 3 %}
+                <a class="carousel-control-prev" href="#jewellery_main_slider" role="button" data-bs-slide="prev">
+                    <i class="fa fa-angle-left"></i>
+                    <span class="visually-hidden">Previous</span>
+                </a>
+                <a class="carousel-control-next" href="#jewellery_main_slider" role="button" data-bs-slide="next">
+                    <i class="fa fa-angle-right"></i>
+                    <span class="visually-hidden">Next</span>
+                </a>
+            {% endif %}
         </div>
     </div>
 </div>
 {% endblock %}
 
-{% block extra_scripts %}
+{% block scripts %}
+{{ block.super }} {# Include base.html scripts #}
 <script>
-    // Additional JavaScript if needed
-    $(document).ready(function(){
-        // Initialize carousels
-        $('.carousel').carousel();
-        
-        // Smooth scrolling for anchor links
+    document.addEventListener('DOMContentLoaded', function() {
+        // Initialize carousels if they have multiple items. Bootstrap 5 auto-initializes single-item carousels.
+        // If you intend to have multiple carousel items (e.g., more than 3 cars),
+        // ensure you structure them with multiple `.carousel-item` divs inside `.carousel-inner`.
+        // The data-bs-ride="carousel" attribute on the main carousel div is sufficient for auto-initialization.
+
+        // Smooth scrolling for anchor links - Keep this from your original script
         $('a[href^="#"]').on('click', function(event) {
             var target = $(this.getAttribute('href'));
             if(target.length) {
