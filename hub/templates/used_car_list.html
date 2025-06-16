@@ -1,5 +1,6 @@
 {% extends 'base.html' %}
 {% load static %}
+{% load humanize %} {# To use intcomma for thousands separators #}
 
 {% block title %}Used Car List{% endblock %}
 
@@ -17,7 +18,6 @@
         margin-bottom: 15px;
         color: #ffffff; /* White text for headings */
     }
-    /* Removed .filter-group as mb-3 will be used directly on cols */
     .price-range-inputs, .kms-range-inputs {
         display: flex;
         gap: 10px; /* Spacing between min/max inputs */
@@ -28,11 +28,15 @@
     .car-image-style {
         height: 200px;
         object-fit: cover;
+        border-top-left-radius: 10px; /* Match card radius */
+        border-top-right-radius: 10px; /* Match card radius */
     }
     .filter-button{
-      background-color: #f26522;
-      color: white;
-      border: none;
+        background-color: #f26522;
+        color: white;
+        border: none;
+        border-radius: 5px; /* Consistent button styling */
+        padding: 8px 15px; /* Consistent padding */
     }
     .filter-button:hover {
         background-color: #e05e1e;
@@ -40,6 +44,8 @@
     .card-body {
         background-color: #f8f9fa;
         color: #343a40;
+        border-bottom-left-radius: 10px; /* Match card radius */
+        border-bottom-right-radius: 10px; /* Match card radius */
     }
     .card-title {
         color: #007bff;
@@ -50,34 +56,49 @@
         background-position: center;
         background-repeat: no-repeat; /* Ensure it doesn't repeat */
     }
-    /* Added some padding to the banner to give content space */
     .banner_bg_main {
         padding-top: 50px;
         padding-bottom: 50px;
     }
-    /* Style for the clear all button */
     .btn-secondary {
         background-color: #6c757d;
         border-color: #6c757d;
         color: white;
+        border-radius: 5px; /* Consistent button styling */
+        padding: 8px 15px; /* Consistent padding */
     }
     .btn-secondary:hover {
         background-color: #5a6268;
         border-color: #545b62;
     }
-    /* Ensure labels are white in the filter section */
     .filter-section label {
         color: #ffffff;
-        margin-bottom: 5px; /* Spacing between label and input */
+        margin-bottom: 5px;
     }
-    /* Adjust input height for better visual alignment within the filter section */
-    .filter-section .form-control {
-        height: calc(1.5em + .75rem + 2px); /* Default Bootstrap height for inputs */
+    .filter-section .form-control,
+    .filter-section .form-select {
+        height: calc(1.5em + .75rem + 2px);
         padding: .375rem .75rem;
     }
-    .filter-form{
-        display: flex;
-        justify-content: space-around;
+    /* Styles for car cards */
+    .card {
+        border-radius: 10px;
+        overflow: hidden;
+        box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+        transition: transform 0.3s ease, box-shadow 0.3s ease;
+    }
+    .card:hover {
+        transform: translateY(-5px);
+        box-shadow: 0 8px 16px rgba(0, 0, 0, 0.2);
+    }
+    .btn-sm {
+        padding: 8px 15px; /* Adjust padding for small buttons */
+        font-size: 0.9rem;
+        border-radius: 5px;
+    }
+    .btn-disabled {
+        opacity: 0.6;
+        cursor: not-allowed;
     }
 </style>
 {% endblock %}
@@ -91,7 +112,7 @@
                 <div class="col-12">
                     <div class="filter-section">
                         <form method="get" action="{% url 'hub:used_car_list' %}" class="needs-validation" novalidate>
-                            <div class="row g-3 align-items-end"> {# Use g-3 for gutter and align-items-end to align bottom of inputs #}
+                            <div class="row g-3 align-items-end">
                                 <div class="col-md-3">
                                     <label for="{{ form.q.id_for_label }}" class="form-label">Search</label>
                                     {{ form.q }}
@@ -123,12 +144,11 @@
                                     </div>
                                 </div>
                                 
-                                <div class="col-md-2 d-flex align-items-end"> {# Use d-grid for full width buttons in a column, gap-2 for spacing #}
-                                    <button type="submit" class="btn filter-button mx-5">Apply Filters</button>
-                                    <a href="{% url 'hub:used_car_list' %}" class="btn btn-secondary mx-5">Clear All</a>
+                                <div class="col-md-2 d-flex"> {# Adjusted for better alignment of buttons #}
+                                    <button type="submit" class="btn filter-button mx-4 ">Apply Filters</button> 
+                                    <a href="{% url 'hub:used_car_list' %}" class="btn btn-secondary mx-4">Clear All</a> 
                                 </div>
                             </div>
-                            <a class="text-white" href="{% url 'hub:add_used_car' %}">Add Car</a>
                         </form>
                     </div>
                 </div>
@@ -142,26 +162,37 @@
                             {% if car.image %}
                                 <img src="{{ car.image.url }}" class="card-img-top car-image-style" alt="{{ car.brand }} {{ car.model }}">
                             {% else %}
-                                <img src="{% static 'images/default_car.jpg' %}" class="card-img-top car-image-style" alt="Default Car Image">
+                                <img src="https://placehold.co/400x200/EFEFEF/AAAAAA?text=No+Image" class="card-img-top car-image-style" alt="No Image Available">
                             {% endif %}
                             <div class="card-body d-flex flex-column">
                                 <h5 class="card-title">{{ car.brand }} {{ car.model }}</h5>
                                 <p class="card-text mb-1">Year: {{ car.year }}</p>
-                                <p class="card-text mb-1">Kms Driven: {{ car.kms_driven }}</p>
-                                <p class="card-text mb-2">Price: ₹ {{ car.price }}</p>
+                                <p class="card-text mb-1">Kms Driven: {{ car.kms_driven|intcomma }}</p>
+                                <p class="card-text mb-2">Price: ₹ {{ car.price|floatformat:2 }}</p>
                                 
                                 <div class="mt-auto">
-                                    <div class="d-flex justify-content-between align-items-center mt-3"> {# align-items-center for horizontal button alignment #}
-                                        <a href="{% url 'hub:car_detail' car.id %}" class="btn btn-outline-primary btn-sm flex-grow-1 me-2">See More</a> {# flex-grow-1 and me-2 for spacing #}
-                                        <form method="post" action="{% url 'hub:buy_now' car.id %}" class="m-0">
-                                            {% csrf_token %}
-                                            <button type="submit" class="btn btn-success btn-sm flex-grow-1">Buy Now</button>
-                                        </form>
+                                    <div class="d-flex justify-content-between align-items-center mt-3">
+                                        {# Removed flex-grow-1 to make the button take content width #}
+                                        <a href="{% url 'hub:car_detail' pk=car.id %}" class="btn btn-outline-primary btn-sm me-2">View Details</a>
+                                        {% if car.stock > 0 %}
+                                            <form method="post" action="{% url 'hub:buy_car_now' pk=car.id %}" class="d-inline-flex m-0">
+                                                {% csrf_token %}
+                                                <input type="hidden" name="quantity" value="1">
+                                                <button type="submit" class="btn btn-success btn-sm flex-grow-1">Buy Now</button>
+                                            </form>
+                                        {% else %}
+                                            <button class="btn btn-success btn-sm flex-grow-1 btn-disabled" disabled>Out of Stock</button>
+                                        {% endif %}
                                     </div>
-                                    <form method="post" action="{% url 'hub:add_to_cart' car.id %}" class="mt-2">
-                                        {% csrf_token %}
-                                        <button type="submit" class="btn btn-primary btn-sm w-100">Add to Cart</button>
-                                    </form>
+                                    {% if car.stock > 0 %}
+                                        <form method="post" action="{% url 'hub:add_car_to_cart' pk=car.id %}" class="mt-2">
+                                            {% csrf_token %}
+                                            <input type="hidden" name="quantity" value="1">
+                                            <button type="submit" class="btn btn-primary btn-sm w-100">Add to Cart</button>
+                                        </form>
+                                    {% else %}
+                                        <button class="btn btn-primary btn-sm w-100 mt-2 btn-disabled" disabled>Add to Cart</button>
+                                    {% endif %}
                                 </div>
                             </div>
                         </div>
@@ -184,38 +215,64 @@
 {{ block.super }} {# Include base.html scripts #}
 <script>
     document.addEventListener('DOMContentLoaded', function() {
+        // Client-side validation for price and kms ranges
         const minPriceInput = document.querySelector('input[name="min_price"]');
         const maxPriceInput = document.querySelector('input[name="max_price"]');
         const minKmsInput = document.querySelector('input[name="min_kms"]');
         const maxKmsInput = document.querySelector('input[name="max_kms"]');
         
+        // Helper function for custom alert (instead of native alert())
+        function showCustomAlert(message) {
+            // You can implement a custom modal or message display here
+            // For now, will use console.error and Django messages (handled by base.html)
+            console.error("Validation Error: " + message);
+            // In a real application, you might show a small temporary div or use a modal
+            // For example:
+            // const alertDiv = document.createElement('div');
+            // alertDiv.className = 'alert alert-danger fixed-top mx-auto mt-3 py-2 w-50 text-center';
+            // alertDiv.textContent = message;
+            // document.body.prepend(alertDiv);
+            // setTimeout(() => alertDiv.remove(), 3000);
+            // Note: For consistency with Django messages, it's better to rely on server-side
+            // validation and messages.error() from your views, which are picked up by base.html.
+            // These client-side checks are just for immediate user feedback.
+        }
+
         if (minPriceInput && maxPriceInput) {
             minPriceInput.addEventListener('change', function() {
-                if (maxPriceInput.value && parseFloat(this.value) > parseFloat(maxPriceInput.value)) {
-                    alert('Minimum price cannot be greater than maximum price');
-                    this.value = '';
+                const minVal = parseFloat(this.value);
+                const maxVal = parseFloat(maxPriceInput.value);
+                if (!isNaN(minVal) && !isNaN(maxVal) && minVal > maxVal) {
+                    showCustomAlert('Minimum price cannot be greater than maximum price');
+                    this.value = ''; // Clear the invalid input
                 }
             });
             
             maxPriceInput.addEventListener('change', function() {
-                if (minPriceInput.value && parseFloat(this.value) < parseFloat(minPriceInput.value)) {
-                    alert('Maximum price cannot be less than minimum price');
-                    this.value = '';
+                const minVal = parseFloat(minPriceInput.value);
+                const maxVal = parseFloat(this.value);
+                if (!isNaN(minVal) && !isNaN(maxVal) && maxVal < minVal) {
+                    showCustomAlert('Maximum price cannot be less than minimum price');
+                    this.value = ''; // Clear the invalid input
                 }
             });
         }
 
         if (minKmsInput && maxKmsInput) {
             minKmsInput.addEventListener('change', function() {
-                if (maxKmsInput.value && parseInt(this.value) > parseInt(maxKmsInput.value)) {
-                    alert('Minimum kilometers cannot be greater than maximum kilometers');
+                const minVal = parseInt(this.value);
+                const maxVal = parseInt(maxKmsInput.value);
+                if (!isNaN(minVal) && !isNaN(maxVal) && minVal > maxVal) {
+                    showCustomAlert('Minimum kilometers cannot be greater than maximum kilometers');
                     this.value = '';
                 }
             });
             
             maxKmsInput.addEventListener('change', function() {
-                if (minKmsInput.value && parseInt(this.value) < parseInt(minKmsInput.value)) {
-                    alert('Maximum kilometers cannot be less than minimum kilometers');
+                const minVal = parseInt(minKmsInput.value);
+                const maxVal = parseInt(this.value);
+                if (!isNaN(minVal) && !isNaN(maxVal) && maxVal < minVal) {
+                    showCustomAlert('Maximum kilometers cannot be less than minimum kilometers');
                     this.value = '';
                 }
             });
@@ -223,3 +280,4 @@
     });
 </script>
 {% endblock %}
+ 

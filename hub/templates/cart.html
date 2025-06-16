@@ -1,16 +1,27 @@
 {% extends 'base.html' %}
 {% load static %}
-{% load humanize %} {# To use intcomma for thousands separators in numbers #}
+{% load humanize %} {# To use intcomma for thousands separators #}
 
 {% block title %}My Cart{% endblock %}
 
 {% block extra_styles %}
 <style>
+    /* Cart Page Specific Background */
+    .cart-page-background {
+        background-image: url("{% static 'images/banner-bg.png.jpg' %}"); /* Using a similar background as other pages */
+        background-size: cover;
+        background-position: center;
+        background-repeat: no-repeat;
+        padding-top: 50px; /* Add some padding to the top and bottom */
+        padding-bottom: 50px;
+    }
+
     .cart-item-card {
         border-radius: 12px;
         box-shadow: 0 4px 15px rgba(0, 0, 0, 0.05);
         margin-bottom: 20px;
         overflow: hidden;
+        background-color: #fff; /* Ensure card background is white for text visibility */
     }
     .cart-item-image {
         width: 100px;
@@ -25,12 +36,12 @@
     .cart-item-name {
         font-size: 1.25rem;
         font-weight: bold;
-        color: #333;
+        color: #333; /* Keep dark for contrast on white card */
         margin-bottom: 5px;
     }
     .cart-item-price {
         font-size: 1.1rem;
-        color: #007bff;
+        color: #007bff; /* Keep blue for contrast on white card */
         font-weight: 600;
     }
     .cart-actions {
@@ -63,7 +74,7 @@
         border-color: #bd2130;
     }
     .cart-summary {
-        background-color: #f8f9fa;
+        background-color: #f8f9fa; /* Light background for summary */
         border-radius: 12px;
         padding: 25px;
         box-shadow: 0 4px 15px rgba(0, 0, 0, 0.05);
@@ -72,7 +83,7 @@
         font-size: 1.5rem;
         font-weight: bold;
         margin-bottom: 20px;
-        color: #333;
+        color: #333; /* Dark for contrast on light summary background */
     }
     .cart-summary .list-group-item {
         background-color: transparent;
@@ -81,6 +92,7 @@
         display: flex;
         justify-content: space-between;
         align-items: center;
+        color: #333; /* Dark for contrast on light summary background */
     }
     .cart-summary .list-group-item strong {
         color: #333;
@@ -109,17 +121,25 @@
     .empty-cart-message {
         padding: 50px;
         text-align: center;
-        color: #6c757d;
-        background-color: #fff;
+        color: #ffffff; /* Set to white for visibility on dark background */
+        background-color: rgba(255, 255, 255, 0.1); /* Slightly transparent white for a subtle effect */
         border-radius: 12px;
-        box-shadow: 0 4px 15px rgba(0, 0, 0, 0.05);
+        box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
+        margin-top: 30px; /* Add some space from the top heading */
+    }
+    .empty-cart-message a {
+        color: #007bff; /* Link color for "cars" or "accessories" */
+        text-decoration: underline;
+    }
+    .empty-cart-message a:hover {
+        color: #0056b3;
     }
 </style>
 {% endblock %}
 
 {% block content %}
-<div class="container py-5">
-    <h1 class="text-center mb-5 fw-bold text-primary">Your Shopping Cart</h1>
+<div class="container py-5 cart-page-background"> {# Added cart-page-background class #}
+    <h1 class="text-center mb-5 fw-bold text-white">Your Shopping Cart</h1> {# Changed text-primary to text-white #}
 
     {% if cart_items %}
     <div class="row">
@@ -152,11 +172,11 @@
                         </form>
                         {% else %}
                         {# Display quantity as 1 for cars, no update button needed #}
-                        <span class="fw-bold me-md-2 mb-2 mb-md-0">Quantity: 1</span>
+                        <span class="fw-bold me-md-2 mb-2 mb-md-0">Quantity:1</span>
                         {% endif %}
                         <form action="{% url 'hub:remove_from_cart' pk=item.pk %}" method="post" class="d-inline">
                             {% csrf_token %}
-                            <button type="submit" class="btn btn-sm btn-remove-item">Remove</button>
+                            <button type="submit" class="btn btn-sm btn-remove-item mx-3">Remove</button>
                         </form>
                     </div>
                     <div class="ms-4 text-end">
@@ -173,7 +193,7 @@
                 <ul class="list-group list-group-flush">
                     {% for item in cart_items %}
                     <li class="list-group-item">
-                        <span>{{ item.quantity }}x {{ item.get_product.name }} {% if item.car %}{{ item.car.model }}{% endif %}</span>
+                        <span>{{ item.quantity }} x {{ item.get_product.name }} {% if item.car %}{{ item.car.model }}{% endif %}</span>
                         <span>₹{{ item.get_total_price|floatformat:2 }}</span>
                     </li>
                     {% endfor %}
