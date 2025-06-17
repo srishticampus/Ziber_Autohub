@@ -1,13 +1,14 @@
 # admin_panel/views.py
 from django.shortcuts import render, redirect, get_object_or_404
 from django.contrib.admin.views.decorators import staff_member_required
-from .forms import AddCarForm, AddJobForm, AddAccessoryForm # Import AddAccessoryForm
-from hub.models import Car, JobVacancy, PreBooking, Accessory # Import Accessory model
 from django.contrib.auth.decorators import login_required
 from django.views.decorators.cache import never_cache
-from django.contrib import messages # Import Django's messages framework
-from django.db import transaction # Import transaction for atomic operations
+from django.contrib import messages
+from django.db import transaction
 from django.utils import timezone
+from hub.models import Car, JobVacancy, PreBooking, Accessory
+from .models import UpcomingLaunch
+from .forms import AddCarForm, AddJobForm, AddAccessoryForm, AddUpcomingLaunchForm
 
 @login_required
 @never_cache 
@@ -19,13 +20,15 @@ def admin_dashboard(request):
     total_cars_count = Car.objects.count()
     active_jobs_count = JobVacancy.objects.filter(is_active=True).count()
     pending_prebookings_count = PreBooking.objects.filter(status='Booked').count() 
-    total_accessories_count = Accessory.objects.count() # New: Count accessories
+    total_accessories_count = Accessory.objects.count()
+    total_upcoming_launches_count = UpcomingLaunch.objects.count() # Get count for upcoming launches
     
     context = {
         'total_cars_count': total_cars_count,
         'active_jobs_count': active_jobs_count,
         'pending_prebookings_count': pending_prebookings_count,
-        'total_accessories_count': total_accessories_count, # Add to context
+        'total_accessories_count': total_accessories_count,
+        'total_upcoming_launches_count': total_upcoming_launches_count, # Pass count to context
     }
     return render(request, 'admin_panel/dashboard.html', context)
 
@@ -169,8 +172,7 @@ def delete_job(request, pk):
         return redirect('admin_panel:job_list')
     return render(request, 'admin_panel/confirm_delete_job.html', {'job': job})
 
-# NEW: Accessory Management Views
-
+# Accessory Management Views
 @login_required
 @never_cache
 @staff_member_required
@@ -233,3 +235,69 @@ def delete_accessory(request, pk):
         messages.success(request, 'Accessory deleted successfully!')
         return redirect('admin_panel:accessory_list')
     return render(request, 'admin_panel/confirm_delete_accessory.html', {'accessory': accessory})
+
+
+# Upcoming Launch Management Views
+@login_required
+@never_cache
+@staff_member_required
+def upcoming_launch_list(request):
+    """
+    Displays a list of all upcoming car launches.
+    """
+    launches = UpcomingLaunch.objects.all().order_by('launch_date', 'launch_time_start')
+    return render(request, 'admin_panel/upcoming_launch_list.html', {'launches': launches})
+
+@login_required
+@never_cache
+@staff_member_required
+def add_upcoming_launch(request):
+    """
+    Handles adding a new upcoming car launch.
+    """
+    if request.method == 'POST':
+        form = AddUpcomingLaunchForm(request.POST)
+        if form.is_valid():
+            form.save()
+            messages.success(request, 'Upcoming launch added successfully!')
+            return redirect('admin_panel:upcoming_launch_list')
+        else:
+            messages.error(request, 'Please correct the errors below.')
+    else:
+        form = AddUpcomingLaunchForm()
+    return render(request, 'admin_panel/add_upcoming_launch.html', {'form': form})
+
+@login_required
+@never_cache
+@staff_member_required
+def edit_upcoming_launch(request, pk):
+    """
+    Handles editing an existing upcoming car launch.
+    """
+    launch = get_object_or_404(UpcomingLaunch, pk=pk)
+    if request.method == 'POST':
+        form = AddUpcomingLaunchForm(request.POST, instance=launch)
+        if form.is_valid():
+            form.save()
+            messages.success(request, 'Upcoming launch updated successfully!')
+            return redirect('admin_panel:upcoming_launch_list')
+        else:
+            messages.error(request, 'Please correct the errors below.')
+    else:
+        form = AddUpcomingLaunchForm(instance=launch)
+    return render(request, 'admin_panel/add_upcoming_launch.html', {'form': form, 'editing': True})
+
+@login_required
+@never_cache
+@staff_member_required
+def delete_upcoming_launch(request, pk):
+    """
+    Handles deleting an upcoming car launch.
+    """
+    launch = get_object_or_404(UpcomingLaunch, pk=pk)
+    if request.method == 'POST':
+        launch.delete()
+        messages.success(request, 'Upcoming launch deleted successfully!')
+        return redirect('admin_panel:upcoming_launch_list')
+    return render(request, 'admin_panel/confirm_delete_upcoming_launch.html', {'launch': launch})
+
