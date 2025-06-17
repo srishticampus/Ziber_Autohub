@@ -10,6 +10,8 @@ urlpatterns = [
     # Cars
     path('add-car/', views.add_car, name='add_car'),
     path('cars/', views.car_list, name='car_list'),
+    path('cars/edit/<int:pk>/', views.edit_car, name='edit_car'),
+    path('cars/delete/<int:pk>/', views.delete_car, name='delete_car'),
     
     # Jobs
     path('add-job/', views.add_job, name='add_job'),

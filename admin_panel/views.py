@@ -32,6 +32,7 @@ def admin_dashboard(request):
     }
     return render(request, 'admin_panel/dashboard.html', context)
 
+
 @login_required
 @never_cache
 @staff_member_required
@@ -79,6 +80,44 @@ def car_list(request):
     """
     cars = Car.objects.all().order_by('-created_at') 
     return render(request, 'admin_panel/car_list.html', {'cars': cars})
+
+# Edit Car View
+@login_required
+@never_cache
+@staff_member_required
+def edit_car(request, pk):
+    """
+    Handles editing an existing car in the inventory.
+    """
+    car = get_object_or_404(Car, pk=pk)
+    if request.method == 'POST':
+        form = AddCarForm(request.POST, request.FILES, instance=car)
+        if form.is_valid():
+            form.save()
+            messages.success(request, 'Car updated successfully!')
+            return redirect('admin_panel:car_list')
+        else:
+            messages.error(request, 'Please correct the errors below.')
+    else:
+        form = AddCarForm(instance=car)
+    # Pass 'editing=True' for the edit view
+    return render(request, 'admin_panel/add_car.html', {'form': form, 'editing': True})
+
+# Delete Car View
+@login_required
+@never_cache
+@staff_member_required
+def delete_car(request, pk):
+    """
+    Handles deleting a car from the inventory.
+    """
+    car = get_object_or_404(Car, pk=pk)
+    if request.method == 'POST':
+        car.delete()
+        messages.success(request, 'Car deleted successfully!')
+        return redirect('admin_panel:car_list')
+    # Render a confirmation page for GET request
+    return render(request, 'admin_panel/confirm_delete_car.html', {'car': car})
 
 @login_required
 @never_cache
