@@ -6,13 +6,25 @@
 
 {% block extra_styles %}
 <style>
-    .checkout-container {
-        padding: 50px 0;
+    /* Checkout Page Specific Background */
+    .checkout-page-background {
+        background-image: url("{% static 'images/banner-bg.png.jpg' %}"); /* Using a similar background as other pages */
+        background-size: cover;
+        background-position: center;
+        background-repeat: no-repeat;
+        padding-top: 50px; /* Add some padding to the top and bottom */
+        padding-bottom: 50px;
+        min-height: calc(100vh - 150px); /* Ensure it takes up sufficient height, adjust as per your header/footer heights */
+        display: flex; /* Use flexbox for vertical centering of inner container */
+        flex-direction: column; /* Stack children vertically */
+        justify-content: center; /* Vertically center content */
     }
+
     .checkout-form-card, .order-summary-card {
         border-radius: 12px;
-        box-shadow: 0 4px 15px rgba(0, 0, 0, 0.05);
+        box-shadow: 0 8px 20px rgba(0, 0, 0, 0.1); /* Slightly more prominent shadow */
         padding: 30px;
+        background-color: #fff; /* Ensure card background is white */
     }
     .checkout-form-card h2, .order-summary-card h2 {
         font-size: 1.8rem;
@@ -35,13 +47,14 @@
         box-shadow: 0 0 0 0.25rem rgba(0, 123, 255, 0.25);
     }
     .btn-place-order {
-        background-color: #28a745;
+        background-color: #28a745; /* Success green */
         border-color: #28a745;
         border-radius: 8px;
         padding: 12px 30px;
         font-size: 1.1rem;
         font-weight: 600;
         margin-top: 20px;
+        transition: background-color 0.3s ease, border-color 0.3s ease;
     }
     .btn-place-order:hover {
         background-color: #218838;
@@ -54,11 +67,12 @@
         display: flex;
         justify-content: space-between;
         align-items: center;
+        color: #333; /* Dark text for summary items */
     }
     .order-summary-total {
         font-size: 1.8rem;
         font-weight: 700;
-        color: #007bff;
+        color: #007bff; /* Primary blue for total */
         border-top: 1px solid #dee2e6;
         padding-top: 15px;
         margin-top: 15px;
@@ -70,11 +84,11 @@
 {% endblock %}
 
 {% block content %}
-<div class="container checkout-container">
-    <h1 class="text-center mb-5 fw-bold text-primary">Checkout</h1>
+<div class="container py-5 checkout-page-background"> {# Added checkout-page-background class #}
+    <h1 class="text-center mb-5 fw-bold text-white">Checkout</h1> {# Changed text-primary to text-white #}
 
-    <div class="row g-4">
-        <div class="col-lg-8">
+    <div class="row g-4 justify-content-center"> {# Added justify-content-center to center the content #}
+        <div class="col-lg-7"> {# Changed from col-lg-8 to col-lg-7 #}
             <div class="card checkout-form-card">
                 <h2>Shipping & Payment Details</h2>
                 <form method="post">
@@ -158,7 +172,7 @@
             </div>
         </div>
 
-        <div class="col-lg-4">
+        <div class="col-lg-5"> {# Changed from col-lg-4 to col-lg-5 #}
             <div class="card order-summary-card">
                 <h2>Your Order</h2>
                 <ul class="list-group list-group-flush order-summary-list">

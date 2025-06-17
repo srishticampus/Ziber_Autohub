@@ -1,0 +1,57 @@
+{% extends "admin_panel/admin_base.html" %}
+{% load static %}
+
+{% block title %}Upcoming Launches{% endblock %}
+
+{% block content %}
+<div class="container-fluid">
+    <h2 class="mb-4">Upcoming Car Launches</h2>
+    <div class="d-flex justify-content-between align-items-center mb-3">
+        <a href="{% url 'admin_panel:add_upcoming_launch' %}" class="btn btn-primary">
+            <i class="fas fa-plus-circle me-2"></i> Add New Launch
+        </a>
+    </div>
+
+    {% if launches %}
+    <div class="table-responsive">
+        <table class="table table-striped table-hover align-middle">
+            <thead class="table-dark">
+                <tr>
+                    <th scope="col">#</th>
+                    <th scope="col">Car Name</th>
+                    <th scope="col">Launch Date</th>
+                    <th scope="col">Time</th>
+                    <th scope="col">Venue</th>
+                    <th scope="col">Location</th>
+                    <th scope="col">Actions</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for launch in launches %}
+                <tr>
+                    <th scope="row">{{ forloop.counter }}</th>
+                    <td>{{ launch.car_name }}</td>
+                    <td>{{ launch.launch_date|date:"M d, Y" }}</td>
+                    <td>{{ launch.launch_time_start|time:"H:i" }} - {{ launch.launch_time_end|time:"H:i" }}</td>
+                    <td>{{ launch.venue }}</td>
+                    <td>{{ launch.location }}</td>
+                    <td>
+                        <a href="{% url 'admin_panel:edit_upcoming_launch' pk=launch.pk %}" class="btn btn-sm btn-info text-white me-2" title="Edit">
+                            <i class="fas fa-edit"></i>
+                        </a>
+                        <a href="{% url 'admin_panel:delete_upcoming_launch' pk=launch.pk %}" class="btn btn-sm btn-danger" title="Delete">
+                            <i class="fas fa-trash-alt"></i>
+                        </a>
+                    </td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
+    {% else %}
+    <div class="alert alert-info text-center mt-4" role="alert">
+        No upcoming car launches found. Add one now!
+    </div>
+    {% endif %}
+</div>
+{% endblock %}

@@ -1,9 +1,9 @@
-# admin_panel/forms.py
+#admin_panel/forms.py
 from django import forms
-from hub.models import Car, JobVacancy, Accessory # Ensure Accessory is imported
+from hub.models import Car, JobVacancy, Accessory
 from django.contrib.auth.models import User
-import re # Import regex module
-
+import re 
+from admin_panel.models import UpcomingLaunch 
 class AddCarForm(forms.ModelForm):
     class Meta:
         model = Car
@@ -83,7 +83,7 @@ class AddJobForm(forms.ModelForm):
             raise forms.ValidationError("Job title can only contain alphabetic characters, spaces, and hyphens.")
         return title
 
-# NEW: Form for Accessories
+#  Form for Accessories
 class AddAccessoryForm(forms.ModelForm):
     class Meta:
         model = Accessory
@@ -101,3 +101,32 @@ class AddAccessoryForm(forms.ModelForm):
                 field.widget.attrs.update({'class': 'form-select'}) # For select/dropdown
             else:
                 field.widget.attrs.update({'class': 'form-control'}) # For other inputs
+
+#  Form for UpcomingLaunch
+class AddUpcomingLaunchForm(forms.ModelForm):
+    class Meta:
+        model = UpcomingLaunch
+        fields = [
+            'car_name', 'car_minimal_details', 'car_description',
+            'launch_date', 'launch_time_start', 'launch_time_end',
+            'venue', 'location'
+        ]
+        widgets = {
+            'car_minimal_details': forms.Textarea(attrs={'rows': 3, 'class': 'form-control'}),
+            'car_description': forms.Textarea(attrs={'rows': 5, 'class': 'form-control'}),
+            'launch_date': forms.DateInput(attrs={'type': 'date', 'class': 'form-control'}),
+            'launch_time_start': forms.TimeInput(attrs={'type': 'time', 'class': 'form-control'}),
+            'launch_time_end': forms.TimeInput(attrs={'type': 'time', 'class': 'form-control'}),
+        }
+
+    def __init__(self, *args, **kwargs):
+        super().__init__(*args, **kwargs)
+        for field_name, field in self.fields.items():
+            # Apply Bootstrap's form-control or form-select where appropriate,
+            # excluding widgets already explicitly set (like Textarea, DateInput, TimeInput)
+            if not isinstance(field.widget, (forms.Textarea, forms.DateInput, forms.TimeInput)):
+                if isinstance(field.widget, forms.Select):
+                    field.widget.attrs.update({'class': 'form-select'})
+                else:
+                    field.widget.attrs.update({'class': 'form-control'})
+
