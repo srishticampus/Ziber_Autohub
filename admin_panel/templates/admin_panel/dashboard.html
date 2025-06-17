@@ -1,45 +1,125 @@
 {% extends "admin_panel/admin_base.html" %}
+{% load static %}
 
 {% block title %}Admin Dashboard{% endblock %}
 
 {% block content %}
 <div class="container-fluid">
-    <h1 class="mb-4">Admin Dashboard</h1>
+    <h2 class="mb-4">Dashboard Overview</h2>
     <div class="row">
-        {# Example cards for overview #}
         <div class="col-md-4 mb-4">
-            <div class="card text-white bg-primary">
+            <div class="card text-white bg-primary shadow-sm h-100">
                 <div class="card-body">
-                    <h5 class="card-title">Total Cars</h5>
-                    <p class="card-text fs-3">{{ total_cars_count }}</p> {# Assuming 'cars' context is passed, or fetch it here #}
+                    <div class="d-flex justify-content-between align-items-center">
+                        <div>
+                            <h5 class="card-title text-white-50">Total Cars</h5>
+                            <h3 class="display-4 fw-bold">{{ total_cars_count }}</h3>
+                        </div>
+                        <i class="fas fa-car fa-3x text-white-50"></i>
+                    </div>
+                    <div class="mt-3">
+                        <a href="{% url 'admin_panel:car_list' %}" class="text-white text-decoration-none">View Details <i class="fas fa-arrow-circle-right"></i></a>
+                    </div>
                 </div>
             </div>
         </div>
         <div class="col-md-4 mb-4">
-            <div class="card text-white bg-success">
+            <div class="card text-white bg-success shadow-sm h-100">
                 <div class="card-body">
-                    <h5 class="card-title">Active Jobs</h5>
-                    <p class="card-text fs-3">{{ active_jobs_count }}</p> {# Assuming 'jobs' context is passed #}
+                    <div class="d-flex justify-content-between align-items-center">
+                        <div>
+                            <h5 class="card-title text-white-50">Active Job Vacancies</h5>
+                            <h3 class="display-4 fw-bold">{{ active_jobs_count }}</h3>
+                        </div>
+                        <i class="fas fa-briefcase fa-3x text-white-50"></i>
+                    </div>
+                    <div class="mt-3">
+                        <a href="{% url 'admin_panel:job_list' %}" class="text-white text-decoration-none">View Details <i class="fas fa-arrow-circle-right"></i></a>
+                    </div>
                 </div>
             </div>
         </div>
         <div class="col-md-4 mb-4">
-            <div class="card text-white bg-info">
+            <div class="card text-white bg-warning shadow-sm h-100">
                 <div class="card-body">
-                    <h5 class="card-title">New Pre-Bookings</h5>
-                    <p class="card-text fs-3">{{ pending_prebookings_count }}</p> {# You'd need to pass this from view #}
+                    <div class="d-flex justify-content-between align-items-center">
+                        <div>
+                            <h5 class="card-title text-white-50">Pending Pre-Bookings</h5>
+                            <h3 class="display-4 fw-bold">{{ pending_prebookings_count }}</h3>
+                        </div>
+                        <i class="fas fa-calendar-check fa-3x text-white-50"></i>
+                    </div>
+                    <div class="mt-3">
+                        <a href="{% url 'admin_panel:view_prebookings' %}" class="text-white text-decoration-none">View Details <i class="fas fa-arrow-circle-right"></i></a>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="col-md-4 mb-4">
+            <div class="card text-white bg-info shadow-sm h-100">
+                <div class="card-body">
+                    <div class="d-flex justify-content-between align-items-center">
+                        <div>
+                            <h5 class="card-title text-white-50">Total Accessories</h5>
+                            <h3 class="display-4 fw-bold">{{ total_accessories_count }}</h3>
+                        </div>
+                        <i class="fas fa-screwdriver-wrench fa-3x text-white-50"></i>
+                    </div>
+                    <div class="mt-3">
+                        <a href="{% url 'admin_panel:accessory_list' %}" class="text-white text-decoration-none">View Details <i class="fas fa-arrow-circle-right"></i></a>
+                    </div>
+                </div>
+            </div>
+        </div>
+        {# NEW: Upcoming Launches Card #}
+        <div class="col-md-4 mb-4">
+            <div class="card text-white bg-secondary shadow-sm h-100">
+                <div class="card-body">
+                    <div class="d-flex justify-content-between align-items-center">
+                        <div>
+                            <h5 class="card-title text-white-50">Upcoming Launches</h5>
+                            <h3 class="display-4 fw-bold">{{ total_upcoming_launches_count }}</h3>
+                        </div>
+                        <i class="fas fa-rocket fa-3x text-white-50"></i> {# Rocket icon for launches #}
+                    </div>
+                    <div class="mt-3">
+                        <a href="{% url 'admin_panel:upcoming_launch_list' %}" class="text-white text-decoration-none">View Details <i class="fas fa-arrow-circle-right"></i></a>
+                    </div>
                 </div>
             </div>
         </div>
     </div>
 
-    {# You can add quick links here if needed #}
-    <div class="list-group">
-        <a href="{% url 'admin_panel:add_car' %}" class="list-group-item list-group-item-action"><i class="fas fa-plus-circle me-2"></i> Add New Car</a>
-        <a href="{% url 'admin_panel:car_list' %}" class="list-group-item list-group-item-action"><i class="fas fa-list me-2"></i> View All Cars</a>
-        <a href="{% url 'admin_panel:add_job' %}" class="list-group-item list-group-item-action"><i class="fas fa-plus-square me-2"></i> Post Job Vacancy</a>
-        <a href="{% url 'admin_panel:job_list' %}" class="list-group-item list-group-item-action"><i class="fas fa-clipboard-list me-2"></i> View Job Listings</a>
-        <a href="{% url 'admin_panel:view_prebookings' %}" class="list-group-item list-group-item-action"><i class="fas fa-calendar-alt me-2"></i> View Pre-Bookings</a>
+    {# Quick links section #}
+    <h3 class="mb-3 mt-4">Quick Actions</h3>
+    <div class="list-group shadow-sm">
+        <a href="{% url 'admin_panel:add_car' %}" class="list-group-item list-group-item-action">
+            <i class="fas fa-plus-circle me-2 text-primary"></i> Add New Car
+        </a>
+        <a href="{% url 'admin_panel:add_accessory' %}" class="list-group-item list-group-item-action">
+            <i class="fas fa-plus-circle me-2 text-info"></i> Add New Accessory
+        </a>
+        <a href="{% url 'admin_panel:add_upcoming_launch' %}" class="list-group-item list-group-item-action">
+            <i class="fas fa-plus-circle me-2 text-secondary"></i> Add New Upcoming Launch
+        </a>
+        <a href="{% url 'admin_panel:add_job' %}" class="list-group-item list-group-item-action">
+            <i class="fas fa-plus-square me-2 text-success"></i> Post Job Vacancy
+        </a>
+        <a href="{% url 'admin_panel:car_list' %}" class="list-group-item list-group-item-action">
+            <i class="fas fa-list me-2 text-primary"></i> View All Cars
+        </a>
+        <a href="{% url 'admin_panel:accessory_list' %}" class="list-group-item list-group-item-action">
+            <i class="fas fa-list me-2 text-info"></i> View All Accessories
+        </a>
+        <a href="{% url 'admin_panel:upcoming_launch_list' %}" class="list-group-item list-group-item-action">
+            <i class="fas fa-list me-2 text-secondary"></i> View Upcoming Launches
+        </a>
+        <a href="{% url 'admin_panel:job_list' %}" class="list-group-item list-group-item-action">
+            <i class="fas fa-clipboard-list me-2 text-success"></i> View Job Listings
+        </a>
+        <a href="{% url 'admin_panel:view_prebookings' %}" class="list-group-item list-group-item-action">
+            <i class="fas fa-calendar-alt me-2 text-warning"></i> View Pre-Bookings
+        </a>
     </div>
 </div>
 {% endblock %}

@@ -383,7 +383,7 @@ def car_detail(request, pk):
     }
     return render(request, 'car_detail.html', context)
 
-# NEW: Accessory list view
+#  Accessory list view
 def accessory_list(request):
     query = request.GET.get('q', '')
     category_filter = request.GET.get('category', '')
@@ -430,7 +430,7 @@ def accessory_list(request):
     }
     return render(request, 'accessory_list.html', context)
 
-# NEW: Accessory detail view
+# Accessory detail view
 @login_required
 def accessory_detail(request, pk):
     accessory = get_object_or_404(Accessory, pk=pk)

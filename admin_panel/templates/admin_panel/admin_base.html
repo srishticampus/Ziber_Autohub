@@ -76,7 +76,7 @@
                     </a>
                 </li>
                 <li class="nav-item">
-                    <a class="nav-link {% if 'car' in request.resolver_match.view_name %}active{% endif %}" href="{% url 'admin_panel:car_list' %}"> {# Updated to check 'car' in view name #}
+                    <a class="nav-link {% if 'car' in request.resolver_match.view_name and not 'upcoming_launch' in request.resolver_match.view_name %}active{% endif %}" href="{% url 'admin_panel:car_list' %}">
                         <i class="fas fa-car me-2"></i> Cars
                     </a>
                     <ul class="nav flex-column ps-3">
@@ -89,7 +89,7 @@
                     </ul>
                 </li>
                 <li class="nav-item">
-                    <a class="nav-link {% if 'job' in request.resolver_match.view_name %}active{% endif %}" href="{% url 'admin_panel:job_list' %}"> {# Updated to check 'job' in view name #}
+                    <a class="nav-link {% if 'job' in request.resolver_match.view_name %}active{% endif %}" href="{% url 'admin_panel:job_list' %}">
                         <i class="fas fa-briefcase me-2"></i> Jobs
                     </a>
                     <ul class="nav flex-column ps-3">
@@ -112,6 +112,20 @@
                         </li>
                         <li class="nav-item">
                             <a class="nav-link text-small {% if request.resolver_match.view_name == 'admin_panel:add_accessory' %}active{% endif %}" href="{% url 'admin_panel:add_accessory' %}">Add New Accessory</a>
+                        </li>
+                    </ul>
+                </li>
+                {# NEW: Upcoming Launches Link #}
+                <li class="nav-item">
+                    <a class="nav-link {% if 'upcoming_launch' in request.resolver_match.view_name %}active{% endif %}" href="{% url 'admin_panel:upcoming_launch_list' %}">
+                        <i class="fas fa-calendar-alt me-2"></i> Upcoming Launches
+                    </a>
+                    <ul class="nav flex-column ps-3">
+                        <li class="nav-item">
+                            <a class="nav-link text-small {% if request.resolver_match.view_name == 'admin_panel:upcoming_launch_list' %}active{% endif %}" href="{% url 'admin_panel:upcoming_launch_list' %}">View All Launches</a>
+                        </li>
+                        <li class="nav-item">
+                            <a class="nav-link text-small {% if request.resolver_match.view_name == 'admin_panel:add_upcoming_launch' %}active{% endif %}" href="{% url 'admin_panel:add_upcoming_launch' %}">Add New Launch</a>
                         </li>
                     </ul>
                 </li>
@@ -175,7 +189,7 @@
                         // alert.style.transition = 'opacity 1s ease-out';
                         // alert.style.opacity = '0';
                         // setTimeout(function() {
-                        //     alert.remove();
+                        //      alert.remove();
                         // }, 1000);
                     }, 5000); // 5000 milliseconds = 5 seconds
                 }

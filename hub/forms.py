@@ -142,7 +142,10 @@ class CheckoutForm(forms.Form):
     
     PAYMENT_CHOICES = [
         ('cash_on_delivery', 'Cash on Delivery'),
-        # You can add more payment options here later, e.g., 'credit_card'
+        ('credit_card', 'Credit Card'),
+        ('debit_card', 'Debit Card'),
+        ('net_banking', 'Net Banking'),
+        ('upi', 'UPI')
     ]
     payment_method = forms.ChoiceField(
         choices=PAYMENT_CHOICES,
