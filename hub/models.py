@@ -306,3 +306,24 @@ class ServiceBooking(models.Model):
     def __str__(self):
         return f"{self.car} - {self.service_type} ({self.status})"
 
+class LaunchRegistration(models.Model):
+    """
+    Model to store registrations for upcoming car launch events.
+    """
+    launch = models.ForeignKey('admin_panel.UpcomingLaunch', on_delete=models.CASCADE, related_name='registrations')
+    full_name = models.CharField(max_length=200, help_text="Your full name.")
+    email = models.EmailField(help_text="Your email address.")
+    phone_number = models.CharField(max_length=20, blank=True, null=True, help_text="Your phone number (optional).")
+    registration_date = models.DateTimeField(auto_now_add=True)
+    # You could add more fields like:
+    # preferred_contact_method = models.CharField(max_length=50, blank=True)
+    # how_heard = models.CharField(max_length=100, blank=True)
+
+    class Meta:
+        verbose_name = "Launch Registration"
+        verbose_name_plural = "Launch Registrations"
+        ordering = ['-registration_date']
+        unique_together = ('launch', 'email') # Prevent duplicate registrations for the same launch by the same email
+
+    def __str__(self):
+        return f"{self.full_name} registered for {self.launch.car_name}"

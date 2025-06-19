@@ -6,7 +6,7 @@ from django.views.decorators.cache import never_cache
 from django.contrib import messages
 from django.db import transaction
 from django.utils import timezone
-from hub.models import Car, JobVacancy, PreBooking, Accessory
+from hub.models import Car, JobVacancy, PreBooking, Accessory,LaunchRegistration
 from .models import UpcomingLaunch
 from .forms import AddCarForm, AddJobForm, AddAccessoryForm, AddUpcomingLaunchForm
 
@@ -339,3 +339,17 @@ def delete_upcoming_launch(request, pk):
         messages.success(request, 'Upcoming launch deleted successfully!')
         return redirect('admin_panel:upcoming_launch_list')
     return render(request, 'admin_panel/confirm_delete_upcoming_launch.html', {'launch': launch})
+
+# VIEW TO LIST LAUNCH REGISTRATIONS
+@login_required
+@never_cache
+@staff_member_required
+def view_launch_registrations(request):
+    """
+    Displays a list of all upcoming launch registrations.
+    """
+    registrations = LaunchRegistration.objects.all().order_by('-registration_date')
+    context = {
+        'registrations': registrations
+    }
+    return render(request, 'admin_panel/view_launch_registrations.html', context)

@@ -138,7 +138,7 @@
 {% block content %}
     <div class="banner_section_demo layout_padding" id="dynamicBannerBackground">
         <div class="container h-100 d-flex align-items-center justify-content-center">
-            <div id="my_slider" class="carousel slide w-100" data-bs-ride="carousel" data-bs-interval="5000"> 
+            <div id="my_slider" class="carousel slide w-100" data-bs-ride="carousel" data-bs-interval="5000">
                 <div class="carousel-inner">
                     <div class="carousel-item active">
                         <div class="row justify-content-center">
@@ -205,10 +205,10 @@
                 <h2 class="text-uppercase new-launch-heading">Upcoming Car Launches</h2> {# Updated heading #}
             </div>
 
-            <div id="new_launch_slider" class="carousel slide" data-bs-ride="carousel" data-bs-interval="5000"> 
+            <div id="new_launch_slider" class="carousel slide" data-bs-ride="carousel" data-bs-interval="5000">
                 <div class="carousel-inner">
                     {# Loop through upcoming_launches passed from the view #}
-                    {% for launch in upcoming_launches %} 
+                    {% for launch in upcoming_launches %}
                     <div class="carousel-item {% if forloop.first %}active{% endif %}">
                         <div class="row justify-content-center">
                             <div class="col-sm-6 col-md-4 text-center"> {# Adjusted column size for better display #}
@@ -231,8 +231,8 @@
                                         <strong>Venue:</strong> {{ launch.venue }}, {{ launch.location }}
                                     </p>
                                     <div class="mt-3">
-                                        {# Link to a general launches list, as specific detail pages might not exist yet #}
-                                        <a href="{% url 'admin_panel:upcoming_launch_list' %}" class="btn buynow_bt btn-sm">View All Launches</a>
+                                        {# CHANGED BUTTON: Link to registration form for this specific launch #}
+                                        <a href="{% url 'hub:register_for_launch' pk=launch.pk %}" class="btn buynow_bt btn-sm">Register for Event</a>
                                     </div>
                                 </div>
                             </div>
@@ -257,11 +257,11 @@
                 </div>
 
                 {% if upcoming_launches|length > 1 %} {# Show controls only if there's more than one launch #}
-                <button class="carousel-control-prev" type="button" data-bs-target="#new_launch_slider" data-bs-slide="prev"> 
+                <button class="carousel-control-prev" type="button" data-bs-target="#new_launch_slider" data-bs-slide="prev">
                     <i class="fa fa-angle-left"></i>
                     <span class="visually-hidden">Previous</span>
                 </button>
-                <button class="carousel-control-next" type="button" data-bs-target="#new_launch_slider" data-bs-slide="next"> 
+                <button class="carousel-control-next" type="button" data-bs-target="#new_launch_slider" data-bs-slide="next">
                     <i class="fa fa-angle-right"></i>
                     <span class="visually-hidden">Next</span>
                 </button>
@@ -272,7 +272,7 @@
 {% endblock %}
 
 {% block scripts %}
-    {{ block.super }} 
+    {{ block.super }}
     <script>
         document.addEventListener('DOMContentLoaded', function() {
             const mySlider = document.getElementById('my_slider');

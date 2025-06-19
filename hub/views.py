@@ -18,13 +18,13 @@ from decimal import Decimal
 from django.db import transaction # Import transaction for atomic operations
 
 from .models import UserProfile, Car, ServiceBooking, JobVacancy, JobApplication, PreBooking, Accessory # Import Accessory
-from .models import Cart, CartItem, Order, OrderItem # Explicitly import Cart and Order related models
+from .models import Cart, CartItem, Order, OrderItem,LaunchRegistration # Explicitly import Cart and Order related models
 from admin_panel.models import UpcomingLaunch
 
 from .forms import (
     # UserRegistrationForm, # Assuming this is handled in register_user directly
     JobApplicationForm, JobVacancyForm, CarDetailsForm, PreBookingForm, UsedCarFilterForm, UsedCarForm,
-    AddToCartForm, CheckoutForm # Import the new forms
+    AddToCartForm, CheckoutForm,LaunchRegistrationForm # Import the new forms
 )
 from datetime import timedelta, date
 from django.utils import timezone # Make sure timezone is imported for any date operations
@@ -1154,3 +1154,29 @@ def service_chatbot(request):
         'car_service_options': json.dumps(car_service_options), # Pass as JSON string
     }
     return render(request, 'service_chatbot.html', context) # Assuming your chatbot template is named service_chatbot.html
+
+# NEW VIEW FOR LAUNCH REGISTRATION
+def register_for_launch(request, pk):
+    launch = get_object_or_404(UpcomingLaunch, pk=pk)
+    if request.method == 'POST':
+        form = LaunchRegistrationForm(request.POST)
+        if form.is_valid():
+            # Check for duplicate registration before saving
+            if LaunchRegistration.objects.filter(launch=launch, email=form.cleaned_data['email']).exists():
+                messages.warning(request, "You have already registered for this launch with this email.")
+            else:
+                registration = form.save(commit=False)
+                registration.launch = launch
+                registration.save()
+                messages.success(request, f"Thank you for registering for the {launch.car_name} launch!")
+                return redirect('hub:demo') # Redirect to home or a confirmation page
+        else:
+            messages.error(request, "Please correct the errors in the form.")
+    else:
+        form = LaunchRegistrationForm(initial={'launch': launch.pk}) # Pre-fill launch ID
+
+    context = {
+        'form': form,
+        'launch': launch,
+    }
+    return render(request, 'register_for_launch.html', context)

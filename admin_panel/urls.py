@@ -35,4 +35,7 @@ urlpatterns = [
     path('upcoming-launches/add/', views.add_upcoming_launch, name='add_upcoming_launch'),
     path('upcoming-launches/edit/<int:pk>/', views.edit_upcoming_launch, name='edit_upcoming_launch'),
     path('upcoming-launches/delete/<int:pk>/', views.delete_upcoming_launch, name='delete_upcoming_launch'),
+
+    # Launch Registrations Management
+    path('launch-registrations/', views.view_launch_registrations, name='view_launch_registrations'),
 ]

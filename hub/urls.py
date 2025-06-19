@@ -63,6 +63,7 @@ urlpatterns = [
     # Other pages
     path('news/', views.news, name='news'),
     path('products/', views.products, name='products'), # This should ideally be 'new_releases' or something similar
+    path('launch/<int:pk>/register/', views.register_for_launch, name='register_for_launch'),
 
     # ml prediction page
     path('predict/', views.predict_price, name='predict_price'),
