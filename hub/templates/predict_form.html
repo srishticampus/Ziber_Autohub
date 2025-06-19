@@ -1,92 +1,126 @@
 {% extends "base.html" %}
 
+{% load static %}
+{% load widget_tweaks%}
+
 {% block title %}
 Car Price Prediction - Ziber Autohub
 {% endblock %}
 
 {% block extra_styles %}
 <style>
+    /* Ensure the body has a consistent background, if not already set in base.html */
+    body {
+        background-color: #f8f9fa; /* Light gray background for the entire page */
+    }
+
     /* Styles for the Prediction Form Card */
-    .predict-card { 
+    .predict-card {
         background-color: #ffffff; /* White background for visibility */
-        padding: 30px;
-        border-radius: 8px;
-        box-shadow: 0 4px 12px rgba(0, 0, 0, 0.2); /* Subtle shadow for depth */
-        margin-top: 50px; /* Adjust as needed to push it down from header */
-        margin-bottom: 50px; /* Adjust as needed */
+        padding: 40px; /* Increased padding inside the card */
+        border-radius: 12px; /* Slightly more rounded corners */
+        box-shadow: 0 8px 20px rgba(0, 0, 0, 0.1); /* More pronounced shadow */
+        margin-top: 60px; /* Adjust as needed to push it down from header */
+        margin-bottom: 60px; /* Adjust as needed */
+        border-top: 5px solid #f26522; /* Brand color top border for distinction */
     }
     .predict-card h2 {
-        color: #333333; /* Darker heading color */
-        margin-bottom: 25px;
+        color: #212529; /* Darker heading color for strong contrast */
+        margin-bottom: 30px; /* More space below heading */
         font-weight: 700;
+        text-transform: uppercase; /* Uppercase for heading */
+        letter-spacing: 1px;
     }
     .predict-card .form-label {
-        color: #555555; /* Dark gray for labels */
-        font-weight: 500;
-        margin-bottom: 5px;
+        color: #343a40; /* Darker gray for labels */
+        font-weight: 600; /* Bolder labels */
+        margin-bottom: 8px; /* More space below label */
+        display: block; /* Ensure labels take full width */
     }
-    .predict-card .form-control {
+    .predict-card .form-control,
+    .predict-card .form-select { /* Apply to select elements too */
         border: 1px solid #ced4da; /* Standard border */
-        padding: 10px 15px;
-        border-radius: 5px;
-        margin-bottom: 15px; /* Spacing below each input */
+        padding: 12px 18px; /* Increased padding for inputs */
+        border-radius: 8px; /* Rounded input fields */
+        margin-bottom: 15px; /* Consistent spacing below each input */
     }
-    .predict-card .form-control:focus {
+    .predict-card .form-control:focus,
+    .predict-card .form-select:focus {
         border-color: #f26522; /* Highlight on focus */
-        box-shadow: 0 0 0 0.25rem rgba(242, 101, 34, 0.25);
+        box-shadow: 0 0 0 0.3rem rgba(242, 101, 34, 0.3); /* Stronger focus shadow */
     }
     .predict-card .text-danger {
         color: #dc3545; /* Bootstrap red for error messages */
-        font-size: 0.875em;
+        font-size: 0.9em; /* Slightly smaller font for errors */
         margin-top: -10px; /* Pull error message closer to field */
-        margin-bottom: 10px;
+        margin-bottom: 15px; /* Consistent spacing after error */
+        display: block; /* Ensure errors break to new line */
     }
     .predict-card .btn-danger {
         background-color: #f26522; /* Your brand color for buttons */
         border-color: #f26522;
         color: white;
-        padding: 10px 20px;
-        font-size: 1.1em;
-        font-weight: 600;
-        border-radius: 5px;
-        transition: background-color 0.3s ease;
+        padding: 12px 25px; /* Increased padding for button */
+        font-size: 1.15em; /* Slightly larger font for button */
+        font-weight: 700; /* Bolder button text */
+        border-radius: 8px; /* Rounded button corners */
+        transition: background-color 0.3s ease, transform 0.2s ease;
+        width: 100%; /* Make button full width */
     }
     .predict-card .btn-danger:hover {
         background-color: #e05e1e; /* Darker shade on hover */
         border-color: #e05e1e;
+        transform: translateY(-2px); /* Slight lift effect on hover */
     }
 
-    /* Ensure the main content area has enough vertical padding if needed,
-       though my-5 on col-md-6 usually handles this well for the container */
-    .container.my-5 {
-        padding-top: 50px;
-        padding-bottom: 50px;
+    /* General container padding for responsive spacing */
+    .container.py-5 {
+        min-height: calc(100vh - 150px); /* Adjust to ensure content pushes footer down */
+        display: flex;
+        align-items: center; /* Vertically center the card */
+        justify-content: center; /* Horizontally center the card */
     }
 </style>
 {% endblock %}
 
 {% block content %}
-<div class="container bg-dark">
-  <div class="row justify-content-center">
-    <div class="col-md-6 col-lg-5">
-      <div class="predict-card"> 
-        <h2 class="text-center">Predict Car Selling Price</h2>
-        <form method="post" novalidate>
-          {% csrf_token %}
-          {{ form.non_field_errors }}
-          {% for field in form %}
-            <div class="form-group">
-              <label class="form-label" for="{{ field.id_for_label }}">{{ field.label }}</label>
-              {{ field }}
-              {% if field.errors %}
-                <div class="text-danger mt-3">{{ field.errors|striptags }}</div>
-              {% endif %}
+<div class="container py-5"> {# Added py-5 for top/bottom padding #}
+    <div class="row justify-content-center w-100"> {# w-100 ensures row takes full width of container #}
+        <div class="col-md-7 col-lg-6"> {# Adjusted column size for better aesthetic on larger screens #}
+            <div class="predict-card">
+                <h2 class="text-center">Predict your Car's Selling Price</h2>
+                {% if model_unavailable %}
+                    <div class="alert alert-warning text-center" role="alert">
+                        The car price prediction model is currently unavailable. Please try again later.
+                    </div>
+                {% endif %}
+                <form method="post" novalidate>
+                    {% csrf_token %}
+                    {% if form.non_field_errors %}
+                        <div class="alert alert-danger" role="alert">
+                            {{ form.non_field_errors }}
+                        </div>
+                    {% endif %}
+                    {% for field in form %}
+                        <div class="mb-4"> {# Consistent margin-bottom #}
+                            <label class="form-label" for="{{ field.id_for_label }}">{{ field.label }}</label>
+                            {% if field.field.widget.input_type == 'select' %}
+                                {{ field|add_class:"form-select" }} {# Apply form-select for dropdowns #}
+                            {% else %}
+                                {{ field|add_class:"form-control" }} {# Apply form-control for other inputs #}
+                            {% endif %}
+                            {% if field.help_text %}
+                                <small class="form-text text-muted">{{ field.help_text }}</small>
+                            {% endif %}
+                            {% if field.errors %}
+                                <div class="text-danger mt-1">{{ field.errors|striptags }}</div> {# Spacing from input #}
+                            {% endif %}
+                        </div>
+                    {% endfor %}
+                    <button type="submit" class="btn btn-danger">Predict</button>
+                </form>
             </div>
-          {% endfor %}
-          <button type="submit" class="btn btn-danger btn-block">Predict</button>
-        </form>
-      </div>
+        </div>
     </div>
-  </div>
 </div>
 {% endblock %}
