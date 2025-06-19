@@ -1180,3 +1180,10 @@ def register_for_launch(request, pk):
         'launch': launch,
     }
     return render(request, 'register_for_launch.html', context)
+
+# About Us View
+def about_us(request):
+    """
+    Renders the About Us page.
+    """
+    return render(request, 'about_us.html')

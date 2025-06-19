@@ -67,4 +67,6 @@ urlpatterns = [
 
     # ml prediction page
     path('predict/', views.predict_price, name='predict_price'),
+
+    path('about-us/', views.about_us, name='about_us'),
 ]
