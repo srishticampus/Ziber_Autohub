@@ -19,6 +19,7 @@ from django.db import transaction # Import transaction for atomic operations
 
 from .models import UserProfile, Car, ServiceBooking, JobVacancy, JobApplication, PreBooking, Accessory # Import Accessory
 from .models import Cart, CartItem, Order, OrderItem # Explicitly import Cart and Order related models
+from admin_panel.models import UpcomingLaunch
 
 from .forms import (
     # UserRegistrationForm, # Assuming this is handled in register_user directly
@@ -41,15 +42,19 @@ def index(request):
     })
 
 def demo(request):
-    # Fetch more new cars for the main banner and new launches section (e.g., 6 items)
-    featured_new_cars = Car.objects.filter(is_new=True).order_by('-created_at')[:6]
-
-    # Fetch general cars for the 'news' images to provide diverse content
-    latest_news_cars = Car.objects.order_by('-created_at')[:6]
+    """
+    Renders the 'demo' page which serves as the main landing/home page,
+    featuring dynamic banner backgrounds and upcoming car launches.
+    """
+    # Fetch upcoming car launches to display in the dedicated section
+    # Order by launch date to show the soonest launches first
+    upcoming_launches = UpcomingLaunch.objects.all().order_by('launch_date', 'launch_time_start')
 
     context = {
-        'featured_new_cars': featured_new_cars,
-        'latest_news_cars': latest_news_cars,
+        'upcoming_launches': upcoming_launches,
+        # 'featured_new_cars' and 'latest_news_cars' are no longer passed here
+        # as the 'demo.html' template now handles these sections with static
+        # content or data from 'upcoming_launches'.
     }
     return render(request, 'demo.html', context)
 

@@ -19,6 +19,7 @@
                 <tr>
                     <th scope="col">#</th>
                     <th scope="col">Car Name</th>
+                    <th scope="col">Image</th> {# New column for image #}
                     <th scope="col">Launch Date</th>
                     <th scope="col">Time</th>
                     <th scope="col">Venue</th>
@@ -31,6 +32,13 @@
                 <tr>
                     <th scope="row">{{ forloop.counter }}</th>
                     <td>{{ launch.car_name }}</td>
+                    <td>
+                        {% if launch.image %}
+                            <img src="{{ launch.image.url }}" alt="{{ launch.car_name }}" style="width: 80px; height: auto; border-radius: 4px;">
+                        {% else %}
+                            <img src="https://placehold.co/80x50/EFEFEF/AAAAAA?text=No+Img" alt="No Image" style="width: 80px; height: auto; border-radius: 4px;">
+                        {% endif %}
+                    </td> {# Display image or placeholder #}
                     <td>{{ launch.launch_date|date:"M d, Y" }}</td>
                     <td>{{ launch.launch_time_start|time:"H:i" }} - {{ launch.launch_time_end|time:"H:i" }}</td>
                     <td>{{ launch.venue }}</td>

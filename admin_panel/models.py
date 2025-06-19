@@ -1,12 +1,10 @@
 #admin_panel/models.py
 from django.db import models
 
-# Create your models here.
-
 class UpcomingLaunch(models.Model):
     """
     Model to store details about upcoming car launches,
-    including car specifics and launch event details.
+    including car specifics, launch event details, and an associated image.
     """
     car_name = models.CharField(max_length=200, help_text="Name of the car being launched.")
     car_minimal_details = models.TextField(
@@ -17,6 +15,7 @@ class UpcomingLaunch(models.Model):
         blank=True,
         help_text="Detailed description of the upcoming car."
     )
+    image = models.ImageField(upload_to='upcoming_launches/', blank=True, null=True, help_text="Image of the upcoming car.") # NEW FIELD
     
     launch_date = models.DateField(help_text="Date of the car launch event.")
     launch_time_start = models.TimeField(help_text="Start time of the launch event.")
@@ -34,3 +33,4 @@ class UpcomingLaunch(models.Model):
 
     def __str__(self):
         return f"{self.car_name} Launch on {self.launch_date}"
+
