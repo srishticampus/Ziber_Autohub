@@ -331,29 +331,31 @@ class LaunchRegistration(models.Model):
 # Add these to your models.py
 
 class TestDriveBooking(models.Model):
+    STATUS_CHOICES = [
+        ('Pending', 'Pending'),
+        ('Confirmed', 'Confirmed'),
+        ('Cancelled', 'Cancelled'),
+    ]
     user = models.ForeignKey(User, on_delete=models.CASCADE)
     car = models.ForeignKey(Car, on_delete=models.CASCADE)
     preferred_date = models.DateField()
     preferred_time = models.TimeField()
-    status = models.CharField(max_length=20, choices=[
-        ('Pending', 'Pending'),
-        ('Confirmed', 'Confirmed'),
-        ('Cancelled', 'Cancelled'),
-    ], default='Pending')
+    status = models.CharField(max_length=20, choices=STATUS_CHOICES, default='Pending')
     created_at = models.DateTimeField(auto_now_add=True)
 
     def __str__(self):
         return f"Test drive for {self.car} by {self.user.username} on {self.preferred_date}"
 
 class Complaint(models.Model):
-    user = models.ForeignKey(User, on_delete=models.CASCADE)
-    subject = models.CharField(max_length=200)
-    description = models.TextField()
-    status = models.CharField(max_length=20, choices=[
+    STATUS_CHOICES = [
         ('Open', 'Open'),
         ('In Progress', 'In Progress'),
         ('Resolved', 'Resolved'),
-    ], default='Open')
+    ]
+    user = models.ForeignKey(User, on_delete=models.CASCADE)
+    subject = models.CharField(max_length=200)
+    description = models.TextField()
+    status = models.CharField(max_length=20, choices=STATUS_CHOICES, default='Open')
     created_at = models.DateTimeField(auto_now_add=True)
     resolved_at = models.DateTimeField(null=True, blank=True)
 

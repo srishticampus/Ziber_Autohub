@@ -353,3 +353,85 @@ def view_launch_registrations(request):
         'registrations': registrations
     }
     return render(request, 'admin_panel/view_launch_registrations.html', context)
+
+# Add these to admin_panel/views.py
+from hub.models import TestDriveBooking, Feedback, Complaint
+
+@login_required
+@never_cache
+@staff_member_required
+def complaint_list(request):
+    """
+    Displays a list of all complaints.
+    """
+    complaints = Complaint.objects.all().order_by('-created_at')
+    context = {
+        'complaints': complaints,
+        'status_choices': Complaint._meta.get_field('status').choices
+    }
+    return render(request, 'admin_panel/complaint_list.html', context)
+
+@login_required
+@never_cache
+@staff_member_required
+def update_complaint_status(request, pk):
+    """
+    Updates the status of a complaint.
+    """
+    complaint = get_object_or_404(Complaint, pk=pk)
+    if request.method == 'POST':
+        new_status = request.POST.get('status')
+        if new_status in dict(Complaint.STATUS_CHOICES).keys():
+            complaint.status = new_status
+            if new_status == 'Resolved':
+                complaint.resolved_at = timezone.now()
+            complaint.save()
+            messages.success(request, f"Complaint #{pk} status updated to {new_status}.")
+        else:
+            messages.error(request, "Invalid status selected.")
+    return redirect('admin_panel:complaint_list')
+
+@login_required
+@never_cache
+@staff_member_required
+def test_drive_list(request):
+    """
+    Displays a list of all test drive bookings.
+    """
+    test_drives = TestDriveBooking.objects.all().order_by('-created_at')
+    context = {
+        'test_drives': test_drives,
+        'status_choices': TestDriveBooking._meta.get_field('status').choices
+    }
+    return render(request, 'admin_panel/test_drive_list.html', context)
+
+@login_required
+@never_cache
+@staff_member_required
+def update_test_drive_status(request, pk):
+    """
+    Updates the status of a test drive booking.
+    """
+    test_drive = get_object_or_404(TestDriveBooking, pk=pk)
+    if request.method == 'POST':
+        new_status = request.POST.get('status')
+        if new_status in dict(TestDriveBooking.STATUS_CHOICES).keys():
+            test_drive.status = new_status
+            test_drive.save()
+            messages.success(request, f"Test drive #{pk} status updated to {new_status}.")
+        else:
+            messages.error(request, "Invalid status selected.")
+    return redirect('admin_panel:test_drive_list')
+
+@login_required
+@never_cache
+@staff_member_required
+def feedback_list(request):
+    """
+    Displays a list of all feedback submissions.
+    """
+    feedbacks = Feedback.objects.all().order_by('-created_at')
+    context = {
+        'feedbacks': feedbacks
+    }
+    return render(request, 'admin_panel/feedback_list.html', context)

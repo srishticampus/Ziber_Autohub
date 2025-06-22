@@ -38,4 +38,11 @@ urlpatterns = [
 
     # Launch Registrations Management
     path('launch-registrations/', views.view_launch_registrations, name='view_launch_registrations'),
+
+    path('complaints/', views.complaint_list, name='complaint_list'),
+    path('complaints/<int:pk>/update-status/', views.update_complaint_status, name='update_complaint_status'),
+
+    path('test-drives/', views.test_drive_list, name='test_drive_list'),
+    path('test-drives/<int:pk>/update-status/', views.update_test_drive_status, name='update_test_drive_status'),
+    path('feedback/', views.feedback_list, name='feedback_list'),
 ]
