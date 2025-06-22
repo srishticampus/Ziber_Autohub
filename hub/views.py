@@ -1254,3 +1254,31 @@ def submit_feedback_api(request):
         except Exception as e:
             return JsonResponse({"success": False, "message": f"An error occurred: {str(e)}"})
     return JsonResponse({"success": False, "message": "Invalid request method"})
+
+@login_required
+def my_complaints(request):
+    complaints = Complaint.objects.filter(user=request.user).order_by('-created_at')
+    return render(request, 'my_complaints.html', {'complaints': complaints})
+
+@login_required
+def my_test_drives(request):
+    test_drives = TestDriveBooking.objects.filter(user=request.user).order_by('-created_at')
+    return render(request, 'my_test_drives.html', {'test_drives': test_drives})
+
+@login_required
+def cancel_test_drive(request, pk):
+    test_drive = get_object_or_404(TestDriveBooking, pk=pk, user=request.user)
+    
+    if test_drive.status == 'Pending':
+        test_drive.status = 'Cancelled'
+        test_drive.save()
+        messages.success(request, 'Your test drive booking has been cancelled.')
+    else:
+        messages.error(request, 'You can only cancel pending test drive bookings.')
+    
+    return redirect('hub:my_test_drives')
+
+@login_required
+def my_feedback(request):
+    feedbacks = Feedback.objects.filter(user=request.user).order_by('-created_at')
+    return render(request, 'my_feedback.html', {'feedbacks': feedbacks})

@@ -73,4 +73,11 @@ urlpatterns = [
     path('book-test-drive-api/', views.book_test_drive_api, name='book_test_drive_api'),
     path('submit-complaint-api/', views.submit_complaint_api, name='submit_complaint_api'),
     path('submit-feedback-api/', views.submit_feedback_api, name='submit_feedback_api'),
+
+    path('my-complaints/', views.my_complaints, name='my_complaints'),
+    
+    path('my-test-drives/', views.my_test_drives, name='my_test_drives'),
+    # path('test-drives/<int:pk>/', views.test_drive_detail, name='test_drive_detail'),
+    path('test-drives/<int:pk>/cancel/', views.cancel_test_drive, name='cancel_test_drive'),
+    path('my-feedback/', views.my_feedback, name='my_feedback'),
 ]
