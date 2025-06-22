@@ -1110,7 +1110,10 @@ def book_service_api(request):
 # NEW: service_chatbot view
 @login_required
 def service_chatbot(request):
-    # This logic is similar to book_service to provide data for the chatbot
+    # For test drives, show all available new cars
+    available_cars = Car.objects.filter(is_new=True).values('id', 'name', 'model')
+    
+    # For service booking, show only delivered cars
     delivered_cars_ids = PreBooking.objects.filter(
         user=request.user,
         car__is_new=True,
@@ -1118,14 +1121,16 @@ def service_chatbot(request):
     ).values_list('car_id', flat=True)
 
     eligible_cars_queryset = Car.objects.filter(id__in=delivered_cars_ids)
-
-    # Convert queryset to list of dictionaries for JSON serialization
+    
+    # Convert querysets to lists of dictionaries for JSON serialization
+    test_drive_cars = list(available_cars)
     eligible_cars = list(eligible_cars_queryset.values('id', 'name', 'model'))
 
+    # Prepare service options for service booking
     car_service_options = {}
     service_order_map = {'1st': 1, '2nd': 2, '3rd': 3, '4th': 4}
 
-    for car in eligible_cars_queryset: # Use queryset here to get full object for filtering
+    for car in eligible_cars_queryset:
         booked_services_for_car = ServiceBooking.objects.filter(
             user=request.user,
             car=car
@@ -1150,10 +1155,11 @@ def service_chatbot(request):
             car_service_options[car.id] = []
 
     context = {
-        'eligible_cars': json.dumps(eligible_cars), # Pass as JSON string
-        'car_service_options': json.dumps(car_service_options), # Pass as JSON string
+        'eligible_cars': json.dumps(eligible_cars),
+        'test_drive_cars': json.dumps(test_drive_cars),
+        'car_service_options': json.dumps(car_service_options),
     }
-    return render(request, 'service_chatbot.html', context) # Assuming your chatbot template is named service_chatbot.html
+    return render(request, 'service_chatbot.html', context)
 
 # NEW VIEW FOR LAUNCH REGISTRATION
 def register_for_launch(request, pk):
@@ -1187,3 +1193,64 @@ def about_us(request):
     Renders the About Us page.
     """
     return render(request, 'about_us.html')
+
+from .models import TestDriveBooking, Feedback, Complaint
+
+@csrf_exempt
+def book_test_drive_api(request):
+    if request.method == "POST":
+        data = json.loads(request.body)
+        car_id = data.get('car_id')
+        preferred_date = data.get('preferred_date')
+        preferred_time = data.get('preferred_time')
+
+        try:
+            car = Car.objects.get(id=car_id)
+            TestDriveBooking.objects.create(
+                user=request.user,
+                car=car,
+                preferred_date=preferred_date,
+                preferred_time=preferred_time
+            )
+            return JsonResponse({"success": True, "message": "Test drive booked successfully!"})
+        except Car.DoesNotExist:
+            return JsonResponse({"success": False, "message": "Selected car does not exist."})
+        except Exception as e:
+            return JsonResponse({"success": False, "message": f"An error occurred: {str(e)}"})
+    return JsonResponse({"success": False, "message": "Invalid request method"})
+
+@csrf_exempt
+def submit_complaint_api(request):
+    if request.method == "POST":
+        data = json.loads(request.body)
+        subject = data.get('subject')
+        description = data.get('description')
+
+        try:
+            Complaint.objects.create(
+                user=request.user,
+                subject=subject,
+                description=description
+            )
+            return JsonResponse({"success": True, "message": "Complaint submitted successfully!"})
+        except Exception as e:
+            return JsonResponse({"success": False, "message": f"An error occurred: {str(e)}"})
+    return JsonResponse({"success": False, "message": "Invalid request method"})
+
+@csrf_exempt
+def submit_feedback_api(request):
+    if request.method == "POST":
+        data = json.loads(request.body)
+        rating = data.get('rating')
+        comments = data.get('comments')
+
+        try:
+            Feedback.objects.create(
+                user=request.user if request.user.is_authenticated else None,
+                rating=rating,
+                comments=comments
+            )
+            return JsonResponse({"success": True, "message": "Thank you for your feedback!"})
+        except Exception as e:
+            return JsonResponse({"success": False, "message": f"An error occurred: {str(e)}"})
+    return JsonResponse({"success": False, "message": "Invalid request method"})

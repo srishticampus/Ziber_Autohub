@@ -69,4 +69,8 @@ urlpatterns = [
     path('predict/', views.predict_price, name='predict_price'),
 
     path('about-us/', views.about_us, name='about_us'),
+
+    path('book-test-drive-api/', views.book_test_drive_api, name='book_test_drive_api'),
+    path('submit-complaint-api/', views.submit_complaint_api, name='submit_complaint_api'),
+    path('submit-feedback-api/', views.submit_feedback_api, name='submit_feedback_api'),
 ]

@@ -117,6 +117,58 @@
             max-width: 90%; /* Allow bubbles to be wider on small screens */
         }
     }
+
+    /* Add these new styles for buttons and options */
+    .options-container {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 0.5rem;
+        margin: 1rem 0;
+    }
+    
+    .option-button {
+        background-color: #f8f9fa;
+        border: 1px solid #dee2e6;
+        border-radius: 0.5rem;
+        padding: 0.5rem 1rem;
+        cursor: pointer;
+        transition: all 0.2s ease;
+    }
+    
+    .option-button:hover {
+        background-color: #e9ecef;
+        border-color: #ced4da;
+    }
+    
+    .date-time-inputs {
+        display: flex;
+        gap: 0.5rem;
+        margin: 1rem 0;
+    }
+    
+    .date-time-inputs input {
+        flex: 1;
+        padding: 0.5rem;
+        border: 1px solid #ced4da;
+        border-radius: 0.25rem;
+    }
+    
+    /* Rating stars */
+    .rating-stars {
+        display: flex;
+        gap: 0.5rem;
+        margin: 1rem 0;
+    }
+    
+    .star {
+        font-size: 1.5rem;
+        cursor: pointer;
+        color: #e4e5e9;
+    }
+    
+    .star.selected {
+        color: #ffc107;
+    }
 </style>
 {% endblock %}
 
@@ -132,30 +184,131 @@
 </div>
 
 <script>
+    let currentFlow = null;
     let step = 0;
     let selectedCar = null;
-    let serviceOptions = JSON.parse('{{ car_service_options|safe }}');
-    let eligibleCars = JSON.parse('{{ eligible_cars|safe }}'); 
+    let selectedService = null;
+    let selectedTestDriveCar = null;
+    let selectedTestDriveDate = null;
+    let complaintSubject = null;
+    let selectedRating = 0;
+    
+    // Parse the cars data passed from the view
+    const serviceOptions = JSON.parse('{{ car_service_options|safe }}');
+    const eligibleCars = JSON.parse('{{ eligible_cars|safe }}');
+    const testDriveCars = JSON.parse('{{ test_drive_cars|safe }}');
 
     const chatBox = document.getElementById("chat-box");
     const chatForm = document.getElementById("chat-form");
     const userInput = document.getElementById("user-input");
 
-    function addMessage(sender, text) {
+    function addMessage(sender, text, isHTML = false) {
         const msgWrapper = document.createElement("div");
         msgWrapper.className = `chat-message ${sender}`;
 
         const msgBubble = document.createElement("span");
         msgBubble.className = `chat-bubble ${sender}`;
-        msgBubble.textContent = text; 
+        
+        if (isHTML) {
+            msgBubble.innerHTML = text;
+        } else {
+            msgBubble.textContent = text;
+        }
 
         msgWrapper.appendChild(msgBubble);
         chatBox.appendChild(msgWrapper);
         chatBox.scrollTop = chatBox.scrollHeight;
     }
 
-    function botAsk(text) {
-        setTimeout(() => addMessage("bot", text), 500);
+    function botAsk(text, isHTML = false) {
+        setTimeout(() => addMessage("bot", text, isHTML), 500);
+    }
+
+    function showMainOptions() {
+        currentFlow = null;
+        step = 0;
+        
+        const optionsHTML = `
+            <div class="options-container">
+                <button type="button" class="option-button" onclick="startServiceBooking()">Service Booking</button>
+                <button type="button" class="option-button" onclick="startTestDriveBooking()">Test Drive Booking</button>
+                <button type="button" class="option-button" onclick="startComplaint()">Submit Complaint</button>
+                <button type="button" class="option-button" onclick="startFeedback()">Submit Feedback</button>
+            </div>
+        `;
+        botAsk("How can I help you today?", true);
+        botAsk(optionsHTML, true);
+    }
+
+    function startServiceBooking() {
+        currentFlow = 'service';
+        step = 0;
+        
+        if (eligibleCars.length === 0) {
+            botAsk("You don't have any delivered cars available for service.");
+            showMainOptions();
+            return;
+        }
+        
+        botAsk("👋 Hi! Please enter your car name (e.g., 'Swift') to book a service.");
+    }
+
+    function startTestDriveBooking() {
+        currentFlow = 'test_drive';
+        step = 0;
+        
+        if (testDriveCars.length === 0) {
+            botAsk("No cars available for test drive at the moment.");
+            showMainOptions();
+            return;
+        }
+        
+        let carList = "Available cars for test drive:<br><div class='options-container'>";
+        testDriveCars.forEach(car => {
+            carList += `<button type="button" class="option-button" onclick="selectTestDriveCar(${car.id}, '${car.name} ${car.model}')">${car.name} ${car.model}</button>`;
+        });
+        carList += "</div>";
+        
+        botAsk(carList, true);
+    }
+
+    function selectTestDriveCar(carId, carName) {
+        selectedTestDriveCar = { id: carId, name: carName };
+        step = 1;
+        botAsk(`You selected ${carName}. Please enter your preferred date (YYYY-MM-DD):`);
+    }
+
+    function startComplaint() {
+        currentFlow = 'complaint';
+        step = 0;
+        botAsk("Please enter the subject of your complaint:");
+    }
+
+    function startFeedback() {
+        currentFlow = 'feedback';
+        step = 0;
+        
+        const starsHTML = `
+            <div>Please rate your experience (1-5 stars):</div>
+            <div class="rating-stars">
+                <span class="star" onclick="setRating(1)">★</span>
+                <span class="star" onclick="setRating(2)">★</span>
+                <span class="star" onclick="setRating(3)">★</span>
+                <span class="star" onclick="setRating(4)">★</span>
+                <span class="star" onclick="setRating(5)">★</span>
+            </div>
+            <div>Now please enter your comments:</div>
+        `;
+        
+        botAsk(starsHTML, true);
+    }
+
+    function setRating(rating) {
+        selectedRating = rating;
+        const stars = document.querySelectorAll('.star');
+        stars.forEach((star, index) => {
+            star.classList.toggle('selected', index < rating);
+        });
     }
 
     chatForm.onsubmit = function (e) {
@@ -165,8 +318,29 @@
 
         addMessage("user", input);
 
+        if (currentFlow === 'service') {
+            handleServiceFlow(input);
+        } else if (currentFlow === 'test_drive') {
+            handleTestDriveFlow(input);
+        } else if (currentFlow === 'complaint') {
+            handleComplaintFlow(input);
+        } else if (currentFlow === 'feedback') {
+            handleFeedbackFlow(input);
+        } else {
+            botAsk("Please select an option from the menu above.");
+            showMainOptions();
+        }
+
+        userInput.value = "";
+    };
+
+    function handleServiceFlow(input) {
         if (step === 0) {
-            const car = eligibleCars.find(c => c.name.toLowerCase() === input.toLowerCase());
+            const car = eligibleCars.find(c => 
+                c.name.toLowerCase().includes(input.toLowerCase()) || 
+                c.model.toLowerCase().includes(input.toLowerCase())
+            );
+            
             if (car) {
                 selectedCar = car;
                 step = 1;
@@ -177,24 +351,19 @@
                     botAsk("Please type the service type (e.g., 1st, 2nd, 3rd, 4th):");
                 } else {
                     botAsk(`No more services available for ${car.name} ${car.model}. You have completed all free services.`);
-                    step = 0; 
-                    selectedCar = null;
+                    showMainOptions();
                 }
             } else {
                 botAsk("Car not found. Please enter a valid car name from your delivered new cars.");
             }
         } else if (step === 1) {
-            const allowed = serviceOptions[selectedCar.id] || []; 
-            // --- FIX APPLIED HERE ---
-            // Only convert input to lowercase for comparison.
-            // Do NOT remove 'st', 'nd', 'rd', 'th' as backend expects them.
+            const allowed = serviceOptions[selectedCar.id] || [];
             const inputLower = input.toLowerCase();
             const actualAllowedService = allowed.find(s => s.toLowerCase() === inputLower);
-            // --- END FIX ---
 
             if (actualAllowedService) {
                 step = 2;
-                chatForm.dataset.serviceType = actualAllowedService; 
+                selectedService = actualAllowedService;
                 botAsk("Got it! Please briefly describe the issue or your request:");
             } else {
                 const serviceList = allowed.length > 0 ? allowed.map(s => `${s} Service`).join(', ') : "No services currently available";
@@ -212,7 +381,7 @@
                 },
                 body: JSON.stringify({
                     car_id: selectedCar.id,
-                    service_type: chatForm.dataset.serviceType,
+                    service_type: selectedService,
                     description: description
                 })
             }).then(res => res.json())
@@ -222,21 +391,154 @@
                   } else {
                       botAsk("❌ " + data.message);
                   }
-                  step = 0; 
-                  selectedCar = null;
+                  showMainOptions();
               })
               .catch(error => {
                   console.error('Error:', error);
                   botAsk("An error occurred while booking service. Please try again.");
-                  step = 0; 
-                  selectedCar = null;
+                  showMainOptions();
               });
         }
+    }
 
-        userInput.value = "";
-    };
+    function handleTestDriveFlow(input) {
+        if (step === 1) {
+            // Validate date
+            const dateRegex = /^\d{4}-\d{2}-\d{2}$/;
+            if (!dateRegex.test(input)) {
+                botAsk("Please enter a valid date in YYYY-MM-DD format:");
+                return;
+            }
+            
+            // Check if date is in the future
+            const today = new Date();
+            today.setHours(0, 0, 0, 0);
+            const selectedDate = new Date(input);
+            
+            if (selectedDate < today) {
+                botAsk("Please select a date in the future:");
+                return;
+            }
+            
+            selectedTestDriveDate = input;
+            step = 2;
+            botAsk("Please enter your preferred time (HH:MM, between 09:00 and 18:00):");
+        } else if (step === 2) {
+            // Validate time
+            const timeRegex = /^\d{2}:\d{2}$/;
+            if (!timeRegex.test(input)) {
+                botAsk("Please enter a valid time in HH:MM format:");
+                return;
+            }
+            
+            // Check if time is within business hours
+            const [hours, minutes] = input.split(':').map(Number);
+            if (hours < 9 || hours > 18 || (hours === 18 && minutes > 0)) {
+                botAsk("Please select a time between 09:00 and 18:00:");
+                return;
+            }
+            
+            addMessage("bot", "Booking your test drive, please wait...");
+            
+            fetch("{% url 'hub:book_test_drive_api' %}", {
+                method: "POST",
+                headers: {
+                    "Content-Type": "application/json",
+                    "X-CSRFToken": "{{ csrf_token }}"
+                },
+                body: JSON.stringify({
+                    car_id: selectedTestDriveCar.id,
+                    preferred_date: selectedTestDriveDate,
+                    preferred_time: input
+                })
+            }).then(res => res.json())
+              .then(data => {
+                  if (data.success) {
+                      botAsk("✅ Test drive booked successfully! We'll contact you to confirm.");
+                  } else {
+                      botAsk("❌ " + data.message);
+                  }
+                  showMainOptions();
+              })
+              .catch(error => {
+                  console.error('Error:', error);
+                  botAsk("An error occurred while booking test drive. Please try again.");
+                  showMainOptions();
+              });
+        }
+    }
 
-    botAsk("👋 Hi! Please enter your car name (e.g., 'Swift') to book a service.");
+    function handleComplaintFlow(input) {
+        if (step === 0) {
+            complaintSubject = input;
+            step = 1;
+            botAsk("Please describe your complaint in detail:");
+        } else if (step === 1) {
+            addMessage("bot", "Submitting your complaint, please wait...");
+            
+            fetch("{% url 'hub:submit_complaint_api' %}", {
+                method: "POST",
+                headers: {
+                    "Content-Type": "application/json",
+                    "X-CSRFToken": "{{ csrf_token }}"
+                },
+                body: JSON.stringify({
+                    subject: complaintSubject,
+                    description: input
+                })
+            }).then(res => res.json())
+              .then(data => {
+                  if (data.success) {
+                      botAsk("✅ Complaint submitted successfully! Our team will contact you soon.");
+                  } else {
+                      botAsk("❌ " + data.message);
+                  }
+                  showMainOptions();
+              })
+              .catch(error => {
+                  console.error('Error:', error);
+                  botAsk("An error occurred while submitting complaint. Please try again.");
+                  showMainOptions();
+              });
+        }
+    }
+
+    function handleFeedbackFlow(input) {
+        if (selectedRating === 0) {
+            botAsk("Please select a rating first by clicking on the stars.");
+            return;
+        }
+        
+        addMessage("bot", "Submitting your feedback, please wait...");
+        
+        fetch("{% url 'hub:submit_feedback_api' %}", {
+            method: "POST",
+            headers: {
+                "Content-Type": "application/json",
+                "X-CSRFToken": "{{ csrf_token }}"
+            },
+            body: JSON.stringify({
+                rating: selectedRating,
+                comments: input
+            })
+        }).then(res => res.json())
+          .then(data => {
+              if (data.success) {
+                  botAsk("✅ Thank you for your feedback! We appreciate your time.");
+              } else {
+                  botAsk("❌ " + data.message);
+              }
+              showMainOptions();
+          })
+          .catch(error => {
+              console.error('Error:', error);
+              botAsk("An error occurred while submitting feedback. Please try again.");
+              showMainOptions();
+          });
+    }
+
+    // Initialize the chat
+    showMainOptions();
 </script>
 
 {% endblock %}
