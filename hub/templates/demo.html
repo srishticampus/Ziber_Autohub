@@ -4,7 +4,7 @@
 {% block title %}Home{% endblock %}
 
 {% block extra_styles %}
-    {# Link to your new demo-specific stylesheet #}
+    {# Link to your new demo-specific stylesheet (if using one) #}
     <link rel="stylesheet" href="{% static 'css/demo_styles.css' %}">
     {# Include styles from news_detail.html for the integrated news section #}
     <style>
@@ -15,56 +15,130 @@
             padding-bottom: 4rem; /* Padding before footer */
         }
 
-        /* Styling for each individual news item card */
-        .news_item {
+        /* Styling for the static news block */
+        .static_news_block {
             background-color: #fff;
-            border-radius: 12px; /* Soft rounded corners */
-            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.08); /* Subtle shadow */
-            padding: 1.5rem;
-            transition: transform 0.3s ease, box-shadow 0.3s ease; /* Smooth hover effect */
-            height: 100%; /* Ensure all cards have same height */
+            border-radius: 12px;
+            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.08);
+            padding: 2.5rem;
+            text-align: center;
             display: flex;
             flex-direction: column;
-            /* cursor: pointer; */ /* No longer needs specific pointer as it's a link now */
+            align-items: center;
+            justify-content: center;
+            height: 100%; /* Ensure consistent height for single block */
         }
 
-        .news_item:hover {
-            transform: translateY(-5px); /* Lift effect on hover */
-            box-shadow: 0 8px 25px rgba(0, 0, 0, 0.15); /* Enhanced shadow on hover */
+        .static_news_block .news_image img {
+            border-radius: 8px;
+            object-fit: cover;
+            max-height: 250px; /* Increased max-height for better visual */
+            width: 100%;
+            margin-bottom: 1.5rem;
         }
 
-        .news_image img {
-            border-radius: 8px; /* Rounded corners for images */
-            object-fit: cover; /* Ensures images cover their area well */
-            max-height: 200px; /* Limit image height to keep cards consistent */
-            width: 100%; /* Ensure image fills its container */
-        }
-
-        .news_title {
-            font-size: 1.5rem; /* Larger title font */
+        .static_news_block .news_title {
+            font-size: 2.2rem; /* Larger title font */
             font-weight: bold;
             color: #333;
-            margin-top: 1rem;
-            margin-bottom: 0.75rem;
-            text-align: center;
+            margin-top: 0;
+            margin-bottom: 1rem;
         }
 
-        .news_content {
-            font-size: 1rem; /* Standard paragraph font size */
+        .static_news_block .news_content {
+            font-size: 1.1rem; /* Slightly larger content font */
             color: #555;
-            line-height: 1.6; /* Improved line spacing */
-            text-align: justify;
-            flex-grow: 1; /* Allows content to push footer to bottom if content varies */
+            line-height: 1.8;
+            margin-bottom: 2rem;
+            max-width: 800px; /* Constrain width for readability */
+            margin-left: auto;
+            margin-right: auto;
         }
 
-        /* Removed modal specific styling as the modal is no longer used for news items */
+        /* Styles for upcoming launch items in the carousel */
+        .upcoming_launch_item {
+            background-color: #fff;
+            border-radius: 12px;
+            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.08);
+            padding: 1.5rem;
+            text-align: center;
+            height: 100%; /* Ensure consistent height for carousel items */
+            display: flex;
+            flex-direction: column;
+            justify-content: space-between; /* Space out content and button */
+        }
+
+        .upcoming_launch_item .launch-image-container {
+            width: 100%;
+            max-height: 200px; /* Max height for the image container */
+            overflow: hidden;
+            border-radius: 8px;
+            margin-bottom: 1rem;
+        }
+
+        .upcoming_launch_item .launch-image-container img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover; /* Cover the container, cropping if necessary */
+            transition: transform 0.3s ease;
+        }
+
+        .upcoming_launch_item:hover .launch-image-container img {
+            transform: scale(1.05); /* Slight zoom on hover */
+        }
+
+        .upcoming_launch_item h4 {
+            font-size: 1.6rem;
+            font-weight: bold;
+            color: #333;
+            margin-bottom: 0.75rem;
+        }
+
+        .upcoming_launch_item p {
+            font-size: 0.95rem;
+            color: #666;
+            line-height: 1.5;
+            margin-bottom: 0.5rem;
+        }
+
+        /* Ensure the existing .product-img style doesn't interfere if you re-add images later */
+        .product-img {
+            width: 100%;
+            height: auto;
+        }
+
+        /* Specific carousel control styles for the new launch section to match design */
+        #new_launch_slider .carousel-control-prev,
+        #new_launch_slider .carousel-control-next {
+            top: 50%;
+            transform: translateY(-50%);
+            width: 40px;
+            height: 40px;
+            background-color: rgba(242, 101, 34, 0.8); /* Match your theme orange */
+            border-radius: 50%;
+            opacity: 1; /* Always visible */
+            transition: background-color 0.3s ease;
+        }
+
+        #new_launch_slider .carousel-control-prev:hover,
+        #new_launch_slider .carousel-control-next:hover {
+            background-color: rgba(242, 101, 34, 1);
+        }
+
+        #new_launch_slider .carousel-control-prev {
+            left: -20px; /* Adjust as needed for positioning */
+        }
+
+        #new_launch_slider .carousel-control-next {
+            right: -20px; /* Adjust as needed for positioning */
+        }
     </style>
 {% endblock %}
 
 {% block content %}
-    <div class="banner_section_demo layout_padding">
+    <div class="banner_section_demo layout_padding" id="dynamicBannerBackground">
         <div class="container h-100 d-flex align-items-center justify-content-center">
-            <div id="my_slider" class="carousel slide w-100" data-bs-ride="carousel" data-bs-interval="5000"> 
+            <div id="my_slider" class="carousel slide w-100" data-bs-ride="carousel" data-bs-interval="5000">
                 <div class="carousel-inner">
                     <div class="carousel-item active">
                         <div class="row justify-content-center">
@@ -100,149 +174,81 @@
         </div>
     </div>
 
-    {# START: Integrated news_detail.html content #}
+    {# START: Simplified "Latest News" section #}
     <div class="news_detail_section">
         <div class="container">
-            <h2 class="text-center mb-5" style="font-size: 2.5rem; font-weight: bold; color: #333;">Latest News from Ziber Autohub</h2>
-            <div class="row">
-                <!-- First News Item -->
-                <div class="col-lg-4 col-md-6 mb-4">
-                    <a href="{% url 'hub:news' %}" class="text-decoration-none text-dark"> {# Added <a> tag here #}
-                        <div class="news_item">
-                            <div class="news_image text-center mb-3">
-                                <img src="{% static 'images/news1.jpg' %}" alt="News 1" class="img-fluid">
-                            </div>
-                            <h3 class="news_title">The Future of Electric Vehicles</h3>
-                            <p class="news_content">
-                                Ziber Autohub is proud to announce its groundbreaking new line of electric vehicles, setting new standards for sustainability and performance...
-                            </p>
+            <h2 class="text-center mb-5" style="font-size: 2.5rem; font-weight: bold; color: #333;">Stay Updated with Ziber Autohub!</h2>
+            <div class="row justify-content-center">
+                <div class="col-lg-8 col-md-10 mb-4">
+                    <div class="static_news_block">
+                        <div class="news_image">
+                            {# Use a static image for the general news section. Make sure this image exists in your static/images/ folder. #}
+                            <img src="{% static 'images/general_news_banner.png' %}" alt="Latest News" class="img-fluid">
                         </div>
-                    </a>
-                </div>
-
-                <!-- Second News Item -->
-                <div class="col-lg-4 col-md-6 mb-4">
-                    <a href="{% url 'hub:news' %}" class="text-decoration-none text-dark"> {# Added <a> tag here #}
-                        <div class="news_item">
-                            <div class="news_image text-center mb-3">
-                                <img src="{% static 'images/news2.jpg' %}" alt="News 2" class="img-fluid">
-                            </div>
-                            <h3 class="news_title">Exclusive Used Car Offers</h3>
-                            <p class="news_content">
-                                Take advantage of our exclusive offers on used cars. Get amazing discounts and flexible financing options...
-                            </p>
-                        </div>
-                    </a>
-                </div>
-
-                <!-- Third News Item -->
-                <div class="col-lg-4 col-md-6 mb-4">
-                    <a href="{% url 'hub:news' %}" class="text-decoration-none text-dark"> {# Added <a> tag here #}
-                        <div class="news_item">
-                            <div class="news_image text-center mb-3">
-                                <img src="{% static 'images/news3.jpg' %}" alt="News 3" class="img-fluid">
-                            </div>
-                            <h3 class="news_title">New Car Accessories Now Available</h3>
-                            <p class="news_content">
-                                Discover the latest car accessories that will enhance your driving experience. From floor mats to advanced GPS systems...
-                            </p>
-                        </div>
-                    </a>
-                </div>
-
-                <!-- Fourth News Item (New) -->
-                <div class="col-lg-4 col-md-6 mb-4">
-                    <a href="{% url 'hub:news' %}" class="text-decoration-none text-dark"> {# Added <a> tag here #}
-                        <div class="news_item">
-                            <div class="news_image text-center mb-3">
-                                <img src="{% static 'images/news4.jpg' %}" alt="News 4" class="img-fluid">
-                            </div>
-                            <h3 class="news_title">Ziber Expands Service Network</h3>
-                            <p class="news_content">
-                                Ziber Autohub has significantly expanded its service network, opening five new state-of-the-art service centers...
-                            </p>
-                        </div>
-                    </a>
-                </div>
-
-                <!-- Fifth News Item (New) -->
-                <div class="col-lg-4 col-md-6 mb-4">
-                    <a href="{% url 'hub:news' %}" class="text-decoration-none text-dark"> {# Added <a> tag here #}
-                        <div class="news_item">
-                            <div class="news_image text-center mb-3">
-                                <img src="{% static 'images/news5.webp' %}" alt="News 5" class="img-fluid">
-                            </div>
-                            <h3 class="news_title">Innovations in Autonomous Driving</h3>
-                            <p class="news_content">
-                                Ziber Autohub is at the forefront of autonomous driving technology, continuously pushing the boundaries...
-                            </p>
-                        </div>
-                    </a>
-                </div>
-
-                <!-- Sixth News Item (New) -->
-                <div class="col-lg-4 col-md-6 mb-4">
-                    <a href="{% url 'hub:news' %}" class="text-decoration-none text-dark"> {# Added <a> tag here #}
-                        <div class="news_item">
-                            <div class="news_image text-center mb-3">
-                                <img src="{% static 'images/news6.webp' %}" alt="News 6" class="img-fluid">
-                            </div>
-                            <h3 class="news_title">Community Drive: Road Safety</h3>
-                            <p class="news_content">
-                                Ziber Autohub has launched a comprehensive 'Community Drive' initiative focused on promoting road safety...
-                            </p>
-                        </div>
-                    </a>
+                        <h3 class="news_title">Catch Up on All the Latest from the Automotive World and Ziber!</h3>
+                        <p class="news_content">
+                            From groundbreaking electric vehicle announcements to exclusive offers on used cars, new accessory arrivals, and expansions of our service network, find all the important updates and stories from Ziber Autohub right here. Don't miss out on industry insights and community initiatives.
+                        </p>
+                        <a href="{% url 'hub:news' %}" class="btn buynow_bt mt-3">
+                            <i class="fas fa-newspaper me-2"></i> View All News
+                        </a>
+                    </div>
                 </div>
             </div>
         </div>
     </div>
-
-    {# Removed the News Detail Modal as it is no longer needed #}
-    {# Removed the JavaScript for the modal as it is no longer needed #}
+    {# END: Simplified "Latest News" section #}
 
     <div class="new_launch_section_demo layout_padding">
         <div class="container">
             <div class="text-center mb-4">
-                <h2 class="text-uppercase new-launch-heading">New Launch Products</h2>
+                <h2 class="text-uppercase new-launch-heading">Upcoming Car Launches</h2> {# Updated heading #}
             </div>
 
-            <div id="new_launch_slider" class="carousel slide" data-bs-ride="carousel" data-bs-interval="5000"> 
+            <div id="new_launch_slider" class="carousel slide" data-bs-ride="carousel" data-bs-interval="5000">
                 <div class="carousel-inner">
-                    {% for car in featured_new_cars %} 
+                    {# Loop through upcoming_launches passed from the view #}
+                    {% for launch in upcoming_launches %}
                     <div class="carousel-item {% if forloop.first %}active{% endif %}">
                         <div class="row justify-content-center">
-                            <div class="col-sm-4 text-center">
-                                <div class="product_item">
-                                    {% if car.image %}
-                                        <img src="{{ car.image.url }}" alt="{{ car.name }} image" class="img-fluid product-img">
-                                    {% else %}
-                                        <img src="https://placehold.co/400x200/EFEFEF/AAAAAA?text=No+Image" alt="No Image Available" class="img-fluid product-img">
-                                    {% endif %}
-                                    <h4 class="product_title product-title-style">{{ car.name }} {{ car.model }}</h4>
-                                    <p class="product_description product-description-style">
-                                        {{ car.description|truncatechars:150 }}
+                            <div class="col-sm-6 col-md-4 text-center"> {# Adjusted column size for better display #}
+                                <div class="upcoming_launch_item"> {# Custom class for styling #}
+                                    <div class="launch-image-container"> {# New container for the image #}
+                                        {% if launch.image %}
+                                            <img src="{{ launch.image.url }}" alt="{{ launch.car_name }} Image">
+                                        {% else %}
+                                            <img src="https://placehold.co/400x250/EFEFEF/AAAAAA?text=No+Launch+Image" alt="No Image Available">
+                                        {% endif %}
+                                    </div>
+                                    <h4 class="mb-2">{{ launch.car_name }}</h4>
+                                    <p class="text-muted mb-1">{{ launch.car_minimal_details|default_if_none:"" }}</p>
+                                    <p style="font-size: 0.9rem; color: #555;">
+                                        {{ launch.car_description|truncatechars:150 }}
+                                    </p>
+                                    <p class="mb-1">
+                                        <strong>Launch Date:</strong> {{ launch.launch_date|date:"M d, Y" }} <br>
+                                        <strong>Time:</strong> {{ launch.launch_time_start|time:"h:i A" }} - {{ launch.launch_time_end|time:"h:i A" }} <br>
+                                        <strong>Venue:</strong> {{ launch.venue }}, {{ launch.location }}
                                     </p>
                                     <div class="mt-3">
-                                        <a href="{% url 'hub:car_detail' pk=car.pk %}" class="btn buynow_bt btn-sm">View Details</a>
+                                        {# CHANGED BUTTON: Link to registration form for this specific launch #}
+                                        <a href="{% url 'hub:register_for_launch' pk=launch.pk %}" class="btn buynow_bt btn-sm">Register for Event</a>
                                     </div>
                                 </div>
                             </div>
                         </div>
                     </div>
                     {% empty %}
-                     <div class="carousel-item active">
+                    {# Fallback if no upcoming launches are found #}
+                    <div class="carousel-item active">
                         <div class="row justify-content-center">
                             <div class="col-sm-4 text-center">
-                                <div class="product_item">
-                                    <img src="https://placehold.co/400x200/EFEFEF/AAAAAA?text=No+Products" alt="No Products" class="img-fluid product-img">
-                                    <h4 class="product_title product-title-style">No New Products Yet!</h4>
-                                    <p class="product_description product-description-style">
-                                        Stay tuned for our exciting new releases.
+                                <div class="upcoming_launch_item">
+                                    <img src="https://placehold.co/400x200/EFEFEF/AAAAAA?text=No+Upcoming+Launches" alt="No Upcoming Launches" class="img-fluid product-img mb-3">
+                                    <h4 class="mb-2">No Upcoming Launches Yet!</h4>
+                                    <p>
+                                        Stay tuned for exciting new car reveals.
                                     </p>
-                                    <div class="mt-3">
-                                        <a href="{% url 'hub:new_car_list' %}" class="btn btn-primary btn-sm">Browse Cars</a>
-                                    </div>
                                 </div>
                             </div>
                         </div>
@@ -250,12 +256,12 @@
                     {% endfor %}
                 </div>
 
-                {% if featured_new_cars|length > 1 %}
-                <button class="carousel-control-prev product-carousel-control" type="button" data-bs-target="#new_launch_slider" data-bs-slide="prev"> 
+                {% if upcoming_launches|length > 1 %} {# Show controls only if there's more than one launch #}
+                <button class="carousel-control-prev" type="button" data-bs-target="#new_launch_slider" data-bs-slide="prev">
                     <i class="fa fa-angle-left"></i>
                     <span class="visually-hidden">Previous</span>
                 </button>
-                <button class="carousel-control-next product-carousel-control" type="button" data-bs-target="#new_launch_slider" data-bs-slide="next"> 
+                <button class="carousel-control-next" type="button" data-bs-target="#new_launch_slider" data-bs-slide="next">
                     <i class="fa fa-angle-right"></i>
                     <span class="visually-hidden">Next</span>
                 </button>
@@ -265,7 +271,43 @@
     </div>
 {% endblock %}
 
-{% block extra_scripts %}
-    {{ block.super }} 
-    {# Removed the JavaScript for the news detail modal as it is no longer needed #}
+{% block scripts %}
+    {{ block.super }}
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            const mySlider = document.getElementById('my_slider');
+            const dynamicBannerBackground = document.getElementById('dynamicBannerBackground');
+
+            // Define your background images matching the order of your carousel items.
+            // You will need to replace these placeholder URLs with your actual images.
+            const backgroundImages = [
+                "{% static 'images/car26.jpg' %}", // For 'Buy Now' (new car)
+                "{% static 'images/car27.jpg' %}", // For 'Used Cars'
+                "{% static 'images/jobs.png' %}"  // For 'Jobs'
+            ];
+
+            // Set initial background image based on the active slide on page load
+            const activeItem = mySlider.querySelector('.carousel-item.active');
+            let initialIndex = 0;
+            if (activeItem) {
+                const allItems = Array.from(mySlider.querySelectorAll('.carousel-item'));
+                initialIndex = allItems.indexOf(activeItem);
+            }
+            if (initialIndex < backgroundImages.length) {
+                dynamicBannerBackground.style.backgroundImage = `url(${backgroundImages[initialIndex]})`;
+            } else {
+                // Fallback if index is out of bounds or no images defined
+                dynamicBannerBackground.style.backgroundImage = `url('https://placehold.co/1920x1080/EFEFEF/AAAAAA?text=Default+Background')`;
+            }
+
+            if (mySlider) {
+                mySlider.addEventListener('slide.bs.carousel', function(event) {
+                    const nextSlideIndex = event.to;
+                    if (nextSlideIndex < backgroundImages.length) {
+                        dynamicBannerBackground.style.backgroundImage = `url(${backgroundImages[nextSlideIndex]})`;
+                    }
+                });
+            }
+        });
+    </script>
 {% endblock %}

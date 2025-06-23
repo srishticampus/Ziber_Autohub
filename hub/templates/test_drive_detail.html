@@ -1,0 +1,109 @@
+{% extends "base.html" %}
+{% load static %}
+
+{% block title %}Test Drive Details | Ziber Autohub{% endblock %}
+
+{% block content %}
+<div class="container my-5">
+    <div class="row">
+        <div class="col-md-8 mx-auto">
+            <div class="d-flex justify-content-between align-items-center mb-4">
+                <h2>Test Drive #{{ test_drive.id }}</h2>
+                <span class="badge 
+                    {% if test_drive.status == 'Pending' %}bg-warning
+                    {% elif test_drive.status == 'Confirmed' %}bg-success
+                    {% else %}bg-danger{% endif %}">
+                    {{ test_drive.get_status_display }}
+                </span>
+            </div>
+            
+            <div class="card shadow">
+                <div class="card-body">
+                    <div class="row mb-4">
+                        <div class="col-md-6">
+                            <h5 class="card-title">Car Details</h5>
+                            <div class="d-flex align-items-center">
+                                {% if test_drive.car.image %}
+                                <img src="{{ test_drive.car.image.url }}" alt="{{ test_drive.car.brand }} {{ test_drive.car.model }}" 
+                                     class="img-thumbnail me-3" style="width: 100px; height: auto;">
+                                {% endif %}
+                                <div>
+                                    <h6>{{ test_drive.car.brand }} {{ test_drive.car.model }}</h6>
+                                    <p class="text-muted mb-0">Year: {{ test_drive.car.year }}</p>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-md-6">
+                            <h5 class="card-title">Test Drive Schedule</h5>
+                            <p class="mb-1">
+                                <strong>Date:</strong> {{ test_drive.preferred_date|date:"M d, Y" }}
+                            </p>
+                            <p class="mb-1">
+                                <strong>Time:</strong> {{ test_drive.preferred_time|time:"H:i" }}
+                            </p>
+                            <p class="mb-0">
+                                <strong>Status:</strong> {{ test_drive.get_status_display }}
+                            </p>
+                        </div>
+                    </div>
+                    
+                    <div class="mb-4">
+                        <h5 class="card-title">Booking Information</h5>
+                        <p class="mb-1"><strong>Booked On:</strong> {{ test_drive.created_at|date:"M d, Y H:i" }}</p>
+                        {% if test_drive.status == 'Confirmed' %}
+                        <div class="alert alert-success mt-3">
+                            <i class="fas fa-check-circle me-2"></i>
+                            Your test drive has been confirmed. Please arrive 15 minutes before your scheduled time.
+                        </div>
+                        {% elif test_drive.status == 'Cancelled' %}
+                        <div class="alert alert-danger mt-3">
+                            <i class="fas fa-times-circle me-2"></i>
+                            This test drive booking has been cancelled.
+                        </div>
+                        {% else %}
+                        <div class="alert alert-warning mt-3">
+                            <i class="fas fa-clock me-2"></i>
+                            Your test drive request is pending confirmation. We'll contact you soon.
+                        </div>
+                        {% endif %}
+                    </div>
+                </div>
+            </div>
+            
+            <div class="mt-4">
+                <a href="{% url 'hub:my_test_drives' %}" class="btn btn-outline-secondary">
+                    <i class="fas fa-arrow-left me-2"></i> Back to My Test Drives
+                </a>
+                {% if test_drive.status == 'Pending' %}
+                <button class="btn btn-outline-danger ms-2" data-bs-toggle="modal" data-bs-target="#cancelModal">
+                    <i class="fas fa-times me-2"></i> Cancel Booking
+                </button>
+                {% endif %}
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Cancel Booking Modal -->
+<div class="modal fade" id="cancelModal" tabindex="-1" aria-labelledby="cancelModalLabel" aria-hidden="true">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="cancelModalLabel">Cancel Test Drive</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body">
+                <p>Are you sure you want to cancel your test drive booking for the {{ test_drive.car.brand }} {{ test_drive.car.model }}?</p>
+                <p class="text-danger">This action cannot be undone.</p>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+                <form method="post" action="{% url 'hub:cancel_test_drive' test_drive.id %}">
+                    {% csrf_token %}
+                    <button type="submit" class="btn btn-danger">Confirm Cancellation</button>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

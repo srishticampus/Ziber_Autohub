@@ -18,12 +18,13 @@ from decimal import Decimal
 from django.db import transaction # Import transaction for atomic operations
 
 from .models import UserProfile, Car, ServiceBooking, JobVacancy, JobApplication, PreBooking, Accessory # Import Accessory
-from .models import Cart, CartItem, Order, OrderItem # Explicitly import Cart and Order related models
+from .models import Cart, CartItem, Order, OrderItem,LaunchRegistration # Explicitly import Cart and Order related models
+from admin_panel.models import UpcomingLaunch
 
 from .forms import (
     # UserRegistrationForm, # Assuming this is handled in register_user directly
     JobApplicationForm, JobVacancyForm, CarDetailsForm, PreBookingForm, UsedCarFilterForm, UsedCarForm,
-    AddToCartForm, CheckoutForm # Import the new forms
+    AddToCartForm, CheckoutForm,LaunchRegistrationForm # Import the new forms
 )
 from datetime import timedelta, date
 from django.utils import timezone # Make sure timezone is imported for any date operations
@@ -41,15 +42,19 @@ def index(request):
     })
 
 def demo(request):
-    # Fetch more new cars for the main banner and new launches section (e.g., 6 items)
-    featured_new_cars = Car.objects.filter(is_new=True).order_by('-created_at')[:6]
-
-    # Fetch general cars for the 'news' images to provide diverse content
-    latest_news_cars = Car.objects.order_by('-created_at')[:6]
+    """
+    Renders the 'demo' page which serves as the main landing/home page,
+    featuring dynamic banner backgrounds and upcoming car launches.
+    """
+    # Fetch upcoming car launches to display in the dedicated section
+    # Order by launch date to show the soonest launches first
+    upcoming_launches = UpcomingLaunch.objects.all().order_by('launch_date', 'launch_time_start')
 
     context = {
-        'featured_new_cars': featured_new_cars,
-        'latest_news_cars': latest_news_cars,
+        'upcoming_launches': upcoming_launches,
+        # 'featured_new_cars' and 'latest_news_cars' are no longer passed here
+        # as the 'demo.html' template now handles these sections with static
+        # content or data from 'upcoming_launches'.
     }
     return render(request, 'demo.html', context)
 
@@ -1105,7 +1110,10 @@ def book_service_api(request):
 # NEW: service_chatbot view
 @login_required
 def service_chatbot(request):
-    # This logic is similar to book_service to provide data for the chatbot
+    # For test drives, show all available new cars
+    available_cars = Car.objects.filter(is_new=True).values('id', 'name', 'model')
+    
+    # For service booking, show only delivered cars
     delivered_cars_ids = PreBooking.objects.filter(
         user=request.user,
         car__is_new=True,
@@ -1113,14 +1121,16 @@ def service_chatbot(request):
     ).values_list('car_id', flat=True)
 
     eligible_cars_queryset = Car.objects.filter(id__in=delivered_cars_ids)
-
-    # Convert queryset to list of dictionaries for JSON serialization
+    
+    # Convert querysets to lists of dictionaries for JSON serialization
+    test_drive_cars = list(available_cars)
     eligible_cars = list(eligible_cars_queryset.values('id', 'name', 'model'))
 
+    # Prepare service options for service booking
     car_service_options = {}
     service_order_map = {'1st': 1, '2nd': 2, '3rd': 3, '4th': 4}
 
-    for car in eligible_cars_queryset: # Use queryset here to get full object for filtering
+    for car in eligible_cars_queryset:
         booked_services_for_car = ServiceBooking.objects.filter(
             user=request.user,
             car=car
@@ -1145,7 +1155,130 @@ def service_chatbot(request):
             car_service_options[car.id] = []
 
     context = {
-        'eligible_cars': json.dumps(eligible_cars), # Pass as JSON string
-        'car_service_options': json.dumps(car_service_options), # Pass as JSON string
+        'eligible_cars': json.dumps(eligible_cars),
+        'test_drive_cars': json.dumps(test_drive_cars),
+        'car_service_options': json.dumps(car_service_options),
     }
-    return render(request, 'service_chatbot.html', context) # Assuming your chatbot template is named service_chatbot.html
+    return render(request, 'service_chatbot.html', context)
+
+# NEW VIEW FOR LAUNCH REGISTRATION
+def register_for_launch(request, pk):
+    launch = get_object_or_404(UpcomingLaunch, pk=pk)
+    if request.method == 'POST':
+        form = LaunchRegistrationForm(request.POST)
+        if form.is_valid():
+            # Check for duplicate registration before saving
+            if LaunchRegistration.objects.filter(launch=launch, email=form.cleaned_data['email']).exists():
+                messages.warning(request, "You have already registered for this launch with this email.")
+            else:
+                registration = form.save(commit=False)
+                registration.launch = launch
+                registration.save()
+                messages.success(request, f"Thank you for registering for the {launch.car_name} launch!")
+                return redirect('hub:demo') # Redirect to home or a confirmation page
+        else:
+            messages.error(request, "Please correct the errors in the form.")
+    else:
+        form = LaunchRegistrationForm(initial={'launch': launch.pk}) # Pre-fill launch ID
+
+    context = {
+        'form': form,
+        'launch': launch,
+    }
+    return render(request, 'register_for_launch.html', context)
+
+# About Us View
+def about_us(request):
+    """
+    Renders the About Us page.
+    """
+    return render(request, 'about_us.html')
+
+from .models import TestDriveBooking, Feedback, Complaint
+
+@csrf_exempt
+def book_test_drive_api(request):
+    if request.method == "POST":
+        data = json.loads(request.body)
+        car_id = data.get('car_id')
+        preferred_date = data.get('preferred_date')
+        preferred_time = data.get('preferred_time')
+
+        try:
+            car = Car.objects.get(id=car_id)
+            TestDriveBooking.objects.create(
+                user=request.user,
+                car=car,
+                preferred_date=preferred_date,
+                preferred_time=preferred_time
+            )
+            return JsonResponse({"success": True, "message": "Test drive booked successfully!"})
+        except Car.DoesNotExist:
+            return JsonResponse({"success": False, "message": "Selected car does not exist."})
+        except Exception as e:
+            return JsonResponse({"success": False, "message": f"An error occurred: {str(e)}"})
+    return JsonResponse({"success": False, "message": "Invalid request method"})
+
+@csrf_exempt
+def submit_complaint_api(request):
+    if request.method == "POST":
+        data = json.loads(request.body)
+        subject = data.get('subject')
+        description = data.get('description')
+
+        try:
+            Complaint.objects.create(
+                user=request.user,
+                subject=subject,
+                description=description
+            )
+            return JsonResponse({"success": True, "message": "Complaint submitted successfully!"})
+        except Exception as e:
+            return JsonResponse({"success": False, "message": f"An error occurred: {str(e)}"})
+    return JsonResponse({"success": False, "message": "Invalid request method"})
+
+@csrf_exempt
+def submit_feedback_api(request):
+    if request.method == "POST":
+        data = json.loads(request.body)
+        rating = data.get('rating')
+        comments = data.get('comments')
+
+        try:
+            Feedback.objects.create(
+                user=request.user if request.user.is_authenticated else None,
+                rating=rating,
+                comments=comments
+            )
+            return JsonResponse({"success": True, "message": "Thank you for your feedback!"})
+        except Exception as e:
+            return JsonResponse({"success": False, "message": f"An error occurred: {str(e)}"})
+    return JsonResponse({"success": False, "message": "Invalid request method"})
+
+@login_required
+def my_complaints(request):
+    complaints = Complaint.objects.filter(user=request.user).order_by('-created_at')
+    return render(request, 'my_complaints.html', {'complaints': complaints})
+
+@login_required
+def my_test_drives(request):
+    test_drives = TestDriveBooking.objects.filter(user=request.user).order_by('-created_at')
+    return render(request, 'my_test_drives.html', {'test_drives': test_drives})
+
+@login_required
+def cancel_test_drive(request, pk):
+    test_drive = get_object_or_404(TestDriveBooking, pk=pk, user=request.user)
+    
+    if test_drive.status == 'Pending':
+        test_drive.status = 'Cancelled'
+        test_drive.save()
+        messages.success(request, 'Your test drive booking has been cancelled.')
+    else:
+        messages.error(request, 'You can only cancel pending test drive bookings.')
+    
+    return redirect('hub:my_test_drives')
+
+@login_required
+def my_feedback(request):
+    feedbacks = Feedback.objects.filter(user=request.user).order_by('-created_at')
+    return render(request, 'my_feedback.html', {'feedbacks': feedbacks})

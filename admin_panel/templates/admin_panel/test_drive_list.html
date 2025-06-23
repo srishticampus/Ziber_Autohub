@@ -1,0 +1,75 @@
+{% extends "admin_panel/admin_base.html" %}
+
+{% block title %}Test Drive Management - Ziber Autohub{% endblock %}
+
+{% block content %}
+<div class="container-fluid">
+    <h1 class="mb-4">Test Drive Bookings</h1>
+    
+    <div class="card shadow mb-4">
+        <div class="card-header py-3 d-flex justify-content-between align-items-center">
+            <h6 class="m-0 font-weight-bold text-primary">All Test Drives</h6>
+        </div>
+        <div class="card-body">
+            <div class="table-responsive">
+                <table class="table table-bordered" width="100%" cellspacing="0">
+                    <thead>
+                        <tr>
+                            <th>ID</th>
+                            <th>User</th>
+                            <th>Car</th>
+                            <th>Date & Time</th>
+                            <th>Status</th>
+                            <th>Booked On</th>
+                            <th>Actions</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {% for test_drive in test_drives %}
+                        <tr>
+                            <td>{{ test_drive.id }}</td>
+                            <td>{{ test_drive.user.username }}</td>
+                            <td>{{ test_drive.car.brand }} {{ test_drive.car.model }}</td>
+                            <td>
+                                {{ test_drive.preferred_date|date:"M d, Y" }} 
+                                at {{ test_drive.preferred_time|time:"H:i" }}
+                            </td>
+                            <td>
+                                <span class="badge 
+                                    {% if test_drive.status == 'Pending' %}bg-warning
+                                    {% elif test_drive.status == 'Confirmed' %}bg-success
+                                    {% else %}bg-danger{% endif %}">
+                                    {{ test_drive.get_status_display }}
+                                </span>
+                            </td>
+                            <td>{{ test_drive.created_at|date:"M d, Y H:i" }}</td>
+                            <td>
+                                <button class="btn btn-sm btn-secondary dropdown-toggle" type="button" id="statusDropdown{{ test_drive.id }}" data-bs-toggle="dropdown" aria-expanded="false">
+                                    Change Status
+                                </button>
+                                <ul class="dropdown-menu" aria-labelledby="statusDropdown{{ test_drive.id }}">
+                                    {% for value, name in status_choices %}
+                                    <li>
+                                        <form method="post" action="{% url 'admin_panel:update_test_drive_status' test_drive.id %}">
+                                            {% csrf_token %}
+                                            <button type="submit" class="dropdown-item" name="status" value="{{ value }}">
+                                                {{ name }}
+                                            </button>
+                                        </form>
+                                    </li>
+                                    {% endfor %}
+                                </ul>
+                            </td>
+                        </tr>
+                        {% empty %}
+                        <tr>
+                            <td colspan="7" class="text-center">No test drive bookings found.</td>
+                        </tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

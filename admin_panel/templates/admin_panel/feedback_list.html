@@ -1,0 +1,55 @@
+{% extends "admin_panel/admin_base.html" %}
+
+{% block title %}Customer Feedback - Ziber Autohub{% endblock %}
+
+{% block content %}
+<div class="container-fluid">
+    <h1 class="mb-4">Customer Feedback</h1>
+    
+    <div class="row">
+        {% for feedback in feedbacks %}
+        <div class="col-md-6 mb-4">
+            <div class="card h-100 shadow">
+                <div class="card-header d-flex justify-content-between align-items-center">
+                    <h6 class="m-0 font-weight-bold text-primary">
+                        Feedback #{{ feedback.id }}
+                    </h6>
+                    <div>
+                        {% for i in "12345" %}
+                            {% if forloop.counter <= feedback.rating %}
+                                <i class="fas fa-star text-warning"></i>
+                            {% else %}
+                                <i class="far fa-star text-warning"></i>
+                            {% endif %}
+                        {% endfor %}
+                    </div>
+                </div>
+                <div class="card-body">
+                    <div class="mb-3">
+                        <h6>User:</h6>
+                        <p>
+                            {% if feedback.user %}
+                                {{ feedback.user.username }} ({{ feedback.user.email }})
+                            {% else %}
+                                Anonymous
+                            {% endif %}
+                        </p>
+                    </div>
+                    <div class="mb-3">
+                        <h6>Comments:</h6>
+                        <p>{{ feedback.comments }}</p>
+                    </div>
+                </div>
+                <div class="card-footer text-muted">
+                    Submitted on {{ feedback.created_at|date:"M d, Y H:i" }}
+                </div>
+            </div>
+        </div>
+        {% empty %}
+        <div class="col-12">
+            <div class="alert alert-info">No feedback submissions yet.</div>
+        </div>
+        {% endfor %}
+    </div>
+</div>
+{% endblock %}

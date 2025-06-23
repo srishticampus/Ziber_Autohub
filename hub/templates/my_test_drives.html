@@ -1,0 +1,72 @@
+{% extends "base.html" %}
+{% load static %}
+
+{% block title %}My Test Drives | Ziber Autohub{% endblock %}
+
+{% block content %}
+<div class="container my-5">
+    <div class="row">
+        <div class="col-md-10 mx-auto">
+            <h2 class="mb-4">My Test Drive Bookings</h2>
+            
+            {% if test_drives %}
+            <div class="card shadow">
+                <div class="card-body">
+                    <div class="table-responsive">
+                        <table class="table table-hover">
+                            <thead class="table-light">
+                                <tr>
+                                    <th>ID</th>
+                                    <th>Car</th>
+                                    <th>Date & Time</th>
+                                    <th>Status</th>
+                                    <th>Booked On</th>
+                                    <!-- <th>Action</th> -->
+                                </tr>
+                            </thead>
+                            <tbody>
+                                {% for test_drive in test_drives %}
+                                <tr>
+                                    <td>#{{ test_drive.id }}</td>
+                                    <td>{{ test_drive.car.brand }} {{ test_drive.car.model }}</td>
+                                    <td>
+                                        {{ test_drive.preferred_date|date:"M d, Y" }} 
+                                        at {{ test_drive.preferred_time|time:"H:i" }}
+                                    </td>
+                                    <td>
+                                        <span class="badge 
+                                            {% if test_drive.status == 'Pending' %}bg-warning
+                                            {% elif test_drive.status == 'Confirmed' %}bg-success
+                                            {% else %}bg-danger{% endif %}">
+                                            {{ test_drive.get_status_display }}
+                                        </span>
+                                    </td>
+                                    <td>{{ test_drive.created_at|date:"M d, Y" }}</td>
+                                    
+                                    <!-- <td>
+                                        <a href="" class="btn btn-sm btn-outline-primary">
+                                            Details
+                                        </a>
+                                    </td> -->
+                                </tr>
+                                {% endfor %}
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+            {% else %}
+            <div class="alert alert-info">
+                You haven't booked any test drives yet.
+            </div>
+            {% endif %}
+            
+            <!-- <div class="mt-4">
+                <a href="{% url 'hub:new_car_list' %}" class="btn btn-primary">
+                    <i class="fas fa-plus me-2"></i> Book New Test Drive
+                </a>
+            </div> -->
+        </div>
+    </div>
+</div>
+{% endblock %}

@@ -1,0 +1,118 @@
+{% extends "base.html" %}
+{% load static %}
+
+{% block title %}My Complaints | Ziber Autohub{% endblock %}
+
+{% block content %}
+<div class="container my-5">
+    <div class="row">
+        <div class="col-md-8 mx-auto">
+            <h2 class="mb-4">My Complaints</h2>
+            
+            {% if complaints %}
+            <div class="card shadow">
+                <div class="card-body">
+                    <div class="table-responsive">
+                        <table class="table table-hover">
+                            <thead class="table-light">
+                                <tr>
+                                    <th>ID</th>
+                                    <th>Subject</th>
+                                    <th>Status</th>
+                                    <th>Submitted</th>
+                                    <th>Action</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                {% for complaint in complaints %}
+                                <tr>
+                                    <td>#{{ complaint.id }}</td>
+                                    <td>{{ complaint.subject|truncatechars:30 }}</td>
+                                    <td>
+                                        <span class="badge 
+                                            {% if complaint.status == 'Open' %}bg-warning
+                                            {% elif complaint.status == 'In Progress' %}bg-info
+                                            {% else %}bg-success{% endif %}">
+                                            {{ complaint.get_status_display }}
+                                        </span>
+                                    </td>
+                                    <td>{{ complaint.created_at|date:"M d, Y" }}</td>
+                                    <td>
+                                        <a href="#" class="btn btn-sm btn-primary" data-bs-toggle="modal" data-bs-target="#complaintModal{{ complaint.id }}">
+                                            <i class="fas fa-eye"></i> View
+                                        </a>
+                                    </td>
+                                </tr>
+
+                                <!-- Complaint Detail Modal -->
+                                <div class="modal fade" id="complaintModal{{ complaint.id }}" tabindex="-1" aria-labelledby="complaintModalLabel{{ complaint.id }}" aria-hidden="true">
+                                    <div class="modal-dialog modal-lg">
+                                        <div class="modal-content">
+                                            <div class="modal-header">
+                                                <h5 class="modal-title" id="complaintModalLabel{{ complaint.id }}">Complaint #{{ complaint.id }}</h5>
+                                                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                                            </div>
+                                            <div class="modal-body">
+                                                <div class="mb-3">
+                                                    <h6>User:</h6>
+                                                    <p>{{ complaint.user.username }} ({{ complaint.user.email }})</p>
+                                                </div>
+                                                <div class="mb-3">
+                                                    <h6>Subject:</h6>
+                                                    <p>{{ complaint.subject }}</p>
+                                                </div>
+                                                <div class="mb-3">
+                                                    <h6>Description:</h6>
+                                                    <p>{{ complaint.description }}</p>
+                                                </div>
+                                                <div class="mb-3">
+                                                    <h6>Status:</h6>
+                                                    <span class="badge 
+                                                        {% if complaint.status == 'Open' %}bg-warning
+                                                        {% elif complaint.status == 'In Progress' %}bg-info
+                                                        {% else %}bg-success{% endif %}">
+                                                        {{ complaint.get_status_display }}
+                                                    </span>
+                                                </div>
+                                                <div class="mb-3">
+                                                    <h6>Submitted:</h6>
+                                                    <p>{{ complaint.created_at|date:"M d, Y H:i" }}</p>
+                                                </div>
+                                                {% if complaint.status == 'Resolved' %}
+                                                <div class="mb-3">
+                                                    <h6>Resolved:</h6>
+                                                    <p>{{ complaint.resolved_at|date:"M d, Y H:i" }}</p>
+                                                </div>
+                                                {% endif %}
+                                            </div>
+                                            <div class="modal-footer">
+                                                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                                {% empty %}
+                                <tr>
+                                    <td colspan="6" class="text-center">No complaints found.</td>
+                                </tr>
+                                {% endfor %}
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+            {% else %}
+            <div class="alert alert-info">
+                You haven't submitted any complaints yet.
+            </div>
+            {% endif %}
+            
+            <!-- <div class="mt-4">
+                <a href="{% url 'hub:service_chatbot' %}" class="btn btn-primary">
+                    <i class="fas fa-plus me-2"></i> Submit New Complaint
+                </a>
+            </div> -->
+        </div>
+    </div>
+</div>
+{% endblock %}

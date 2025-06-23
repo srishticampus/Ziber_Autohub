@@ -74,6 +74,10 @@
                   <li><a href="{% url 'hub:job_list' %}">Careers</a></li>
                   <li><a href="{% url 'hub:news' %}">News</a></li>
                   <li><a href="{% url 'hub:service_chatbot' %}">Chat Bot</a></li>
+                  <li><a href="{% url 'hub:my_complaints' %}">My complaints</a></li>
+                  <li><a href="{% url 'hub:my_test_drives' %}">Test Drives</a></li>
+                  <li><a href="{% url 'hub:my_feedback' %}">Feedbacks</a></li>
+                  <li><a href="{% url 'hub:about_us' %}">About Us</a></li> {# NEW: About Us Link #}
                 </ul>
               </div>
             </div>
@@ -102,11 +106,12 @@
               <a href="{% url 'hub:car_list' %}">All Vehicles</a>
               <a href="{% url 'hub:new_car_list' %}">New Releases</a>
               <a href="{% url 'hub:used_car_list' %}">Used Cars</a>
-              <a href="{% url 'hub:accessory_list' %}">Accessories</a> {# NEW: Accessories Link #}
+              <a href="{% url 'hub:accessory_list' %}">Accessories</a>
               <a href="{% url 'hub:predict_price' %}">Price Predictor</a>
               <a href="{% url 'hub:book_service' %}">Services</a>
               <a href="{% url 'hub:job_list' %}">Careers</a>
               <a href="{% url 'hub:news' %}">News</a>
+              <a href="{% url 'hub:about_us' %}">About Us</a> {# NEW: About Us Link in Sidenav #}
               {% if user.is_authenticated %}
                 <a href="{% url 'hub:view_cart' %}">My Cart</a>
                 <a href="{% url 'hub:order_history' %}">My Orders</a>
@@ -134,11 +139,12 @@
                 <a class="dropdown-item" href="{% url 'hub:car_list' %}">All Vehicles</a>
                 <a class="dropdown-item" href="{% url 'hub:new_car_list' %}">New Releases</a>
                 <a class="dropdown-item" href="{% url 'hub:used_car_list' %}">Used Cars</a>
-                <a class="dropdown-item" href="{% url 'hub:accessory_list' %}">Accessories</a> {# NEW: Accessories Link #}
+                <a class="dropdown-item" href="{% url 'hub:accessory_list' %}">Accessories</a>
                 <a class="dropdown-item" href="{% url 'hub:predict_price' %}">Price Predictor</a>
                 <div class="dropdown-divider"></div>
                 <a class="dropdown-item" href="{% url 'hub:book_service' %}">Book Service</a>
                 <a class="dropdown-item" href="{% url 'hub:job_list' %}">Career Opportunities</a>
+                <a class="dropdown-item" href="{% url 'hub:about_us' %}">About Us</a> {# NEW: About Us Link in Quick Links dropdown #}
               </div>
             </div>
             <div class="main">
@@ -214,12 +220,13 @@
             <li><a href="{% url 'hub:new_car_list' %}">New Releases</a></li>
             <li><a href="{% url 'hub:car_list' %}">All Vehicles</a></li>
             <li><a href="{% url 'hub:used_car_list' %}">Used Cars</a></li>
-            <li><a href="{% url 'hub:accessory_list' %}">Accessories</a></li> {# NEW: Accessories Link #}
+            <li><a href="{% url 'hub:accessory_list' %}">Accessories</a></li>
             <li><a href="{% url 'hub:book_service' %}">Service Booking</a></li>
             <li><a href="{% url 'hub:my_service_bookings' %}">My Service</a></li>
             <li><a href="{% url 'hub:predict_price' %}">Price Predictor</a></li>
             <li><a href="{% url 'hub:job_list' %}">Careers</a></li>
             <li><a href="{% url 'hub:news' %}">News</a></li>
+            <li><a href="{% url 'hub:about_us' %}">About Us</a></li> {# NEW: About Us Link in Footer #}
           </ul>
         </div>
         <div class="location_main">

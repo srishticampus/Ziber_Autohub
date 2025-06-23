@@ -306,3 +306,67 @@ class ServiceBooking(models.Model):
     def __str__(self):
         return f"{self.car} - {self.service_type} ({self.status})"
 
+class LaunchRegistration(models.Model):
+    """
+    Model to store registrations for upcoming car launch events.
+    """
+    launch = models.ForeignKey('admin_panel.UpcomingLaunch', on_delete=models.CASCADE, related_name='registrations')
+    full_name = models.CharField(max_length=200, help_text="Your full name.")
+    email = models.EmailField(help_text="Your email address.")
+    phone_number = models.CharField(max_length=20, blank=True, null=True, help_text="Your phone number (optional).")
+    registration_date = models.DateTimeField(auto_now_add=True)
+    # You could add more fields like:
+    # preferred_contact_method = models.CharField(max_length=50, blank=True)
+    # how_heard = models.CharField(max_length=100, blank=True)
+
+    class Meta:
+        verbose_name = "Launch Registration"
+        verbose_name_plural = "Launch Registrations"
+        ordering = ['-registration_date']
+        unique_together = ('launch', 'email') # Prevent duplicate registrations for the same launch by the same email
+
+    def __str__(self):
+        return f"{self.full_name} registered for {self.launch.car_name}"
+
+# Add these to your models.py
+
+class TestDriveBooking(models.Model):
+    STATUS_CHOICES = [
+        ('Pending', 'Pending'),
+        ('Confirmed', 'Confirmed'),
+        ('Cancelled', 'Cancelled'),
+    ]
+    user = models.ForeignKey(User, on_delete=models.CASCADE)
+    car = models.ForeignKey(Car, on_delete=models.CASCADE)
+    preferred_date = models.DateField()
+    preferred_time = models.TimeField()
+    status = models.CharField(max_length=20, choices=STATUS_CHOICES, default='Pending')
+    created_at = models.DateTimeField(auto_now_add=True)
+
+    def __str__(self):
+        return f"Test drive for {self.car} by {self.user.username} on {self.preferred_date}"
+
+class Complaint(models.Model):
+    STATUS_CHOICES = [
+        ('Open', 'Open'),
+        ('In Progress', 'In Progress'),
+        ('Resolved', 'Resolved'),
+    ]
+    user = models.ForeignKey(User, on_delete=models.CASCADE)
+    subject = models.CharField(max_length=200)
+    description = models.TextField()
+    status = models.CharField(max_length=20, choices=STATUS_CHOICES, default='Open')
+    created_at = models.DateTimeField(auto_now_add=True)
+    resolved_at = models.DateTimeField(null=True, blank=True)
+
+    def __str__(self):
+        return f"Complaint #{self.id} by {self.user.username}"
+
+class Feedback(models.Model):
+    user = models.ForeignKey(User, on_delete=models.CASCADE, null=True, blank=True)
+    rating = models.PositiveIntegerField(choices=[(i, i) for i in range(1, 6)])
+    comments = models.TextField()
+    created_at = models.DateTimeField(auto_now_add=True)
+
+    def __str__(self):
+        return f"Feedback #{self.id} ({self.rating} stars)"

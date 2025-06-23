@@ -6,29 +6,29 @@ from django.views.decorators.cache import never_cache
 from django.contrib import messages
 from django.db import transaction
 from django.utils import timezone
-from hub.models import Car, JobVacancy, PreBooking, Accessory
+from hub.models import Car, JobVacancy, PreBooking, Accessory,LaunchRegistration
 from .models import UpcomingLaunch
 from .forms import AddCarForm, AddJobForm, AddAccessoryForm, AddUpcomingLaunchForm
 
 @login_required
-@never_cache 
-@staff_member_required 
+@never_cache
+@staff_member_required
 def admin_dashboard(request):
     """
     Renders the admin dashboard with summary counts.
     """
     total_cars_count = Car.objects.count()
     active_jobs_count = JobVacancy.objects.filter(is_active=True).count()
-    pending_prebookings_count = PreBooking.objects.filter(status='Booked').count() 
+    pending_prebookings_count = PreBooking.objects.filter(status='Booked').count()
     total_accessories_count = Accessory.objects.count()
-    total_upcoming_launches_count = UpcomingLaunch.objects.count() # Get count for upcoming launches
-    
+    total_upcoming_launches_count = UpcomingLaunch.objects.count()
+
     context = {
         'total_cars_count': total_cars_count,
         'active_jobs_count': active_jobs_count,
         'pending_prebookings_count': pending_prebookings_count,
         'total_accessories_count': total_accessories_count,
-        'total_upcoming_launches_count': total_upcoming_launches_count, # Pass count to context
+        'total_upcoming_launches_count': total_upcoming_launches_count,
     }
     return render(request, 'admin_panel/dashboard.html', context)
 
@@ -44,12 +44,12 @@ def add_car(request):
         form = AddCarForm(request.POST, request.FILES)
         if form.is_valid():
             form.save()
-            messages.success(request, 'Car added successfully!') 
-            return redirect('admin_panel:car_list') 
+            messages.success(request, 'Car added successfully!')
+            return redirect('admin_panel:car_list')
         else:
-            messages.error(request, 'Please correct the errors below.') 
+            messages.error(request, 'Please correct the errors below.')
     else:
-        form = AddCarForm() 
+        form = AddCarForm()
     return render(request, 'admin_panel/add_car.html', {'form': form})
 
 @login_required
@@ -63,12 +63,12 @@ def add_job(request):
         form = AddJobForm(request.POST)
         if form.is_valid():
             form.save()
-            messages.success(request, 'Job vacancy posted successfully!') 
-            return redirect('admin_panel:job_list') 
+            messages.success(request, 'Job vacancy posted successfully!')
+            return redirect('admin_panel:job_list')
         else:
-            messages.error(request, 'Please correct the errors below.') 
+            messages.error(request, 'Please correct the errors below.')
     else:
-        form = AddJobForm() 
+        form = AddJobForm()
     return render(request, 'admin_panel/add_job.html', {'form': form})
 
 @login_required
@@ -78,7 +78,7 @@ def car_list(request):
     """
     Displays a list of all cars in the inventory.
     """
-    cars = Car.objects.all().order_by('-created_at') 
+    cars = Car.objects.all().order_by('-created_at')
     return render(request, 'admin_panel/car_list.html', {'cars': cars})
 
 # Edit Car View
@@ -126,13 +126,13 @@ def job_list(request):
     """
     Displays a list of all job vacancies.
     """
-    jobs = JobVacancy.objects.all().order_by('-posted_at') 
+    jobs = JobVacancy.objects.all().order_by('-posted_at')
     return render(request, 'admin_panel/job_list.html', {'jobs': jobs})
 
 @login_required
 @never_cache
 @staff_member_required
-def job_detail(request, pk): 
+def job_detail(request, pk):
     """
     Displays the detailed view of a single job vacancy.
     """
@@ -146,24 +146,24 @@ def view_prebookings(request):
     """
     Displays a list of all pre-bookings.
     """
-    bookings = PreBooking.objects.all().order_by('-booking_date') 
+    bookings = PreBooking.objects.all().order_by('-booking_date')
     return render(request, 'admin_panel/view_prebookings.html', {'bookings': bookings})
 
 @login_required
 @never_cache
 @staff_member_required
-def mark_prebooking_delivered(request, pk): 
+def mark_prebooking_delivered(request, pk):
     """
     Marks a pre-booking as 'Delivered' and decrements the car's stock.
     """
     booking = get_object_or_404(PreBooking, pk=pk)
 
     if request.method == 'POST':
-        if booking.status != 'Delivered': 
+        if booking.status != 'Delivered':
             try:
-                with transaction.atomic(): 
+                with transaction.atomic():
                     booking.status = 'Delivered'
-                    booking.delivery_date = timezone.now().date() 
+                    booking.delivery_date = timezone.now().date()
                     booking.save()
 
                     car = booking.car
@@ -180,7 +180,7 @@ def mark_prebooking_delivered(request, pk):
             messages.info(request, "Pre-booking is already marked as Delivered.")
     else:
         messages.error(request, "Invalid request method for this action.")
-    
+
     return redirect('admin_panel:view_prebookings')
 
 @login_required
@@ -198,7 +198,7 @@ def edit_job(request, pk):
             messages.error(request, 'Please correct the errors below.')
     else:
         form = AddJobForm(instance=job)
-    return render(request, 'admin_panel/add_job.html', {'form': form, 'editing': True}) 
+    return render(request, 'admin_panel/add_job.html', {'form': form, 'editing': True})
 
 @login_required
 @never_cache
@@ -295,7 +295,7 @@ def add_upcoming_launch(request):
     Handles adding a new upcoming car launch.
     """
     if request.method == 'POST':
-        form = AddUpcomingLaunchForm(request.POST)
+        form = AddUpcomingLaunchForm(request.POST, request.FILES) # <-- Changed here
         if form.is_valid():
             form.save()
             messages.success(request, 'Upcoming launch added successfully!')
@@ -315,7 +315,7 @@ def edit_upcoming_launch(request, pk):
     """
     launch = get_object_or_404(UpcomingLaunch, pk=pk)
     if request.method == 'POST':
-        form = AddUpcomingLaunchForm(request.POST, instance=launch)
+        form = AddUpcomingLaunchForm(request.POST, request.FILES, instance=launch) # <-- Changed here
         if form.is_valid():
             form.save()
             messages.success(request, 'Upcoming launch updated successfully!')
@@ -340,3 +340,98 @@ def delete_upcoming_launch(request, pk):
         return redirect('admin_panel:upcoming_launch_list')
     return render(request, 'admin_panel/confirm_delete_upcoming_launch.html', {'launch': launch})
 
+# VIEW TO LIST LAUNCH REGISTRATIONS
+@login_required
+@never_cache
+@staff_member_required
+def view_launch_registrations(request):
+    """
+    Displays a list of all upcoming launch registrations.
+    """
+    registrations = LaunchRegistration.objects.all().order_by('-registration_date')
+    context = {
+        'registrations': registrations
+    }
+    return render(request, 'admin_panel/view_launch_registrations.html', context)
+
+# Add these to admin_panel/views.py
+from hub.models import TestDriveBooking, Feedback, Complaint
+
+@login_required
+@never_cache
+@staff_member_required
+def complaint_list(request):
+    """
+    Displays a list of all complaints.
+    """
+    complaints = Complaint.objects.all().order_by('-created_at')
+    context = {
+        'complaints': complaints,
+        'status_choices': Complaint._meta.get_field('status').choices
+    }
+    return render(request, 'admin_panel/complaint_list.html', context)
+
+@login_required
+@never_cache
+@staff_member_required
+def update_complaint_status(request, pk):
+    """
+    Updates the status of a complaint.
+    """
+    complaint = get_object_or_404(Complaint, pk=pk)
+    if request.method == 'POST':
+        new_status = request.POST.get('status')
+        if new_status in dict(Complaint.STATUS_CHOICES).keys():
+            complaint.status = new_status
+            if new_status == 'Resolved':
+                complaint.resolved_at = timezone.now()
+            complaint.save()
+            messages.success(request, f"Complaint #{pk} status updated to {new_status}.")
+        else:
+            messages.error(request, "Invalid status selected.")
+    return redirect('admin_panel:complaint_list')
+
+@login_required
+@never_cache
+@staff_member_required
+def test_drive_list(request):
+    """
+    Displays a list of all test drive bookings.
+    """
+    test_drives = TestDriveBooking.objects.all().order_by('-created_at')
+    context = {
+        'test_drives': test_drives,
+        'status_choices': TestDriveBooking._meta.get_field('status').choices
+    }
+    return render(request, 'admin_panel/test_drive_list.html', context)
+
+@login_required
+@never_cache
+@staff_member_required
+def update_test_drive_status(request, pk):
+    """
+    Updates the status of a test drive booking.
+    """
+    test_drive = get_object_or_404(TestDriveBooking, pk=pk)
+    if request.method == 'POST':
+        new_status = request.POST.get('status')
+        if new_status in dict(TestDriveBooking.STATUS_CHOICES).keys():
+            test_drive.status = new_status
+            test_drive.save()
+            messages.success(request, f"Test drive #{pk} status updated to {new_status}.")
+        else:
+            messages.error(request, "Invalid status selected.")
+    return redirect('admin_panel:test_drive_list')
+
+@login_required
+@never_cache
+@staff_member_required
+def feedback_list(request):
+    """
+    Displays a list of all feedback submissions.
+    """
+    feedbacks = Feedback.objects.all().order_by('-created_at')
+    context = {
+        'feedbacks': feedbacks
+    }
+    return render(request, 'admin_panel/feedback_list.html', context)
