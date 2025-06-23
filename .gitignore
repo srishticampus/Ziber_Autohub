@@ -7,10 +7,10 @@ __pycache__/
 *.pyo
 *.pyd
 
-# Django migration files
-**/migrations/
-**/migrations/*.py
-**/migrations/*.pyc
+# # Django migration files
+# **/migrations/
+# **/migrations/*.py
+# **/migrations/*.pyc
 
 # Environment files
 .env
