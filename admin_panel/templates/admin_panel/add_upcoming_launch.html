@@ -70,6 +70,16 @@
                     <small class="form-text text-muted">{{ form.car_description.help_text }}</small>
                 </div>
 
+                {# NEW: Image field for upcoming launch #}
+                <div class="mb-3">
+                    <label for="{{ form.image.id_for_label }}" class="form-label">Car Image</label>
+                    {{ form.image|add_class:"form-control" }} {# Apply form-control class, widget_tweaks handles the type #}
+                    {% if form.instance.image %}
+                        <small class="form-text text-muted mt-2 d-block">Current image: <a href="{{ form.instance.image.url }}" target="_blank">{{ form.instance.image.name }}</a></small>
+                        <img src="{{ form.instance.image.url }}" alt="Current Car Image" style="max-width: 150px; height: auto; margin-top: 10px;">
+                    {% endif %}
+                </div>
+
                 <div class="d-flex justify-content-end">
                     <button type="submit" class="btn btn-primary me-2">
                         <i class="fas fa-save me-2"></i> {% if editing %}Update Launch{% else %}Add Launch{% endif %}

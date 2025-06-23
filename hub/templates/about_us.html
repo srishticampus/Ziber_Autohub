@@ -1,0 +1,198 @@
+{% extends "base.html" %}
+{% load static %}
+
+{% block title %}About Us - Ziber Autohub{% endblock %}
+
+{% block extra_styles %}
+<style>
+    .about-section {
+        padding: 80px 0; /* More padding top/bottom */
+        background-color: #f8f9fa; /* Light background */
+        color: #333;
+    }
+    .about-section h1 {
+        font-size: 3.5rem;
+        font-weight: 700;
+        color: #212529;
+        margin-bottom: 25px;
+        text-align: center;
+    }
+    .about-section h2 {
+        font-size: 2.5rem;
+        font-weight: 600;
+        color: #f26522; /* Your brand color */
+        margin-bottom: 20px;
+        border-bottom: 2px solid rgba(242, 101, 34, 0.3);
+        padding-bottom: 10px;
+    }
+    .about-section p {
+        font-size: 1.1rem;
+        line-height: 1.8;
+        margin-bottom: 20px;
+    }
+    .about-section ul {
+        list-style: none; /* Remove default bullet points */
+        padding-left: 0;
+    }
+    .about-section ul li {
+        font-size: 1.05rem;
+        line-height: 1.6;
+        margin-bottom: 10px;
+        position: relative; /* For custom bullet */
+        padding-left: 25px; /* Space for custom bullet */
+    }
+    .about-section ul li::before {
+        content: "\f00c"; /* Font Awesome check icon */
+        font-family: "Font Awesome 6 Free"; /* Ensure Font Awesome is linked */
+        font-weight: 900; /* For solid icon */
+        color: #f26522;
+        position: absolute;
+        left: 0;
+        top: 0;
+    }
+    .about-image {
+        border-radius: 12px;
+        box-shadow: 0 8px 20px rgba(0, 0, 0, 0.1);
+        width: 100%;
+        height: auto;
+        object-fit: cover;
+        margin-bottom: 30px;
+    }
+    .team-member {
+        text-align: center;
+        margin-bottom: 30px;
+    }
+    .team-member img {
+        width: 150px;
+        height: 150px;
+        border-radius: 50%;
+        object-fit: cover;
+        margin-bottom: 15px;
+        border: 4px solid #f26522;
+        box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
+    }
+    .team-member h4 {
+        font-size: 1.4rem;
+        font-weight: 600;
+        color: #333;
+        margin-bottom: 5px;
+    }
+    .team-member p {
+        font-size: 0.95rem;
+        color: #666;
+        margin-bottom: 0;
+    }
+</style>
+{% endblock %}
+
+{% block content %}
+<div class="about-section">
+    <div class="container">
+        <h1 class="text-center mb-5">About Ziber Autohub</h1>
+
+        <div class="row align-items-center mb-5">
+            <div class="col-lg-6">
+                <img src="{% static 'images/about_us_main.png' %}" alt="Ziber Autohub Headquarters" class="img-fluid about-image">
+            </div>
+            <div class="col-lg-6">
+                <h2>Our Story</h2>
+                <p>
+                    Welcome to Ziber Autohub, your premier destination for all things automotive. Founded with a passion for cars and a commitment to exceptional service, we strive to redefine your car buying, selling, and maintenance experience. From the sleekest new models to reliable pre-owned vehicles, and a comprehensive range of accessories and services, we are here to cater to every automotive need.
+                </p>
+                <p>
+                    Our journey began with a simple vision: to create a transparent, customer-centric platform where car enthusiasts and everyday drivers alike can find quality vehicles and trusted services under one roof. We believe in building lasting relationships with our clients, ensuring satisfaction at every step.
+                </p>
+            </div>
+        </div>
+
+        <div class="row mb-5">
+            <div class="col-12">
+                <h2 class="text-center">Our Mission</h2>
+                <p class="text-center fs-5 text-muted mb-4">
+                    To empower our customers with unparalleled choice, exceptional quality, and reliable services, making their automotive journey seamless and enjoyable.
+                </p>
+            </div>
+            <div class="col-md-6 col-lg-4 mb-4">
+                <div class="card h-100 p-3 shadow-sm">
+                    <div class="card-body">
+                        <h4 class="card-title text-center text-white mb-3">Integrity &amp; Trust</h4>
+                        <p class="card-text text-center text-white">We uphold the highest standards of honesty and transparency in all our dealings.</p>
+                    </div>
+                </div>
+            </div>
+            <div class="col-md-6 col-lg-4 mb-4">
+                <div class="card h-100 p-3 shadow-sm">
+                    <div class="card-body">
+                        <h4 class="card-title text-center text-white mb-3">Customer Centricity</h4>
+                        <p class="card-text text-center text-white">Your needs drive our innovation. We are dedicated to delivering personalized solutions.</p>
+                    </div>
+                </div>
+            </div>
+            <div class="col-md-6 col-lg-4 mb-4">
+                <div class="card h-100 p-3 shadow-sm">
+                    <div class="card-body">
+                        <h4 class="card-title text-center text-white mb-3">Excellence in Service</h4>
+                        <p class="card-text text-center text-white">From sales to after-sales, we commit to providing top-tier service every time.</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="row align-items-center flex-row-reverse mb-5">
+            <div class="col-lg-6">
+                <img src="{% static 'images/about_us_team.jpg' %}" alt="Our Team" class="img-fluid about-image">
+            </div>
+            <div class="col-lg-6">
+                <h2>Why Choose Ziber Autohub?</h2>
+                <ul>
+                    <li>Extensive selection of new and pre-owned vehicles.</li>
+                    <li>Transparent pricing and fair deals.</li>
+                    <li>Expert service and maintenance facilities.</li>
+                    <li>Wide range of quality car accessories.</li>
+                    <li>Dedicated and knowledgeable staff.</li>
+                    <li>Easy and secure online platform for all transactions.</li>
+                </ul>
+            </div>
+        </div>
+
+        <h2 class="text-center mb-5">Meet Our Leadership Team</h2>
+        <div class="row justify-content-center">
+            <div class="col-md-4 col-sm-6 mb-4">
+                <div class="team-member">
+                    <img src="https://placehold.co/150x150/000000/FFFFFF?text=CEO" alt="CEO Name">
+                    <h4>John Doe</h4>
+                    <p>CEO &amp; Founder</p>
+                    <p class="text-muted">Visionary leader driving innovation.</p>
+                </div>
+            </div>
+            <div class="col-md-4 col-sm-6 mb-4">
+                <div class="team-member">
+                    <img src="https://placehold.co/150x150/000000/FFFFFF?text=CTO" alt="CTO Name">
+                    <h4>Jane Smith</h4>
+                    <p>Chief Technology Officer</p>
+                    <p class="text-muted">Architect of our seamless digital experience.</p>
+                </div>
+            </div>
+            <div class="col-md-4 col-sm-6 mb-4">
+                <div class="team-member">
+                    <img src="https://placehold.co/150x150/000000/FFFFFF?text=Sales+Dir" alt="Sales Director Name">
+                    <h4>Robert Brown</h4>
+                    <p>Sales Director</p>
+                    <p class="text-muted">Ensuring top-tier sales and customer satisfaction.</p>
+                </div>
+            </div>
+        </div>
+
+        <div class="text-center mt-5">
+            <h2>Contact Us</h2>
+            <p class="fs-5 text-muted">Have questions? We're here to help!</p>
+            <a href="mailto:info@ziberautohub.com" class="btn buynow_bt btn-lg">
+                <i class="fas fa-envelope me-2"></i> Email Us
+            </a>
+            <a href="#" class="btn btn-outline-primary btn-lg ms-3" style="color:#f26522; border-color:#f26522;">
+                <i class="fas fa-phone me-2"></i> Call Us
+            </a>
+        </div>
+    </div>
+</div>
+{% endblock %}

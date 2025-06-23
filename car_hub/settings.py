@@ -48,8 +48,8 @@ CSRF_TRUSTED_ORIGINS = [
 # Application definition
 
 INSTALLED_APPS = [
-    'hub',
     'admin_panel',
+    'hub',
     'chat',
     'django.contrib.admin',
     'django.contrib.auth',

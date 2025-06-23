@@ -29,6 +29,7 @@
             color: #fff;
             display: flex; /* Use flexbox to push logout to bottom */
             flex-direction: column;
+            overflow-x: auto;
         }
         .sidebar .nav-link {
             color: #adb5bd; /* Lighter text color */
@@ -132,6 +133,21 @@
                 <li class="nav-item">
                     <a class="nav-link {% if request.resolver_match.view_name == 'admin_panel:view_prebookings' %}active{% endif %}" href="{% url 'admin_panel:view_prebookings' %}">
                         <i class="fas fa-calendar-check me-2"></i> Pre-Bookings
+                    </a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link {% if 'complaint' in request.resolver_match.view_name %}active{% endif %}" href="{% url 'admin_panel:complaint_list' %}">
+                        <i class="fas fa-exclamation-triangle me-2"></i> Complaints
+                    </a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link {% if 'test_drive' in request.resolver_match.view_name %}active{% endif %}" href="{% url 'admin_panel:test_drive_list' %}">
+                        <i class="fas fa-car-side me-2"></i> Test Drives
+                    </a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link {% if 'feedback' in request.resolver_match.view_name %}active{% endif %}" href="{% url 'admin_panel:feedback_list' %}">
+                        <i class="fas fa-comment-alt me-2"></i> Feedback
                     </a>
                 </li>
                 <li class="nav-item mt-auto"> {# Push logout to the bottom #}

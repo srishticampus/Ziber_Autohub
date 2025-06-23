@@ -107,7 +107,7 @@ class AddUpcomingLaunchForm(forms.ModelForm):
     class Meta:
         model = UpcomingLaunch
         fields = [
-            'car_name', 'car_minimal_details', 'car_description',
+            'car_name', 'car_minimal_details', 'car_description', 'image', # Added 'image'
             'launch_date', 'launch_time_start', 'launch_time_end',
             'venue', 'location'
         ]
@@ -117,14 +117,15 @@ class AddUpcomingLaunchForm(forms.ModelForm):
             'launch_date': forms.DateInput(attrs={'type': 'date', 'class': 'form-control'}),
             'launch_time_start': forms.TimeInput(attrs={'type': 'time', 'class': 'form-control'}),
             'launch_time_end': forms.TimeInput(attrs={'type': 'time', 'class': 'form-control'}),
+            'image': forms.FileInput(attrs={'class': 'form-control-file'}), # Widget for image
         }
 
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
         for field_name, field in self.fields.items():
             # Apply Bootstrap's form-control or form-select where appropriate,
-            # excluding widgets already explicitly set (like Textarea, DateInput, TimeInput)
-            if not isinstance(field.widget, (forms.Textarea, forms.DateInput, forms.TimeInput)):
+            # excluding widgets already explicitly set (like Textarea, DateInput, TimeInput, FileInput)
+            if not isinstance(field.widget, (forms.Textarea, forms.DateInput, forms.TimeInput, forms.FileInput)):
                 if isinstance(field.widget, forms.Select):
                     field.widget.attrs.update({'class': 'form-select'})
                 else:

@@ -1155,12 +1155,14 @@ input.mail_bt::placeholder {
     border-color: #f26522;
 }
 
-/* Style from demo.html inline style on banner_section */
+/* Updated: Removed static background-image from banner_section_demo */
 .banner_section_demo {
     height: 100vh;
-    background-size: cover;
+    background-size: contain;
     background-position: center;
-    background-image: url('../images/car26.jpg');
+    background-repeat: no-repeat;
+    /* background-image will be set by JavaScript */
+    transition: background-image 1s ease-in-out; /* Smooth transition for background image change */
 }
 
 /* Style from demo.html inline style on news carousel controls */
@@ -1218,6 +1220,8 @@ input.mail_bt::placeholder {
     background-color: #f26522;
     border-color: #f26522;
 }
+
+
 
 /* Ensure base.html styles are not duplicated if already present */
 /* Remove or merge any conflicting styles from base.html's original style.css content */

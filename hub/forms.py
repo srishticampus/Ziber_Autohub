@@ -4,7 +4,7 @@ from django import forms
 from django.core.exceptions import ValidationError
 from django.contrib.auth.models import User
 from django.contrib.auth.forms import UserCreationForm
-from .models import UserProfile, ServiceBooking, JobApplication, JobVacancy, PreBooking,Car,Accessory
+from .models import UserProfile, ServiceBooking, JobApplication, JobVacancy, PreBooking,Car,Accessory,LaunchRegistration
 
 class UserRegistrationForm(UserCreationForm):
     age = forms.IntegerField(min_value=0)
@@ -207,3 +207,23 @@ class UsedCarForm(forms.ModelForm):
         if commit:
             car.save()
         return car
+
+# FORM FOR LAUNCH REGISTRATION
+class LaunchRegistrationForm(forms.ModelForm):
+    class Meta:
+        model = LaunchRegistration
+        fields = ['launch', 'full_name', 'email', 'phone_number']
+        widgets = {
+            'launch': forms.HiddenInput(), # Launch is set by the view
+        }
+        labels = {
+            'full_name': 'Your Full Name',
+            'email': 'Your Email Address',
+            'phone_number': 'Your Phone Number (Optional)',
+        }
+
+    def __init__(self, *args, **kwargs):
+        super().__init__(*args, **kwargs)
+        for field_name, field in self.fields.items():
+            if field_name != 'launch': # Apply bootstrap class to visible fields
+                field.widget.attrs.update({'class': 'form-control'})
